@@ -3,12 +3,12 @@ groups:
   rules:
 
   - alert: HighCPUUsage
-    expr: avg(rate(node_cpu_seconds_total{mode!="idle"}[2m])) * 100 > 80
+    expr: avg by(instance)(rate(node_cpu_seconds_total{mode!="idle"}[2m])) * 100 > 80
     for: 2m
     labels:
       severity: warning
     annotations:
-      summary: High CPU usage detected
+      summary: "High CPU usage detected on {{ $labels.instance }}"
 
   - alert: InstanceDown
     expr: up == 0

@@ -3,6 +3,7 @@ global:
 
 route:
   receiver: default
+  group_by: [alertname, instance]
   group_wait: 30s
   group_interval: 5m
   repeat_interval: 4h

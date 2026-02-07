@@ -1,0 +1,33 @@
+###############################################################################
+# cAdvisor - Standalone Setup for Remote VMs
+#
+# Deploy this file on each VM where you want to collect container metrics.
+# Prometheus (on your main monitoring server) will scrape this on port 8080.
+#
+# Usage:
+#   1. Copy this entire 'cadvisor-remote' folder to your target VM
+#   2. Run: docker compose up -d
+#   3. Verify: curl http://localhost:8080/metrics
+#   4. Make sure port 8080 is open in your VM's firewall/security group
+#      so the Prometheus server can reach it
+#
+# Then in your Prometheus server's prometheus.yml, add this VM's IP under
+# the 'cadvisor-remote' job targets (already configured as placeholders).
+###############################################################################
+
+services:
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: cadvisor
+    restart: unless-stopped
+    privileged: true
+    devices:
+      - /dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+    ports:
+      - "8080:8080"

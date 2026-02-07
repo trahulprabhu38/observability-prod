@@ -8,6 +8,7 @@ volumes:
   prometheus_data:
   grafana_data:
   alertmanager_data:
+  loki_data:
 
 services:
 
@@ -121,11 +122,33 @@ services:
     networks:
       - monitoring
 
+  loki:
+    image: grafana/loki:2.9.4
+    container_name: loki
+    restart: unless-stopped
+    volumes:
+      - ./loki/loki.yml:/etc/loki/loki.yml:ro
+      - loki_data:/loki
+    command:
+      - "-config.file=/etc/loki/loki.yml"
+    ports:
+      - "3100:3100"
+    networks:
+      - monitoring
+
+  promtail:
+    image: grafana/promtail:2.9.4
+    container_name: promtail
+    restart: unless-stopped
+    volumes:
+      - ./promtail/promtail.yml:/etc/promtail/promtail.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command:
+      - "-config.file=/etc/promtail/promtail.yml"
+    networks:
+      - monitoring
+    depends_on:
+      - loki
 
 
-git init
-git add .
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/trahulprabhu38/prometheus-prod.git
-git push -u origin main

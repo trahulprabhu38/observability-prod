@@ -17,9 +17,28 @@ scrape_configs:
     static_configs:
       - targets: ["prometheus:9090"]
 
-  - job_name: cadvisor
+  - job_name: cadvisor-local
     static_configs:
       - targets: ["cadvisor:8080"]
+        labels:
+          env: local
+
+  # Remote cAdvisor instances running on other VMs
+  # Replace the IPs below with your actual VM IPs
+  - job_name: cadvisor-remote
+    static_configs:
+      - targets: ["<VM1_IP>:8080"]
+        labels:
+          env: production
+          vm: vm1
+      - targets: ["<VM2_IP>:8080"]
+        labels:
+          env: production
+          vm: vm2
+      - targets: ["<VM3_IP>:8080"]
+        labels:
+          env: production
+          vm: vm3
 
   - job_name: node-exporter
     static_configs:
@@ -41,5 +60,6 @@ scrape_configs:
         replacement: blackbox-exporter:9115
 
   - job_name: pushgateway
+    honor_labels: true
     static_configs:
       - targets: ["pushgateway:9091"]
