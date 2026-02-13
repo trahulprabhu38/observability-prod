@@ -28,3 +28,5 @@ scrape_configs:
       - action: replace
         replacement: docker
         target_label: job
+
+
