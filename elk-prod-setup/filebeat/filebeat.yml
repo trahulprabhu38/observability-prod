@@ -1,0 +1,37 @@
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+      templates:
+        - condition:
+            contains:
+              docker.container.image: ""
+          config:
+            - type: container
+              paths:
+                - /var/lib/docker/containers/${data.docker.container.id}/*.log
+              processors:
+                - add_docker_metadata:
+                    host: "unix:///var/run/docker.sock"
+
+# Collect all Docker container logs
+filebeat.inputs:
+  - type: container
+    paths:
+      - /var/lib/docker/containers/*/*.log
+    processors:
+      - add_docker_metadata:
+          host: "unix:///var/run/docker.sock"
+
+# Send to Logstash
+output.logstash:
+  hosts: ["logstash:5044"]
+
+# Alternatively send directly to Elasticsearch (uncomment if not using Logstash)
+# output.elasticsearch:
+#   hosts: ["elasticsearch:9200"]
+#   indices:
+#     - index: "filebeat-%{+yyyy.MM.dd}"
+
+logging.level: info
+logging.to_files: false

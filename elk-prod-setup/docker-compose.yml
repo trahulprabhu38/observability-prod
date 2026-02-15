@@ -1,0 +1,140 @@
+version: "3.9"
+
+networks:
+  elk:
+    driver: bridge
+
+volumes:
+  elasticsearch_data:
+  logstash_data:
+  kibana_data:
+
+services:
+
+  ###########################################################################
+  # Elasticsearch - Search & Analytics Engine (Data Store)
+  ###########################################################################
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: elasticsearch
+    restart: unless-stopped
+    user: "0:0"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - elk
+
+  ###########################################################################
+  # Logstash - Data Processing Pipeline
+  ###########################################################################
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.12.0
+    container_name: logstash
+    restart: unless-stopped
+    user: "0:0"
+    environment:
+      - "LS_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - ./logstash/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+      - logstash_data:/usr/share/logstash/data
+    ports:
+      - "5044:5044"
+      - "5000:5000/tcp"
+      - "9600:9600"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  ###########################################################################
+  # Kibana - Visualization Dashboard (equivalent to Grafana)
+  ###########################################################################
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: kibana
+    restart: unless-stopped
+    user: "0:0"
+    volumes:
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+      - kibana_data:/usr/share/kibana/data
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  ###########################################################################
+  # Filebeat - Log Shipper (equivalent to Promtail)
+  # Collects Docker container logs and ships to Logstash
+  ###########################################################################
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.12.0
+    container_name: filebeat
+    restart: unless-stopped
+    user: "0:0"
+    volumes:
+      - ./filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - elk
+    depends_on:
+      - logstash
+      - elasticsearch
+
+  ###########################################################################
+  # Metricbeat - System & Container Metrics (equivalent to cAdvisor + Node Exporter)
+  # Collects CPU, memory, disk, network, and Docker container metrics
+  ###########################################################################
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:8.12.0
+    container_name: metricbeat
+    restart: unless-stopped
+    user: "0:0"
+    volumes:
+      - ./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /proc:/hostfs/proc:ro
+      - /:/hostfs:ro
+    command: metricbeat -e -system.hostfs=/hostfs
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+      - kibana
+
+  ###########################################################################
+  # Heartbeat - Uptime Monitoring (equivalent to Blackbox Exporter)
+  # Monitors service availability via HTTP, TCP, ICMP
+  ###########################################################################
+  heartbeat:
+    image: docker.elastic.co/beats/heartbeat:8.12.0
+    container_name: heartbeat
+    restart: unless-stopped
+    user: "0:0"
+    volumes:
+      - ./heartbeat/heartbeat.yml:/usr/share/heartbeat/heartbeat.yml:ro
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+      - kibana

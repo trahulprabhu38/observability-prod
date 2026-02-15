@@ -1,0 +1,117 @@
+version: "3.9"
+
+networks:
+  efk:
+    driver: bridge
+
+volumes:
+  elasticsearch_data:
+  fluentd_log:
+  kibana_data:
+
+services:
+
+  ###########################################################################
+  # Elasticsearch - Search & Analytics Engine (Data Store)
+  ###########################################################################
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: elasticsearch
+    restart: unless-stopped
+    user: "0:0"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - efk
+
+  ###########################################################################
+  # Fluentd - Log Collector & Processor (replaces Logstash - lighter weight)
+  # Uses Docker log driver for native container log collection
+  ###########################################################################
+  fluentd:
+    build: ./fluentd
+    container_name: fluentd
+    restart: unless-stopped
+    user: "0:0"
+    volumes:
+      - ./fluentd/fluent.conf:/fluentd/etc/fluent.conf:ro
+      - fluentd_log:/fluentd/log
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+      - "5170:5170"
+    networks:
+      - efk
+    depends_on:
+      - elasticsearch
+
+  ###########################################################################
+  # Kibana - Visualization Dashboard (equivalent to Grafana)
+  ###########################################################################
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: kibana
+    restart: unless-stopped
+    user: "0:0"
+    volumes:
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+      - kibana_data:/usr/share/kibana/data
+    ports:
+      - "5601:5601"
+    networks:
+      - efk
+    depends_on:
+      - elasticsearch
+
+  ###########################################################################
+  # Metricbeat - System & Container Metrics (equivalent to cAdvisor + Node Exporter)
+  ###########################################################################
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:8.12.0
+    container_name: metricbeat
+    restart: unless-stopped
+    user: "0:0"
+    volumes:
+      - ./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /proc:/hostfs/proc:ro
+      - /:/hostfs:ro
+    command: metricbeat -e -system.hostfs=/hostfs
+    networks:
+      - efk
+    depends_on:
+      - elasticsearch
+      - kibana
+
+  ###########################################################################
+  # Heartbeat - Uptime Monitoring (equivalent to Blackbox Exporter)
+  ###########################################################################
+  heartbeat:
+    image: docker.elastic.co/beats/heartbeat:8.12.0
+    container_name: heartbeat
+    restart: unless-stopped
+    user: "0:0"
+    volumes:
+      - ./heartbeat/heartbeat.yml:/usr/share/heartbeat/heartbeat.yml:ro
+    networks:
+      - efk
+    depends_on:
+      - elasticsearch
+      - kibana

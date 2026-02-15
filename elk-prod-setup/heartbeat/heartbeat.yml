@@ -1,0 +1,49 @@
+# Heartbeat - Uptime monitoring (equivalent to Blackbox Exporter)
+
+heartbeat.monitors:
+  # HTTP monitoring
+  - type: http
+    id: elasticsearch-monitor
+    name: Elasticsearch
+    schedule: '@every 30s'
+    urls:
+      - http://elasticsearch:9200
+    check.response.status: [200]
+
+  - type: http
+    id: kibana-monitor
+    name: Kibana
+    schedule: '@every 30s'
+    urls:
+      - http://kibana:5601
+    check.response.status: [200]
+
+  # Add your application URLs here
+  # - type: http
+  #   id: my-app
+  #   name: My Application
+  #   schedule: '@every 30s'
+  #   urls:
+  #     - https://your-app-url.com
+  #   check.response.status: [200]
+
+  # TCP monitoring
+  - type: tcp
+    id: logstash-tcp
+    name: Logstash TCP
+    schedule: '@every 30s'
+    hosts:
+      - logstash:5044
+
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  indices:
+    - index: "heartbeat-%{+yyyy.MM.dd}"
+
+setup.kibana:
+  host: "kibana:5601"
+
+setup.dashboards.enabled: true
+
+logging.level: info
+logging.to_files: false

@@ -1,0 +1,54 @@
+metricbeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+# System metrics (CPU, memory, disk, network)
+metricbeat.modules:
+  - module: system
+    metricsets:
+      - cpu
+      - load
+      - memory
+      - network
+      - process
+      - process_summary
+      - socket_summary
+      - filesystem
+      - diskio
+    enabled: true
+    period: 15s
+    processes: ['.*']
+    process.include_top_n:
+      by_cpu: 5
+      by_memory: 5
+
+  # Docker container metrics (replaces cAdvisor)
+  - module: docker
+    metricsets:
+      - container
+      - cpu
+      - diskio
+      - healthcheck
+      - info
+      - image
+      - memory
+      - network
+    hosts: ["unix:///var/run/docker.sock"]
+    period: 15s
+    enabled: true
+
+# Send to Elasticsearch
+output.elasticsearch:
+  hosts: ["elasticsearch:9200"]
+  indices:
+    - index: "metricbeat-%{+yyyy.MM.dd}"
+
+# Kibana dashboards
+setup.kibana:
+  host: "kibana:5601"
+
+# Auto-load dashboards
+setup.dashboards.enabled: true
+
+logging.level: info
+logging.to_files: false

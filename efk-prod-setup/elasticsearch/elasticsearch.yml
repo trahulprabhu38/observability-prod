@@ -1,0 +1,16 @@
+cluster.name: "efk-cluster"
+network.host: 0.0.0.0
+
+# Single node discovery
+discovery.type: single-node
+
+# Security - disable for internal use (enable in production with TLS)
+xpack.security.enabled: false
+xpack.security.enrollment.enabled: false
+
+# Memory lock to prevent swapping
+bootstrap.memory_lock: true
+
+# Storage
+path.data: /usr/share/elasticsearch/data
+path.logs: /usr/share/elasticsearch/logs
