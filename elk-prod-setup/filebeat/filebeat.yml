@@ -23,7 +23,9 @@ filebeat.inputs:
       - add_docker_metadata:
           host: "unix:///var/run/docker.sock"
 
-# Send to Logstash
+# Send to Logstashdocker logs -f filebeat
+
+
 output.logstash:
   hosts: ["logstash:5044"]
 
