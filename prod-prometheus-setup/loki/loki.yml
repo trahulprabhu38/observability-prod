@@ -10,10 +10,6 @@ common:
   ring:
     kvstore:
       store: inmemory
-  storage:
-    filesystem:
-      chunks_directory: /loki/chunks
-      rules_directory: /loki/rules
 
 schema_config:
   configs:
@@ -25,6 +21,10 @@ schema_config:
         prefix: index_
         period: 24h
 
+storage_config:
+  filesystem:
+    directory: /loki/chunks
+
 compactor:
   working_directory: /loki/compactor
   compaction_interval: 10m
@@ -35,4 +35,3 @@ compactor:
 limits_config:
   retention_period: 15d
   allow_structured_metadata: true
-
