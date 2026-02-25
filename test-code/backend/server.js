@@ -4,12 +4,33 @@ const morgan = require("morgan");
 const cors = require("cors");
 const logger = require("./logger");
 const os = require("os");
+const metrics = require("./metrics");
 
 const app = express();
 const PORT = 5000;
 
 app.use(cors());
 app.use(express.json());
+
+// ─── Prometheus metrics endpoint ─────────────────────────────────────────────
+app.get("/metrics", async (req, res) => {
+  res.set("Content-Type", metrics.register.contentType);
+  res.end(await metrics.register.metrics());
+});
+
+// ─── HTTP metrics middleware ──────────────────────────────────────────────────
+app.use((req, res, next) => {
+  metrics.httpRequestsInFlight.inc();
+  const end = metrics.httpRequestDurationMs.startTimer();
+  res.on("finish", () => {
+    const route = req.route ? req.route.path : req.path;
+    const labels = { method: req.method, route, status_code: res.statusCode };
+    end(labels);
+    metrics.httpRequestsTotal.inc(labels);
+    metrics.httpRequestsInFlight.dec();
+  });
+  next();
+});
 
 // ─── Detailed HTTP request logging ──────────────────────────────────────────
 app.use((req, res, next) => {
@@ -189,6 +210,7 @@ app.get("/api/simulate/warning", (req, res) => {
 });
 
 app.get("/api/simulate/auth-fail", (req, res) => {
+  const reason = ["invalid_password", "account_locked", "token_expired", "invalid_token"][Math.floor(Math.random() * 4)];
   logger.warn("Authentication failure", {
     type: "security",
     event: "authentication_failed",
@@ -196,9 +218,10 @@ app.get("/api/simulate/auth-fail", (req, res) => {
     ip: req.ip,
     userAgent: req.get("user-agent"),
     attemptedUser: `user_${Math.floor(Math.random() * 100)}`,
-    reason: ["invalid_password", "account_locked", "token_expired", "invalid_token"][Math.floor(Math.random() * 4)],
+    reason,
     geoip: { country: "US", city: ["New York", "Los Angeles", "Chicago", "Houston"][Math.floor(Math.random() * 4)] },
   });
+  metrics.authFailuresTotal.inc({ reason });
   res.status(401).json({ error: "Unauthorized" });
 });
 
@@ -329,15 +352,17 @@ function generateContinuousLogs() {
 
     // ── Security Logs ──
     () => {
+      const endpoint = `/api/${["login", "register", "reset-password", "verify"][Math.floor(Math.random() * 4)]}`;
       logger.warn("Rate limit triggered", {
         type: "security",
         event: "rate_limit",
         ip: `192.168.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`,
-        endpoint: `/api/${["login", "register", "reset-password", "verify"][Math.floor(Math.random() * 4)]}`,
+        endpoint,
         requestCount: 80 + Math.floor(Math.random() * 50),
         limit: 100,
         windowSeconds: 60,
       });
+      metrics.rateLimitHitsTotal.inc({ endpoint });
     },
     () => {
       logger.warn("Suspicious activity detected", {
@@ -402,20 +427,25 @@ function generateContinuousLogs() {
     // ── Business Event Logs ──
     () => {
       const amount = parseFloat((Math.random() * 999 + 1).toFixed(2));
+      const currency = ["USD", "EUR", "GBP"][Math.floor(Math.random() * 3)];
+      const paymentMethod = ["credit_card", "paypal", "stripe", "bank_transfer"][Math.floor(Math.random() * 4)];
       logger.info("Order created", {
         type: "business",
         event: "order_created",
         orderId: `ORD-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
         userId: users[Math.floor(Math.random() * users.length)],
         amount,
-        currency: ["USD", "EUR", "GBP"][Math.floor(Math.random() * 3)],
+        currency,
         items: Math.floor(Math.random() * 10) + 1,
-        paymentMethod: ["credit_card", "paypal", "stripe", "bank_transfer"][Math.floor(Math.random() * 4)],
+        paymentMethod,
       });
+      metrics.ordersCreatedTotal.inc({ currency, payment_method: paymentMethod });
+      metrics.revenueTotal.inc({ currency }, amount);
     },
     () => {
       const status = ["completed", "failed", "refunded", "pending"][Math.floor(Math.random() * 4)];
       const logFn = status === "failed" ? "error" : status === "refunded" ? "warn" : "info";
+      const gateway = ["stripe", "paypal", "square"][Math.floor(Math.random() * 3)];
       logger[logFn]("Payment processed", {
         type: "business",
         event: "payment_processed",
@@ -423,9 +453,10 @@ function generateContinuousLogs() {
         status,
         amount: parseFloat((Math.random() * 500 + 5).toFixed(2)),
         processingTime: Math.floor(Math.random() * 3000),
-        gateway: ["stripe", "paypal", "square"][Math.floor(Math.random() * 3)],
+        gateway,
         failureReason: status === "failed" ? ["insufficient_funds", "card_declined", "timeout", "fraud_detected"][Math.floor(Math.random() * 4)] : undefined,
       });
+      metrics.paymentsTotal.inc({ status, gateway });
     },
     () => {
       logger.info("Inventory update", {
@@ -444,29 +475,35 @@ function generateContinuousLogs() {
       const duration = Math.floor(Math.random() * 10000);
       const success = Math.random() > 0.15;
       const logFn = success ? "info" : "error";
+      const jobType = ["email_send", "report_generate", "data_cleanup", "sync_external", "image_resize", "invoice_generate"][Math.floor(Math.random() * 6)];
+      const queue = ["high", "default", "low"][Math.floor(Math.random() * 3)];
       logger[logFn]("Background job completed", {
         type: "worker",
         event: "job_completed",
         jobId: `job_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-        jobType: ["email_send", "report_generate", "data_cleanup", "sync_external", "image_resize", "invoice_generate"][Math.floor(Math.random() * 6)],
+        jobType,
         duration,
         success,
         retries: Math.floor(Math.random() * 3),
-        queue: ["high", "default", "low"][Math.floor(Math.random() * 3)],
+        queue,
         error: success ? undefined : errorMessages[Math.floor(Math.random() * errorMessages.length)],
       });
+      metrics.jobsCompletedTotal.inc({ job_type: jobType, queue, status: success ? "success" : "failed" });
     },
     () => {
+      const queue = ["high", "default", "low"][Math.floor(Math.random() * 3)];
+      const pending = Math.floor(Math.random() * 50);
       logger.info("Queue metrics", {
         type: "worker",
         event: "queue_metrics",
-        queue: ["high", "default", "low"][Math.floor(Math.random() * 3)],
-        pending: Math.floor(Math.random() * 50),
+        queue,
+        pending,
         processing: Math.floor(Math.random() * 10),
         completed: Math.floor(Math.random() * 1000),
         failed: Math.floor(Math.random() * 20),
         avgProcessingTime: Math.floor(Math.random() * 5000),
       });
+      metrics.queueDepth.set({ queue }, pending);
     },
 
     // ── Notification Logs ──
@@ -487,25 +524,29 @@ function generateContinuousLogs() {
 
     // ── Error Logs (various severities) ──
     () => {
+      const service = services[Math.floor(Math.random() * services.length)];
       logger.error("Unhandled exception caught", {
         type: "application-error",
         severity: "critical",
         error: errorMessages[Math.floor(Math.random() * errorMessages.length)],
-        service: services[Math.floor(Math.random() * services.length)],
+        service,
         stack: `Error: ${errorMessages[Math.floor(Math.random() * errorMessages.length)]}\n    at processRequest (/app/server.js:${Math.floor(Math.random() * 200)}:${Math.floor(Math.random() * 40)})\n    at Layer.handle (/app/node_modules/express/lib/router/layer.js:95:5)`,
         pid: process.pid,
       });
+      metrics.errorsTotal.inc({ type: "application-error", severity: "critical", service });
     },
     () => {
+      const service = services[Math.floor(Math.random() * services.length)];
       logger.error("Circuit breaker tripped", {
         type: "infrastructure",
         event: "circuit_breaker",
-        service: services[Math.floor(Math.random() * services.length)],
+        service,
         state: ["open", "half-open"][Math.floor(Math.random() * 2)],
         failureCount: Math.floor(Math.random() * 20) + 5,
         lastError: errorMessages[Math.floor(Math.random() * errorMessages.length)],
         cooldownSeconds: 30,
       });
+      metrics.errorsTotal.inc({ type: "infrastructure", severity: "high", service });
     },
 
     // ── Deployment / Config Logs ──
@@ -593,4 +634,14 @@ app.listen(PORT, () => {
   logger.info("Starting continuous log generator", { type: "startup", event: "log_generator_init" });
   generateContinuousLogs();
   logger.info("Log generator active - producing diverse logs every 800ms", { type: "startup", event: "log_generator_running" });
+
+  // Push metrics to Pushgateway every 15 seconds
+  const PUSH_INTERVAL_MS = parseInt(process.env.PUSH_INTERVAL_MS || "15000", 10);
+  setInterval(() => metrics.pushMetrics("test-backend"), PUSH_INTERVAL_MS);
+  logger.info("Pushgateway push scheduled", {
+    type: "startup",
+    event: "pushgateway_init",
+    url: process.env.PUSHGATEWAY_URL || "http://pushgateway:9091",
+    intervalMs: PUSH_INTERVAL_MS,
+  });
 });

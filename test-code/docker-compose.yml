@@ -18,6 +18,16 @@ services:
       - "27017:27017"
 
   ###########################################################################
+  # Prometheus Pushgateway
+  ###########################################################################
+  pushgateway:
+    image: prom/pushgateway:latest
+    container_name: test-pushgateway
+    restart: unless-stopped
+    ports:
+      - "9091:9091"
+
+  ###########################################################################
   # MERN Backend - Express API (generates diverse logs)
   ###########################################################################
   backend:
@@ -27,6 +37,8 @@ services:
     environment:
       - MONGO_URI=mongodb://mongo:27017/elktest
       - NODE_ENV=production
+      - PUSHGATEWAY_URL=http://pushgateway:9091
+      - PUSH_INTERVAL_MS=15000
     ports:
       - "5005:5000"
     labels:
