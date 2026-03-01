@@ -10,3 +10,8 @@ vi /etc/docker/daemon.json
 }
 sudo systemctl restart docker
 
+
+# reload the alloy config:
+
+curl -X POST http://<ip>:12345/-/reload
+
