@@ -31,14 +31,6 @@ scrape_configs:
         labels:
           env: production
           vm: vm1
-      - targets: ["<VM2_IP>:8080"]
-        labels:
-          env: production
-          vm: vm2
-      - targets: ["<VM3_IP>:8080"]
-        labels:
-          env: production
-          vm: vm3
 
   # - job_name: node-exporter
   #   static_configs:

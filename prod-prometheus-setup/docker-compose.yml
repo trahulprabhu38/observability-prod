@@ -7,7 +7,7 @@ networks:
 volumes:
   prometheus_data:
   grafana_data:
-  alertmanager_data:
+  # alertmanager_data:
   loki_data:
 
 services:
@@ -33,20 +33,20 @@ services:
       - cadvisor
       - node-exporter
 
-  alertmanager:
-    image: prom/alertmanager:v0.27.0
-    container_name: alertmanager
-    restart: unless-stopped
-    volumes:
-      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
-      - alertmanager_data:/alertmanager
-    command:
-      - "--config.file=/etc/alertmanager/alertmanager.yml"
-      - "--storage.path=/alertmanager"
-    ports:
-      - "9093:9093"
-    networks:
-      - monitoring
+  # alertmanager:
+  #   image: prom/alertmanager:v0.27.0
+  #   container_name: alertmanager
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+  #     - alertmanager_data:/alertmanager
+  #   command:
+  #     - "--config.file=/etc/alertmanager/alertmanager.yml"
+  #     - "--storage.path=/alertmanager"
+  #   ports:
+  #     - "9093:9093"
+  #   networks:
+  #     - monitoring
 
   grafana:
     image: grafana/grafana:11.6.0
@@ -100,18 +100,18 @@ services:
     networks:
       - monitoring
 
-  blackbox-exporter:
-    image: prom/blackbox-exporter:v0.25.0
-    container_name: blackbox-exporter
-    restart: unless-stopped
-    volumes:
-      - ./blackbox/blackbox.yml:/etc/blackbox_exporter/config.yml
-    command:
-      - "--config.file=/etc/blackbox_exporter/config.yml"
-    ports:
-      - "9115:9115"
-    networks:
-      - monitoring
+  # blackbox-exporter:
+  #   image: prom/blackbox-exporter:v0.25.0
+  #   container_name: blackbox-exporter
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./blackbox/blackbox.yml:/etc/blackbox_exporter/config.yml
+  #   command:
+  #     - "--config.file=/etc/blackbox_exporter/config.yml"
+  #   ports:
+  #     - "9115:9115"
+  #   networks:
+  #     - monitoring
 
   pushgateway:
     image: prom/pushgateway:v1.7.0
