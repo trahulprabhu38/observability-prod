@@ -1,5 +1,3 @@
-version: "3.9"
-
 networks:
   monitoring:
     driver: bridge
@@ -7,11 +5,15 @@ networks:
 volumes:
   prometheus_data:
   grafana_data:
-  # alertmanager_data:
   loki_data:
+  tempo_data:
+  # alertmanager_data:
 
 services:
 
+  # ==========================================================================
+  #  METRICS
+  # ==========================================================================
   prometheus:
     image: prom/prometheus:v2.48.0
     container_name: prometheus
@@ -19,12 +21,16 @@ services:
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./prometheus/rules:/etc/prometheus/rules:ro
+      - ./blackbox:/etc/prometheus/blackbox-targets:ro
       - prometheus_data:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
-      - "--web.enable-lifecycle"
       - "--storage.tsdb.retention.time=15d"
+      - "--storage.tsdb.retention.size=40GB"
+      - "--web.enable-lifecycle"
+      - "--web.enable-remote-write-receiver"   # Tempo metrics-generator + Alloy OTLP metrics
+      - "--enable-feature=exemplar-storage"    # trace exemplars on metrics
     ports:
       - "9090:9090"
     networks:
@@ -32,57 +38,6 @@ services:
     depends_on:
       - cadvisor
       - node-exporter
-
-  # alertmanager:
-  #   image: prom/alertmanager:v0.27.0
-  #   container_name: alertmanager
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
-  #     - alertmanager_data:/alertmanager
-  #   command:
-  #     - "--config.file=/etc/alertmanager/alertmanager.yml"
-  #     - "--storage.path=/alertmanager"
-  #   ports:
-  #     - "9093:9093"
-  #   networks:
-  #     - monitoring
-
-  grafana:
-    image: grafana/grafana:12.3.2
-    container_name: grafana
-    restart: unless-stopped
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin123
-      - GF_USERS_ALLOW_SIGN_UP=false
-      - GF_INSTALL_PLUGINS=grafana-lokiexplore-app
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./grafana/provisioning:/etc/grafana/provisioning
-    ports:
-      - "3000:3000"
-    networks:
-      - monitoring
-    depends_on:
-      - prometheus
-
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.49.1
-    container_name: cadvisor
-    restart: unless-stopped
-    privileged: true
-    devices:
-      - /dev/kmsg
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker:/var/lib/docker:ro
-    ports:
-      - "8080:8080"
-    networks:
-      - monitoring
 
   node-exporter:
     image: prom/node-exporter:v1.7.0
@@ -101,18 +56,22 @@ services:
     networks:
       - monitoring
 
-  # blackbox-exporter:
-  #   image: prom/blackbox-exporter:v0.25.0
-  #   container_name: blackbox-exporter
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./blackbox/blackbox.yml:/etc/blackbox_exporter/config.yml
-  #   command:
-  #     - "--config.file=/etc/blackbox_exporter/config.yml"
-  #   ports:
-  #     - "9115:9115"
-  #   networks:
-  #     - monitoring
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: cadvisor
+    restart: unless-stopped
+    privileged: true
+    devices:
+      - /dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+    ports:
+      - "8080:8080"
+    networks:
+      - monitoring
 
   pushgateway:
     image: prom/pushgateway:v1.7.0
@@ -123,10 +82,15 @@ services:
     networks:
       - monitoring
 
+  # ==========================================================================
+  #  LOGS
+  # ==========================================================================
   loki:
     image: grafana/loki:3.5.0
     container_name: loki
     restart: unless-stopped
+    env_file:
+      - .env            # AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_REGION
     volumes:
       - ./loki/loki.yml:/etc/loki/loki.yml:ro
       - loki_data:/loki
@@ -137,21 +101,31 @@ services:
     networks:
       - monitoring
 
-  # promtail:
-  #   image: grafana/promtail:2.9.4
-  #   container_name: promtail
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./promtail/promtail.yml:/etc/promtail/promtail.yml:ro
-  #     - /var/lib/docker/containers:/var/lib/docker/containers:ro
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   command:
-  #     - "-config.file=/etc/promtail/promtail.yml"
-  #   networks:
-  #     - monitoring
-  #   depends_on:
-  #     - loki
+  # ==========================================================================
+  #  TRACES
+  # ==========================================================================
+  tempo:
+    image: grafana/tempo:2.7.1
+    container_name: tempo
+    restart: unless-stopped
+    env_file:
+      - .env            # AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_REGION
+    volumes:
+      - ./tempo/tempo.yml:/etc/tempo/tempo.yml:ro
+      - tempo_data:/var/tempo
+    command:
+      - "-config.file=/etc/tempo/tempo.yml"
+    ports:
+      - "3200:3200"          # Tempo API (Grafana data source)
+    networks:
+      - monitoring
+    depends_on:
+      - prometheus
 
+  # ==========================================================================
+  #  COLLECTOR  (OpenTelemetry Collector = Grafana Alloy)
+  #  container logs -> Loki ; OTLP traces/metrics/logs -> Tempo/Prometheus/Loki
+  # ==========================================================================
   alloy:
     image: grafana/alloy:latest
     container_name: alloy
@@ -160,18 +134,73 @@ services:
       - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
       - /var/run/docker.sock:/var/run/docker.sock
     command:
-      - run 
+      - run
       - --server.http.listen-addr=0.0.0.0:12345
       - --storage.path=/var/lib/alloy/data
       - /etc/alloy/config.alloy
-      
     ports:
-      - "12345:12345"
-      - "4317:4317"
-      - "4318:4318"
+      - "12345:12345"        # Alloy UI
+      - "4317:4317"          # OTLP gRPC  (app instrumentation -> here)
+      - "4318:4318"          # OTLP HTTP
     networks:
       - monitoring
     depends_on:
       - loki
+      - tempo
+      - prometheus
 
+  # ==========================================================================
+  #  VISUALIZATION
+  # ==========================================================================
+  grafana:
+    image: grafana/grafana:12.3.2
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-lokiexplore-app,grafana-exploretraces-app
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    ports:
+      - "3000:3000"
+    networks:
+      - monitoring
+    depends_on:
+      - prometheus
+      - loki
+      - tempo
 
+  # ==========================================================================
+  #  OPTIONAL - enable when you have a real alert receiver / probe targets
+  # ==========================================================================
+  # alertmanager:
+  #   image: prom/alertmanager:v0.27.0
+  #   container_name: alertmanager
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./alertmanager/alertmanager .yml:/etc/alertmanager/alertmanager.yml
+  #     - alertmanager_data:/alertmanager
+  #   command:
+  #     - "--config.file=/etc/alertmanager/alertmanager.yml"
+  #     - "--storage.path=/alertmanager"
+  #   ports:
+  #     - "9093:9093"
+  #   networks:
+  #     - monitoring
+
+  # blackbox probing of the 63 public endpoints -> Prometheus time series (SLOs)
+  blackbox-exporter:
+    image: prom/blackbox-exporter:v0.25.0
+    container_name: blackbox-exporter
+    restart: unless-stopped
+    volumes:
+      - ./blackbox/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
+    command:
+      - "--config.file=/etc/blackbox_exporter/config.yml"
+    ports:
+      - "9115:9115"
+    networks:
+      - monitoring

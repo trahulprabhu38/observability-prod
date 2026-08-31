@@ -1,10 +1,29 @@
-discovery.docker "getting_started" {
-  host = "unix:///var/run/docker.sock"
+// ============================================================================
+//  Grafana Alloy - unified telemetry collector (= OpenTelemetry Collector)
+//
+//   Docker container logs         -> Loki
+//   OTLP  :4317 gRPC / :4318 HTTP -> redact PII -> template routes ->
+//        traces : spanmetrics (RED) -> Prometheus
+//                 tail sampling      -> Tempo
+//        metrics: -> Prometheus (remote-write)
+//        logs   : redact PII -> Loki (OTLP)
+//
+//  Point application OTel SDKs at:  http://<alloy-host>:4317
+//  COMPLIANCE (IFSCA / GIFT City): PAN, Aadhaar, passport, email, phone,
+//  Authorization, cookies, account numbers and broker tokens must never be
+//  stored in a span attribute or a log line - see redaction.pii + transform.pii_body.
+// ============================================================================
+
+// ---------------------------------------------------------------------------
+//  1. Docker container logs -> Loki
+// ---------------------------------------------------------------------------
+discovery.docker "containers" {
+  host             = "unix:///var/run/docker.sock"
   refresh_interval = "5s"
 }
 
-discovery.relabel "getting_started" {
-  targets = discovery.docker.getting_started.targets
+discovery.relabel "containers" {
+  targets = discovery.docker.containers.targets
 
   rule {
     source_labels = ["__meta_docker_container_name"]
@@ -13,31 +32,262 @@ discovery.relabel "getting_started" {
   }
 }
 
-loki.source.docker "getting_started" {
+loki.source.docker "containers" {
   host             = "unix:///var/run/docker.sock"
-  targets          = discovery.docker.getting_started.targets
-  forward_to       = [loki.process.getting_started.receiver]
-  relabel_rules    = discovery.relabel.getting_started.rules
+  targets          = discovery.docker.containers.targets
+  forward_to       = [loki.process.containers.receiver]
+  relabel_rules    = discovery.relabel.containers.rules
   refresh_interval = "5s"
 }
 
-loki.process "getting_started" {
+loki.process "containers" {
   stage.static_labels {
     values = {
       env = "production",
     }
   }
 
-  forward_to = [loki.write.getting_started.receiver]
+  forward_to = [loki.write.default.receiver]
 }
 
-loki.write "getting_started" {
+loki.write "default" {
   endpoint {
     url = "http://loki:3100/loki/api/v1/push"
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  2. OTLP ingest
+// ---------------------------------------------------------------------------
+otelcol.receiver.otlp "default" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    traces  = [otelcol.processor.memory_limiter.default.input]
+    metrics = [otelcol.processor.memory_limiter.default.input]
+    logs    = [otelcol.processor.memory_limiter.default.input]
+  }
+}
+
+otelcol.processor.memory_limiter "default" {
+  check_interval         = "1s"
+  limit_percentage       = 80
+  spike_limit_percentage = 25
+
+  output {
+    traces  = [otelcol.processor.transform.pii.input]
+    metrics = [otelcol.exporter.prometheus.default.input]
+    logs    = [otelcol.processor.transform.pii.input]
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  3. PII redaction (GA transform / OTTL)
+//     - drops sensitive attribute KEYS   (Authorization, Cookie, *token*, ...)
+//     - masks PII-shaped VALUES in every attribute (span, log, resource)
+//     - masks PII in the free-text log body
+//  IFSCA / GIFT City: PAN, Aadhaar, passport, email, phone, Authorization,
+//  cookies, account numbers, broker tokens.
+// ---------------------------------------------------------------------------
+otelcol.processor.transform "pii" {
+  error_mode = "ignore"
+
+  trace_statements {
+    context = "resource"
+    statements = [
+      `delete_matching_keys(resource.attributes, "(?i)(authorization|cookie|set-cookie|token|secret|password|session|api[_-]?key|\\bpan\\b|aadhaar|passport|account[_-]?number|broker[_-]?token)")`,
+      `replace_all_patterns(resource.attributes, "value", "[A-Z]{5}[0-9]{4}[A-Z]", "[REDACTED_PAN]")`,
+      `replace_all_patterns(resource.attributes, "value", "[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}", "[REDACTED_EMAIL]")`,
+    ]
+  }
+
+  trace_statements {
+    context = "span"
+    statements = [
+      `delete_matching_keys(span.attributes, "(?i)(authorization|cookie|set-cookie|token|secret|password|session|api[_-]?key|\\bpan\\b|aadhaar|passport|account[_-]?number|broker[_-]?token)")`,
+      `replace_all_patterns(span.attributes, "value", "[A-Z]{5}[0-9]{4}[A-Z]", "[REDACTED_PAN]")`,
+      `replace_all_patterns(span.attributes, "value", "[A-PR-WYa-pr-wy][0-9]{7}", "[REDACTED_PASSPORT]")`,
+      `replace_all_patterns(span.attributes, "value", "[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}", "[REDACTED_EMAIL]")`,
+      `replace_all_patterns(span.attributes, "value", "eyJ[A-Za-z0-9_\\-]+\\.[A-Za-z0-9_\\-]+\\.[A-Za-z0-9_\\-]+", "[REDACTED_TOKEN]")`,
+      `replace_all_patterns(span.attributes, "value", "\\+?(?:91[\\-\\s]?)?[6-9][0-9]{9}", "[REDACTED_PHONE]")`,
+      `replace_all_patterns(span.attributes, "value", "\\b\\d{4}\\s?\\d{4}\\s?\\d{4}\\b", "[REDACTED_AADHAAR]")`,
+      `replace_all_patterns(span.attributes, "value", "[0-9]{9,18}", "[REDACTED_ACCT]")`,
+    ]
+  }
+
+  log_statements {
+    context = "log"
+    statements = [
+      `delete_matching_keys(log.attributes, "(?i)(authorization|cookie|set-cookie|token|secret|password|session|api[_-]?key|\\bpan\\b|aadhaar|passport|account[_-]?number|broker[_-]?token)")`,
+      `replace_all_patterns(log.attributes, "value", "[A-Z]{5}[0-9]{4}[A-Z]", "[REDACTED_PAN]")`,
+      `replace_all_patterns(log.attributes, "value", "[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}", "[REDACTED_EMAIL]")`,
+      `replace_pattern(log.body, "[A-Z]{5}[0-9]{4}[A-Z]", "[REDACTED_PAN]")`,
+      `replace_pattern(log.body, "[A-PR-WYa-pr-wy][0-9]{7}", "[REDACTED_PASSPORT]")`,
+      `replace_pattern(log.body, "[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}", "[REDACTED_EMAIL]")`,
+      `replace_pattern(log.body, "eyJ[A-Za-z0-9_\\-]+\\.[A-Za-z0-9_\\-]+\\.[A-Za-z0-9_\\-]+", "[REDACTED_TOKEN]")`,
+      `replace_pattern(log.body, "\\+?(?:91[\\-\\s]?)?[6-9][0-9]{9}", "[REDACTED_PHONE]")`,
+      `replace_pattern(log.body, "\\b\\d{4}\\s?\\d{4}\\s?\\d{4}\\b", "[REDACTED_AADHAAR]")`,
+    ]
+  }
+
+  output {
+    traces = [otelcol.processor.transform.route_template.input]
+    logs   = [otelcol.exporter.otlphttp.loki.input]
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  4. Route templating - collapse high-cardinality path IDs to one series
+//     /portfolio/123  ->  /portfolio/:id
+// ---------------------------------------------------------------------------
+otelcol.processor.transform "route_template" {
+  error_mode = "ignore"
+
+  trace_statements {
+    context = "span"
+    statements = [
+      `replace_pattern(span.attributes["url.path"], "/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}", "/:uuid")`,
+      `replace_pattern(span.attributes["url.path"], "/[0-9]+", "/:id")`,
+      `replace_pattern(span.attributes["url.path"], "/[0-9a-f]{16,}", "/:hash")`,
+      `replace_pattern(span.attributes["http.route"], "/[0-9]+", "/:id")`,
+      `replace_pattern(span.attributes["http.target"], "/[0-9]+", "/:id")`,
+      `replace_pattern(span.name, "/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}", "/:uuid")`,
+      `replace_pattern(span.name, "/[0-9]+", "/:id")`,
+    ]
+  }
+
+  output {
+    traces = [
+      otelcol.connector.spanmetrics.red.input,
+      otelcol.processor.tail_sampling.default.input,
+    ]
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  5. Span metrics - RED catalogue, carries service.version for deploy markers
+//     (runs on ALL spans, before tail sampling, so rates stay accurate)
+// ---------------------------------------------------------------------------
+otelcol.connector.spanmetrics "red" {
+  namespace              = "traces.spanmetrics"
+  metrics_flush_interval = "15s"
+
+  histogram {
+    explicit {
+      buckets = ["2ms", "4ms", "8ms", "16ms", "32ms", "64ms", "128ms", "256ms", "512ms", "1s", "2s", "5s", "10s"]
+    }
+  }
+
+  dimension {
+    name = "service.version"
+  }
+
+  dimension {
+    name = "http.request.method"
+  }
+
+  dimension {
+    name = "http.route"
+  }
+
+  dimension {
+    name = "http.response.status_code"
+  }
+
+  exemplars {
+    enabled = true
+  }
+
+  output {
+    metrics = [otelcol.exporter.prometheus.default.input]
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  6. Tail sampling - 10% baseline, 100% errors, 100% slow (>1s)
+// ---------------------------------------------------------------------------
+otelcol.processor.tail_sampling "default" {
+  decision_wait               = "10s"
+  num_traces                  = 100000
+  expected_new_traces_per_sec = 200
+
+  policy {
+    name = "errors"
+    type = "status_code"
+
+    status_code {
+      status_codes = ["ERROR"]
+    }
+  }
+
+  policy {
+    name = "slow-over-1s"
+    type = "latency"
+
+    latency {
+      threshold_ms = 1000
+    }
+  }
+
+  policy {
+    name = "baseline-10pct"
+    type = "probabilistic"
+
+    probabilistic {
+      sampling_percentage = 10
+    }
+  }
+
+  output {
+    traces = [otelcol.processor.batch.default.input]
+  }
+}
+
+otelcol.processor.batch "default" {
+  send_batch_size     = 8192
+  send_batch_max_size = 16384
+  timeout             = "2s"
+
+  output {
+    traces = [otelcol.exporter.otlp.tempo.input]
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  7. Exporters
+// ---------------------------------------------------------------------------
+otelcol.exporter.otlp "tempo" {
+  client {
+    endpoint = "tempo:4317"
+
+    tls {
+      insecure = true
+    }
+  }
+}
+
+otelcol.exporter.prometheus "default" {
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
+prometheus.remote_write "default" {
+  endpoint {
+    url = "http://prometheus:9090/api/v1/write"
+  }
+}
+
+otelcol.exporter.otlphttp "loki" {
+  client {
+    endpoint = "http://loki:3100/otlp"
   }
 }
 
 livedebugging {
   enabled = true
 }
-

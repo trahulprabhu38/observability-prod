@@ -1,0 +1,7 @@
+# secrets - never commit
+.env
+.env.*
+!.env.example
+
+# local editor / OS
+.DS_Store

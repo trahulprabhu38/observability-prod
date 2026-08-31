@@ -1,3 +1,12 @@
+# ============================================================================
+#  Grafana Loki - S3 chunk + index storage (local disk only for WAL/active index)
+#
+#  Chunks + index:  s3://valura-loki-logs  (ap-south-1)
+#  AWS creds:       AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY from env (see ../.env)
+#  Retention:       336h (14d) dev.  Prod: 720h (30d).
+#  S3 lifecycle on the bucket expires objects at 17d as a hard backstop.
+# ============================================================================
+
 auth_enabled: false
 
 server:
@@ -11,15 +20,25 @@ common:
     kvstore:
       store: inmemory
   storage:
-    filesystem:
-      chunks_directory: /loki/chunks
-      rules_directory: /loki/rules
+    s3:
+      bucketnames: valura-loki-logs
+      region: ap-south-1
+      s3forcepathstyle: false
 
 schema_config:
   configs:
+    # legacy local data (readable until it ages out / volume is wiped)
     - from: 2024-01-01
       store: tsdb
       object_store: filesystem
+      schema: v13
+      index:
+        prefix: index_
+        period: 24h
+    # everything from the S3 cutover onward
+    - from: 2026-09-01
+      store: tsdb
+      object_store: s3
       schema: v13
       index:
         prefix: index_
@@ -28,16 +47,23 @@ schema_config:
 storage_config:
   filesystem:
     directory: /loki/chunks
+  aws:
+    bucketnames: valura-loki-logs
+    region: ap-south-1
+    s3forcepathstyle: false
+  tsdb_shipper:
+    active_index_directory: /loki/tsdb-index
+    cache_location: /loki/tsdb-cache
 
 compactor:
   working_directory: /loki/compactor
   compaction_interval: 10m
   retention_enabled: true
   retention_delete_delay: 2h
-  delete_request_store: filesystem
+  delete_request_store: s3
 
 limits_config:
-  retention_period: 15d
+  retention_period: 336h
   allow_structured_metadata: true
   volume_enabled: true
 

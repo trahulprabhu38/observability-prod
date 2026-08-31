@@ -1,0 +1,78 @@
+# ============================================================================
+#  Grafana Tempo - single-binary, S3 block storage (WAL stays local & small)
+#
+#  Ingest:  app --(OTLP)--> alloy:4317 --(OTLP)--> tempo:4317
+#  Blocks:  s3://valura-tempo-traces  (ap-south-1)
+#  Query:   grafana --> tempo:3200
+#
+#  AWS creds come from the environment (see ../.env):
+#     AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_REGION
+#  Retention: 168h (7d) dev.  Prod: raise block_retention to 720h (30d).
+#  S3 lifecycle on the bucket expires objects at 10d as a hard backstop.
+# ============================================================================
+
+stream_over_http_enabled: true
+
+server:
+  http_listen_port: 3200
+  grpc_listen_port: 9095
+  log_level: info
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: "0.0.0.0:4317"
+        http:
+          endpoint: "0.0.0.0:4318"
+
+ingester:
+  max_block_duration: 5m
+  complete_block_timeout: 15m
+
+compactor:
+  compaction:
+    block_retention: 168h            # 7d dev  (prod: 720h)
+
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+      cluster: prod-prometheus-setup
+  storage:
+    path: /var/tempo/generator/wal
+    remote_write:
+      - url: http://prometheus:9090/api/v1/write
+        send_exemplars: true
+  traces_storage:
+    path: /var/tempo/generator/traces
+  processor:
+    local_blocks:
+      filter_server_spans: false
+
+storage:
+  trace:
+    backend: s3
+    s3:
+      bucket: valura-tempo-traces
+      endpoint: s3.ap-south-1.amazonaws.com
+      region: ap-south-1
+      # credentials: AWS SDK chain picks up AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY from env
+    wal:
+      path: /var/tempo/wal
+    pool:
+      max_workers: 100
+      queue_depth: 10000
+
+overrides:
+  defaults:
+    metrics_generator:
+      processors:
+        - service-graphs        # powers Grafana service map / node graph
+        - local-blocks          # powers TraceQL metrics
+        # span-metrics (RED) is produced upstream by Alloy's otelcol.connector.spanmetrics
+        # (richer dimensions incl. service.version) - not duplicated here
+
+usage_report:
+  reporting_enabled: false

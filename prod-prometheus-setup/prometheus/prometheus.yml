@@ -2,8 +2,8 @@ global:
   scrape_interval: 15s
   evaluation_interval: 15s
 
-# rule_files:
-#   - "/etc/prometheus/rules/*.yml"
+rule_files:
+  - "/etc/prometheus/rules/*.yml"
 
 # alerting:
 #   alertmanagers:
@@ -13,45 +13,91 @@ global:
 
 scrape_configs:
 
+  # ----- observability stack self-monitoring -----
   - job_name: prometheus
     static_configs:
       - targets: ["prometheus:9090"]
+
+  - job_name: grafana
+    static_configs:
+      - targets: ["grafana:3000"]
+
+  - job_name: loki
+    static_configs:
+      - targets: ["loki:3100"]
+
+  - job_name: tempo
+    static_configs:
+      - targets: ["tempo:3200"]
+
+  - job_name: alloy
+    static_configs:
+      - targets: ["alloy:12345"]
+
+  - job_name: pushgateway
+    honor_labels: true
+    static_configs:
+      - targets: ["pushgateway:9091"]
+
+  # ----- local host / container metrics (this box) -----
+  - job_name: node-exporter
+    static_configs:
+      - targets: ["node-exporter:9100"]
 
   - job_name: cadvisor-local
     static_configs:
       - targets: ["cadvisor:8080"]
         labels:
-          env: local
+          box: observability
+          env: infra
 
-  # Remote cAdvisor instances running on other VMs
-  # Replace the IPs below with your actual VM IPs
-  - job_name: cadvisor-remote
+  # ----- fleet cAdvisor (one container per box, published on :8085) -----
+  # Rollout: scripts/cadvisor-rollout.sh   (runbook win 3)
+  - job_name: cadvisor-fleet
     static_configs:
-      - targets: ["<VM1_IP>:8080"]
-        labels:
-          env: production
-          vm: vm1
+      - targets: ["10.200.2.51:8085"]
+        labels: {box: valura-dev, env: dev}
+      - targets: ["10.200.2.52:8085"]
+        labels: {box: observability, env: infra}
+      - targets: ["10.200.2.56:8085"]
+        labels: {box: uae-staging, env: staging}
+      - targets: ["10.200.2.57:8085"]
+        labels: {box: valura-ind-stg, env: staging}
+      - targets: ["86.106.26.45:8085"]
+        labels: {box: dubai, env: prod}
+      # - targets: ["10.200.2.54:8085"]          # prod-UAE - unreachable during setup
+      #   labels: {box: prod-uae, env: prod}
+      # - targets: ["<EDGE_BOX_IP>:8085"]        # edge box - IP TBD
+      #   labels: {box: edge, env: edge}
 
-  # - job_name: node-exporter
+  # ----- Traefik / edge proxy (OBS-1) -----
+  # Enable on the Coolify proxy by adding to its Traefik command:
+  #   --entryPoints.metrics.address=:8082
+  #   --metrics.prometheus=true
+  #   --metrics.prometheus.entryPoint=metrics
+  #   --metrics.prometheus.addEntryPointsLabels=true
+  #   --metrics.prometheus.addRoutersLabels=true
+  #   --metrics.prometheus.addServicesLabels=true
+  # then publish :8082 and set the target below. Dashboard 17346 consumes it.
+  # - job_name: traefik
   #   static_configs:
-  #     - targets: ["node-exporter:9100"]
+  #     - targets: ["<EDGE_BOX_IP>:8082"]
+  #       labels: {box: edge}
 
-  # - job_name: blackbox
-  #   metrics_path: /probe
-  #   params:
-  #     module: [http_2xx]
-  #   static_configs:
-  #     - targets:
-  #         - https://google.com
-  #   relabel_configs:
-  #     - source_labels: [__address__]
-  #       target_label: __param_target
-  #     - source_labels: [__param_target]
-  #       target_label: instance
-  #     - target_label: __address__
-  #       replacement: blackbox-exporter:9115
-
-  # - job_name: pushgateway
-  #   honor_labels: true
-  #   static_configs:
-  #     - targets: ["pushgateway:9091"]
+  # ----- blackbox probing: the 63 public endpoints (SLO / error-budget source) -----
+  # Populate blackbox/targets.json from the Kuma inventory. Per-target "module"
+  # label picks the blackbox module (default http_2xx).
+  - job_name: blackbox
+    metrics_path: /probe
+    file_sd_configs:
+      - files: ["/etc/prometheus/blackbox-targets/*.json"]
+        refresh_interval: 30s
+    relabel_configs:
+      - source_labels: [module]
+        target_label: __param_module          # each targets.json group sets module: http_2xx (or tcp_connect, ...)
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115

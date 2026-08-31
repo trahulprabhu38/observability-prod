@@ -1,0 +1,9 @@
+[
+  {
+    "labels": { "module": "http_2xx", "tier": "public" },
+    "targets": [
+      "https://REPLACE-with-the-63-Kuma-endpoints.example.com",
+      "https://another.example.com/health"
+    ]
+  }
+]
