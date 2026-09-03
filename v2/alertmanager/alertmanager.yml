@@ -1,0 +1,81 @@
+# =============================================================================
+#  Alertmanager - takes fired alerts from Prometheus and decides
+#  WHO gets told, HOW, grouped how, and how often.
+#
+#  Pipeline:  Prometheus rule fires  ->  Alertmanager
+#             route tree (match labels) -> receiver -> notification
+#             + grouping (batch related alerts)
+#             + inhibition (suppress noise when a bigger alert is already firing)
+#             + silences (manual mute, set in the UI :9093)
+#
+#  Validate:  make validate
+#  Test routing:  amtool config routes test --config.file=alertmanager.yml severity=critical
+#  Docs: ../docs/04-grafana-alerting.md
+# =============================================================================
+
+global:
+  resolve_timeout: 5m
+  # slack_api_url: 'https://hooks.slack.com/services/XXX/YYY/ZZZ'   # set for Slack
+
+route:
+  receiver: default                 # fallback if nothing else matches
+  group_by: ['alertname', 'box', 'service_name']
+  group_wait: 30s                   # wait this long to collect siblings before first notify
+  group_interval: 5m                # then, new alerts in an existing group wait this long
+  repeat_interval: 4h               # re-send an un-resolved alert every 4h
+
+  routes:
+    # page for anything critical
+    - matchers: ['severity = "critical"']
+      receiver: pager
+      group_wait: 10s
+      repeat_interval: 1h
+      continue: true                # also fall through to the next matching route
+
+    # dev/staging noise -> a muted channel, never pages
+    - matchers: ['env =~ "dev|staging"']
+      receiver: low-priority
+      repeat_interval: 12h
+
+    # everything else warning-level
+    - matchers: ['severity = "warning"']
+      receiver: default
+
+# suppress the small stuff when the big stuff is already firing
+inhibit_rules:
+  # if a whole box is down, don't also alert on its individual containers
+  - source_matchers: ['alertname = "TargetDown"', 'severity = "critical"']
+    target_matchers: ['severity =~ "warning|info"']
+    equal: ['box']
+  # a firing critical for an alertname mutes the warning of the same alertname/scope
+  - source_matchers: ['severity = "critical"']
+    target_matchers: ['severity = "warning"']
+    equal: ['alertname', 'box', 'service_name']
+
+receivers:
+  - name: default
+    # Replace with a real integration. Webhook shown so the container starts clean.
+    webhook_configs:
+      - url: 'http://host.docker.internal:9000/hook'
+        send_resolved: true
+    # slack_configs:
+    #   - channel: '#alerts'
+    #     send_resolved: true
+    #     title: '{{ .CommonLabels.alertname }} ({{ .CommonLabels.severity }})'
+    #     text: >-
+    #       {{ range .Alerts }}*{{ .Annotations.summary }}*
+    #       {{ .Annotations.description }}
+    #       {{ end }}
+
+  - name: pager
+    webhook_configs:
+      - url: 'http://host.docker.internal:9000/hook-critical'
+        send_resolved: true
+    # pagerduty_configs:
+    #   - routing_key: 'REPLACE_WITH_PD_INTEGRATION_KEY'
+    #     severity: critical
+
+  - name: low-priority
+    webhook_configs:
+      - url: 'http://host.docker.internal:9000/hook-lowprio'
+        send_resolved: true

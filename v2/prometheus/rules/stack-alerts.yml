@@ -1,0 +1,93 @@
+# The observability stack watching its own health, plus RED recording rules.
+groups:
+
+  # ---- recording rules: precompute RED (Rate/Errors/Duration) from span-metrics ----
+  # The OTel Collector's spanmetrics connector emits:
+  #   traces_spanmetrics_calls_total{service_name,span_name,status_code,...}
+  #   traces_spanmetrics_duration_milliseconds_bucket{...}
+  # These rules roll them up so dashboards/alerts stay cheap.
+  - name: red-recording
+    interval: 30s
+    rules:
+      - record: service:request_rate:5m
+        expr: sum by (service_name) (rate(traces_spanmetrics_calls_total[5m]))
+
+      - record: service:error_rate:5m
+        expr: |
+          sum by (service_name) (rate(traces_spanmetrics_calls_total{status_code="STATUS_CODE_ERROR"}[5m]))
+          /
+          sum by (service_name) (rate(traces_spanmetrics_calls_total[5m]))
+
+      - record: service:latency_p95_ms:5m
+        expr: |
+          histogram_quantile(0.95,
+            sum by (service_name, le) (rate(traces_spanmetrics_duration_milliseconds_bucket[5m])))
+
+  # ---- alerts on the RED signals ----
+  - name: red-alerts
+    rules:
+      - alert: ServiceHighErrorRate
+        expr: service:error_rate:5m > 0.05
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: "{{ $labels.service_name }} error rate {{ $value | humanizePercentage }} (>5%)"
+
+      - alert: ServiceHighLatencyP95
+        expr: service:latency_p95_ms:5m > 1000
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: "{{ $labels.service_name }} p95 latency {{ printf \"%.0f\" $value }}ms (>1s)"
+
+  # ---- the pipeline itself ----
+  - name: stack-health
+    rules:
+      - alert: PrometheusConfigReloadFailed
+        expr: prometheus_config_last_reload_successful == 0
+        for: 5m
+        labels: { severity: critical }
+        annotations:
+          summary: "Prometheus config reload failed - running on the last good config"
+
+      - alert: PrometheusTSDBCompactionFailing
+        expr: increase(prometheus_tsdb_compactions_failed_total[3h]) > 0
+        for: 0m
+        labels: { severity: warning }
+        annotations:
+          summary: "Prometheus TSDB compaction failing"
+
+      - alert: PrometheusRemoteWriteRejects
+        expr: rate(prometheus_remote_write_samples_dropped_total[5m]) > 0
+        for: 15m
+        labels: { severity: warning }
+        annotations:
+          summary: "Prometheus is dropping remote-write samples (OTel span-metrics?)"
+
+      - alert: AlertmanagerNotConnected
+        expr: prometheus_notifications_alertmanagers_discovered < 1
+        for: 5m
+        labels: { severity: critical }
+        annotations:
+          summary: "Prometheus cannot see any Alertmanager - alerts will not be delivered"
+
+      - alert: LokiIngestErrors
+        expr: sum(rate(loki_request_duration_seconds_count{route=~"loki_api_v1_push|otlp_v1_logs", status_code=~"5.."}[5m])) > 0
+        for: 15m
+        labels: { severity: warning }
+        annotations:
+          summary: "Loki is returning 5xx on log ingestion"
+
+      - alert: OtelCollectorRefusingSpans
+        expr: rate(otelcol_receiver_refused_spans_total[5m]) > 0
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: "OTel Collector is refusing spans (memory_limiter / backpressure)"
+
+      - alert: OtelCollectorExportFailures
+        expr: rate(otelcol_exporter_send_failed_spans_total[5m]) > 0
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: "OTel Collector failing to export spans to {{ $labels.exporter }}"

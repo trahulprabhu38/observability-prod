@@ -1,0 +1,150 @@
+# =============================================================================
+#  OpenTelemetry Collector (contrib)  -  the OTLP front door for applications.
+#
+#  Every app sends OTLP to this collector on :4317 (gRPC) or :4318 (HTTP):
+#     OTEL_EXPORTER_OTLP_ENDPOINT=http://<this-host>:4317
+#
+#  Pipeline shape:
+#     receivers  -> where data comes IN        (otlp)
+#     processors -> transform in flight        (memory_limiter, batch, redact...)
+#     connectors -> a pipeline that feeds another pipeline (spanmetrics: spans->metrics)
+#     exporters  -> where data goes OUT        (Jaeger, Prometheus, Loki)
+#
+#  traces  -> Jaeger (storage/UI) + spanmetrics connector
+#  metrics -> Prometheus (remote-write) ; includes the RED metrics from spanmetrics
+#  logs    -> Loki (OTLP endpoint)
+#
+#  Validate:  make validate        Live pipeline debug:  http://localhost:55679/debug/tracez
+#  Docs: ../docs/03-traces-otel-jaeger.md
+# =============================================================================
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  # Drop data before the collector runs out of RAM (protects the whole box).
+  memory_limiter:
+    check_interval: 1s
+    limit_percentage: 80
+    spike_limit_percentage: 25
+
+  # Add host/os/env resource attributes to everything.
+  resourcedetection:
+    detectors: [env, system]
+    timeout: 2s
+    override: false
+
+  # Best-effort redaction of obviously-sensitive attributes. Extend in docs/03.
+  transform/pii:
+    error_mode: ignore
+    trace_statements:
+      - context: span
+        statements:
+          - delete_matching_keys(attributes, "(?i)(authorization|cookie|set-cookie|x-api-key|password|secret|token)")
+          - replace_all_patterns(attributes, "value", "[A-Za-z0-9._%+\\-]+@[A-Za-z0-9.\\-]+\\.[A-Za-z]{2,}", "[REDACTED_EMAIL]")
+    log_statements:
+      - context: log
+        statements:
+          - delete_matching_keys(attributes, "(?i)(authorization|cookie|set-cookie|x-api-key|password|secret|token)")
+
+  # Batch for throughput/compression. Always last before exporters.
+  batch:
+    send_batch_size: 8192
+    send_batch_max_size: 16384
+    timeout: 2s
+
+connectors:
+  # Turn every span into RED metrics (Rate, Errors, Duration) BEFORE sampling,
+  # so rates stay accurate. Output goes into the metrics pipeline below.
+  spanmetrics:
+    namespace: traces.spanmetrics
+    histogram:
+      unit: ms
+      explicit:
+        buckets: [2ms, 4ms, 8ms, 16ms, 32ms, 64ms, 128ms, 256ms, 512ms, 1s, 2s, 5s, 10s]
+    dimensions:
+      - name: service.version
+      - name: http.request.method
+      - name: http.route
+      - name: http.response.status_code
+    exemplars:
+      enabled: true                 # links a metric data point back to a trace
+    metrics_flush_interval: 15s
+
+exporters:
+  # --- traces -> Jaeger (Jaeger listens OTLP on its own 4317 inside the network) ---
+  otlp/jaeger:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
+
+  # --- metrics -> Prometheus (needs --web.enable-remote-write-receiver, already set) ---
+  prometheusremotewrite:
+    endpoint: http://prometheus:9090/api/v1/write
+    resource_to_telemetry_conversion:
+      enabled: false                # do NOT turn every resource attr into a label (cardinality)
+    add_metric_suffixes: true
+
+  # --- logs -> Loki OTLP endpoint ---
+  otlphttp/loki:
+    endpoint: http://loki:3100/otlp
+
+  # --- console echo for debugging; set verbosity: detailed to see full payloads ---
+  debug:
+    verbosity: basic
+
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+service:
+  extensions: [health_check, zpages]
+  telemetry:
+    metrics:
+      level: detailed
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: 0.0.0.0
+                port: 8888
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resourcedetection, transform/pii, batch]
+      exporters: [otlp/jaeger, spanmetrics, debug]
+
+    metrics:
+      receivers: [otlp, spanmetrics]
+      processors: [memory_limiter, batch]
+      exporters: [prometheusremotewrite]
+
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, transform/pii, batch]
+      exporters: [otlphttp/loki]
+
+  # ---------------------------------------------------------------------------
+  #  OPTIONAL: tail-based sampling (store 100% errors + slow, 10% of the rest).
+  #  Move it into the traces pipeline processors list AFTER batch is removed
+  #  from that pipeline (tail_sampling must see whole traces). See docs/03.
+  # ---------------------------------------------------------------------------
+  #   tail_sampling:
+  #     decision_wait: 10s
+  #     policies:
+  #       - name: errors
+  #         type: status_code
+  #         status_code: { status_codes: [ERROR] }
+  #       - name: slow
+  #         type: latency
+  #         latency: { threshold_ms: 1000 }
+  #       - name: baseline
+  #         type: probabilistic
+  #         probabilistic: { sampling_percentage: 10 }

@@ -1,0 +1,76 @@
+# =============================================================================
+#  Grafana Loki - the log database.  Single-binary mode, LOCAL filesystem store.
+#
+#  Mental model:
+#   * Loki indexes only LABELS (job, container, box, level...), never the log text.
+#   * Log lines are gzipped into "chunks" on disk; queries brute-force-scan the
+#     chunks that match your label selector, then grep inside.
+#   * => Keep label cardinality LOW. A label per user_id / trace_id / request_id
+#     will melt Loki. Put those in the log line, filter with |= or | json.
+#
+#  Everything stays on the local volume (loki_data). To move chunks to S3/GCS
+#  later, swap the `common.storage` block - see docs/02-logs-loki-alloy.md.
+#
+#  Retention: 14 days (336h), enforced by the compactor.
+# =============================================================================
+
+auth_enabled: false                 # no multi-tenancy; single tenant "fake"
+
+server:
+  http_listen_port: 3100
+  grpc_listen_port: 9096
+  log_level: info
+
+common:
+  instance_addr: 127.0.0.1
+  path_prefix: /loki                 # all the dirs below live under here
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
+  storage:
+    filesystem:
+      chunks_directory: /loki/chunks
+      rules_directory: /loki/rules
+
+schema_config:
+  configs:
+    - from: 2024-01-01
+      store: tsdb                    # current index type
+      object_store: filesystem
+      schema: v13                    # current schema
+      index:
+        prefix: index_
+        period: 24h
+
+compactor:
+  working_directory: /loki/compactor
+  compaction_interval: 10m
+  retention_enabled: true            # actually delete data past retention_period
+  retention_delete_delay: 2h
+  delete_request_store: filesystem
+
+limits_config:
+  retention_period: 336h             # 14d - applies to every stream
+  allow_structured_metadata: true    # lets OTLP attrs (trace_id...) ride along without becoming labels
+  volume_enabled: true               # powers the "Logs volume" panel in Grafana Explore
+  ingestion_rate_mb: 16
+  ingestion_burst_size_mb: 32
+  reject_old_samples: true
+  reject_old_samples_max_age: 168h
+  max_query_series: 10000
+  split_queries_by_interval: 15m
+
+# Loki can also evaluate alerting rules against LOGS and push to Alertmanager.
+# Drop *.yml rule files into the loki_data volume's /loki/rules/fake/ dir.
+ruler:
+  storage:
+    type: local
+    local:
+      directory: /loki/rules
+  rule_path: /loki/rules-temp
+  alertmanager_url: http://alertmanager:9093
+  enable_api: true
+
+analytics:
+  reporting_enabled: false

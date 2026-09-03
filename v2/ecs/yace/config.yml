@@ -1,0 +1,56 @@
+# yet-another-cloudwatch-exporter (YACE) - pulls ECS/Fargate metrics from AWS
+# CloudWatch and exposes them as Prometheus metrics on :5000/metrics.
+#
+# Enable with:   make ecs-up      (starts the `ecs` compose profile)
+# Then uncomment the `ecs-cloudwatch` job in prometheus/prometheus.yml.
+#
+# Docs & full metric list: docs/05-ecs-metrics.md
+# YACE metric naming: aws_ecs_<metric>_<stat>, e.g. aws_ecs_cpuutilization_average
+
+apiVersion: v1alpha1
+
+sts-region: ap-south-1
+
+discovery:
+  exportedTagsOnMetrics:
+    AWS/ECS:
+      - Name
+      - Environment
+  jobs:
+    # ---- Cluster + service level metrics (AWS/ECS namespace) ----
+    - type: AWS/ECS
+      regions: [ap-south-1]
+      period: 300
+      length: 600
+      metrics:
+        - { name: CPUUtilization,    statistics: [Average, Maximum] }
+        - { name: MemoryUtilization, statistics: [Average, Maximum] }
+
+    # ---- Container Insights: task/container level (needs Insights enabled on the cluster) ----
+    - type: ECS/ContainerInsights
+      regions: [ap-south-1]
+      period: 60
+      length: 300
+      metrics:
+        - { name: RunningTaskCount,        statistics: [Average] }
+        - { name: PendingTaskCount,        statistics: [Average] }
+        - { name: DesiredTaskCount,        statistics: [Average] }
+        - { name: CpuUtilized,             statistics: [Average] }
+        - { name: CpuReserved,             statistics: [Average] }
+        - { name: MemoryUtilized,          statistics: [Average] }
+        - { name: MemoryReserved,          statistics: [Average] }
+        - { name: NetworkRxBytes,          statistics: [Average] }
+        - { name: NetworkTxBytes,          statistics: [Average] }
+        - { name: EphemeralStorageUtilized, statistics: [Average] }
+
+    # ---- Optional: the ALB in front of your ECS services ----
+    - type: AWS/ApplicationELB
+      regions: [ap-south-1]
+      period: 60
+      length: 300
+      metrics:
+        - { name: RequestCount,            statistics: [Sum] }
+        - { name: HTTPCode_Target_5XX_Count, statistics: [Sum] }
+        - { name: TargetResponseTime,      statistics: [Average, p95] }
+        - { name: HealthyHostCount,        statistics: [Average] }
+        - { name: UnHealthyHostCount,      statistics: [Average] }

@@ -1,0 +1,120 @@
+# =============================================================================
+#  Prometheus - the metrics database + scraper for stack v2
+#
+#  Concepts:
+#   * Prometheus PULLS. Every `scrape_config` is a list of HTTP endpoints it
+#     fetches `/metrics` from every `scrape_interval`.
+#   * `static_configs`  = hard-coded target list.
+#   * `file_sd_configs` = target list read from a file on disk and re-read live,
+#     so you add hosts by editing ./targets/*.yml - no Prometheus restart.
+#   * Batch jobs can't be scraped (they exit) so they PUSH to pushgateway,
+#     which Prometheus then scrapes.
+#
+#  After editing this file:  make reload-prometheus   (or docker kill -s HUP prometheus)
+#  Validate first:           make validate
+#  Docs: ../docs/01-metrics-prometheus.md
+# =============================================================================
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    stack: observability-v2      # stamped on every series sent to remote storage / Alertmanager
+
+rule_files:
+  - /etc/prometheus/rules/*.yml
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]
+
+scrape_configs:
+
+  # ----- the observability stack watching itself -----
+  - job_name: prometheus
+    static_configs: [{ targets: ["localhost:9090"] }]
+
+  - job_name: alertmanager
+    static_configs: [{ targets: ["alertmanager:9093"] }]
+
+  - job_name: grafana
+    static_configs: [{ targets: ["grafana:3000"] }]
+
+  - job_name: loki
+    static_configs: [{ targets: ["loki:3100"] }]
+
+  - job_name: alloy
+    static_configs: [{ targets: ["alloy:12345"] }]
+
+  - job_name: otel-collector
+    static_configs: [{ targets: ["otel-collector:8888"] }]
+
+  - job_name: jaeger
+    static_configs: [{ targets: ["jaeger:14269"] }]
+
+  # ----- batch-job metrics (jobs push here; honor_labels keeps their own job/instance) -----
+  - job_name: pushgateway
+    honor_labels: true
+    static_configs: [{ targets: ["pushgateway:9091"] }]
+
+  # ----- host / LXC OS metrics -----
+  # This box's own node-exporter:
+  - job_name: node
+    static_configs:
+      - targets: ["node-exporter:9100"]
+        labels: { box: observability, kind: host }
+  # Every other host / LXC container: add a block in targets/node-*.yml
+  - job_name: node-fleet
+    file_sd_configs:
+      - files: ["/etc/prometheus/targets/node-*.yml"]
+        refresh_interval: 30s
+
+  # ----- Docker container metrics -----
+  # This box's cAdvisor:
+  - job_name: cadvisor
+    static_configs:
+      - targets: ["cadvisor:8080"]
+        labels: { box: observability, kind: docker-host }
+  # cAdvisor on other Docker hosts: add to targets/cadvisor-*.yml
+  - job_name: cadvisor-fleet
+    file_sd_configs:
+      - files: ["/etc/prometheus/targets/cadvisor-*.yml"]
+        refresh_interval: 30s
+
+  # ----- Proxmox VE cluster/VM/CT metrics (optional; see docs/06-lxc-proxmox.md) -----
+  # - job_name: proxmox
+  #   metrics_path: /pve
+  #   params: { module: [default] }
+  #   static_configs:
+  #     - targets: ["10.0.0.10"]        # the Proxmox node's IP, NOT the exporter's
+  #   relabel_configs:
+  #     - source_labels: [__address__]
+  #       target_label: __param_target
+  #     - source_labels: [__param_target]
+  #       target_label: instance
+  #     - target_label: __address__
+  #       replacement: pve-exporter:9221
+
+  # =========================================================================
+  #  ECS METRICS  -  three independent options, pick what fits (docs/05-ecs-metrics.md)
+  # =========================================================================
+
+  # Option A - CloudWatch metrics via YACE  (start stack with:  make ecs-up)
+  # Gives you ECS service/cluster CPU/Memory, Fargate, ALB, RunningTaskCount, etc.
+  # - job_name: ecs-cloudwatch
+  #   metrics_path: /metrics
+  #   static_configs:
+  #     - targets: ["yace:5000"]
+
+  # Option B - task-level app metrics via prometheus-ecs-discovery
+  # A sidecar process writes discovered ECS tasks to this file; Prometheus scrapes
+  # each task's own /metrics endpoint. See ecs/ecs-discovery/.
+  # - job_name: ecs-tasks
+  #   file_sd_configs:
+  #     - files: ["/etc/prometheus/targets/ecs_file_sd.yml"]
+  #       refresh_interval: 60s
+
+  # Option C - ADOT collector sidecar in each task remote-writes to Prometheus.
+  # Nothing to configure here; the sidecar pushes to
+  # http://<this-host>:9090/api/v1/write   (see ecs/adot/).

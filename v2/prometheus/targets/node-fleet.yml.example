@@ -1,0 +1,27 @@
+# file_sd target list for the `node-fleet` job.
+# Copy to node-fleet.yml (drop .example) and edit. Prometheus re-reads it live.
+#
+# One entry per host or LXC container running node-exporter on :9100.
+# `labels` are attached to every metric from that target - use them to filter
+# in Grafana ($box / $env template variables).
+
+- targets:
+    - "10.0.0.11:9100"
+  labels:
+    box: proxmox-host-01
+    kind: host
+    env: infra
+
+- targets:
+    - "10.0.0.20:9100"      # an LXC container with node-exporter installed
+  labels:
+    box: lxc-postgres
+    kind: lxc
+    env: prod
+
+- targets:
+    - "10.0.0.21:9100"
+  labels:
+    box: lxc-redis
+    kind: lxc
+    env: prod

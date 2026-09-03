@@ -1,0 +1,46 @@
+# Docker container alerts - fed by cAdvisor.
+# cAdvisor labels: `name` (container name), `image`, plus whatever the fleet
+# file_sd attached (box, env).
+groups:
+  - name: containers
+    rules:
+
+      - alert: ContainerKilledRecently
+        expr: time() - container_last_seen{name!=""} > 60 and time() - container_last_seen{name!=""} < 300
+        for: 0m
+        labels: { severity: warning }
+        annotations:
+          summary: "Container {{ $labels.name }} on {{ $labels.box }} disappeared"
+          description: "cAdvisor stopped seeing this container 1-5 min ago (crash / redeploy?)."
+
+      - alert: ContainerHighCPU
+        expr: |
+          sum by (name, box) (rate(container_cpu_usage_seconds_total{name!=""}[5m])) * 100 > 90
+        for: 15m
+        labels: { severity: warning }
+        annotations:
+          summary: "Container {{ $labels.name }} using >90% of a core for 15m"
+
+      - alert: ContainerHighMemory
+        expr: |
+          container_memory_working_set_bytes{name!=""}
+            / (container_spec_memory_limit_bytes{name!=""} > 0) > 0.90
+        for: 10m
+        labels: { severity: warning }
+        annotations:
+          summary: "Container {{ $labels.name }} above 90% of its memory limit"
+          description: "Working set {{ $value | humanizePercentage }} of limit - OOM risk."
+
+      - alert: ContainerFrequentRestarts
+        expr: increase(container_start_time_seconds{name!=""}[1h]) > 3
+        for: 5m
+        labels: { severity: warning }
+        annotations:
+          summary: "Container {{ $labels.name }} restarted >3x in the last hour"
+
+      - alert: ContainerOOMKilled
+        expr: increase(container_oom_events_total{name!=""}[10m]) > 0
+        for: 0m
+        labels: { severity: critical }
+        annotations:
+          summary: "Container {{ $labels.name }} was OOM-killed"

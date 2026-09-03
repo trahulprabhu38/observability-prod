@@ -1,0 +1,120 @@
+// ============================================================================
+//  Grafana Alloy - LOGS ONLY in this stack.
+//  Job: discover every Docker container on this host, tail its stdout/stderr,
+//  attach a few low-cardinality labels, ship to Loki.
+//
+//  River/Alloy config is a graph of components. Each `xxx.yyy "name" { }` block
+//  is a node; `forward_to` / `targets =` wires the output of one into the next.
+//  Live pipeline view + logs:  http://localhost:12345
+//
+//  App traces/metrics/OTLP-logs do NOT come here - they go to the
+//  otel-collector service. Docs: ../docs/02-logs-loki-alloy.md
+// ============================================================================
+
+logging {
+  level  = "info"
+  format = "logfmt"
+}
+
+// 1. Ask the Docker daemon for the list of running containers, refreshed live.
+discovery.docker "containers" {
+  host             = "unix:///var/run/docker.sock"
+  refresh_interval = "5s"
+}
+
+// 2. Turn Docker metadata into clean Loki labels.
+//    KEEP THIS LIST SHORT - every label is a separate Loki stream.
+discovery.relabel "containers" {
+  targets = discovery.docker.containers.targets
+
+  // /my-app  ->  container="my-app"
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+  // docker compose project name, if any
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_project"]
+    target_label  = "compose_project"
+  }
+  // image without the :tag
+  rule {
+    source_labels = ["__meta_docker_container_label_org_opencontainers_image_title"]
+    target_label  = "image_title"
+  }
+  // drop Alloy tailing its own logs (feedback loop)
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/alloy"
+    action        = "drop"
+  }
+}
+
+// 3. Tail the containers.
+loki.source.docker "containers" {
+  host             = "unix:///var/run/docker.sock"
+  targets          = discovery.docker.containers.targets
+  forward_to       = [loki.process.enrich.receiver]
+  relabel_rules    = discovery.relabel.containers.rules
+  refresh_interval = "5s"
+}
+
+// 4. Processing pipeline: static labels + best-effort level + trace_id extraction.
+loki.process "enrich" {
+  // constant labels for everything from this box
+  stage.static_labels {
+    values = {
+      job = "docker",
+      box = "observability",
+    }
+  }
+
+  // If the line is JSON, lift a couple of useful fields (does not add labels).
+  stage.json {
+    expressions = {
+      level    = "level",
+      trace_id = "trace_id",
+    }
+  }
+
+  // Promote ONLY `level` to a label (low cardinality: debug/info/warn/error).
+  stage.labels {
+    values = { level = "" }
+  }
+
+  // Normalise common level spellings so dashboards can group on them.
+  stage.replace {
+    source     = "level"
+    expression = "(?i)^(warning)$"
+    replace    = "warn"
+  }
+}
+
+// 5. Ship to Loki.
+loki.write "default" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  OPTIONAL EXTRAS - uncomment as needed
+// ---------------------------------------------------------------------------
+
+// -- Tail systemd journal on the host (mount /var/log/journal into the container)
+// loki.source.journal "host" {
+//   max_age    = "12h"
+//   path       = "/var/log/journal"
+//   forward_to = [loki.write.default.receiver]
+//   labels     = { job = "systemd-journal", box = "observability" }
+// }
+
+// -- Tail plain log files
+// local.file_match "applogs" {
+//   path_targets = [{ __path__ = "/var/log/myapp/*.log", job = "myapp" }]
+// }
+// loki.source.file "applogs" {
+//   targets    = local.file_match.applogs.targets
+//   forward_to = [loki.write.default.receiver]
+// }

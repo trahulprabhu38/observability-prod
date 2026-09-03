@@ -1,0 +1,242 @@
+# =============================================================================
+#  Observability stack v2  -  metrics + logs + traces, one Grafana
+#
+#  METRICS : Prometheus  <- node-exporter (LXC/hosts) , cAdvisor (Docker) ,
+#            Pushgateway (batch jobs) , ECS (CloudWatch via YACE / task metrics)
+#  LOGS    : Alloy -> Loki
+#  TRACES  : OpenTelemetry Collector -> Jaeger  (+ span-metrics -> Prometheus)
+#  UI      : Grafana + Alertmanager
+#
+#  Run:   cp .env.example .env  &&  docker compose up -d
+#  Read:  ./README.md  and  ./docs/00-overview.md
+# =============================================================================
+
+networks:
+  monitoring:
+    driver: bridge
+
+volumes:
+  prometheus_data:
+  grafana_data:
+  loki_data:
+  jaeger_data:
+  alertmanager_data:
+
+services:
+
+  # ==========================================================================
+  #  METRICS
+  # ==========================================================================
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    container_name: prometheus
+    restart: unless-stopped
+    user: root                       # so it can write to the named volume
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/rules:/etc/prometheus/rules:ro
+      - ./prometheus/targets:/etc/prometheus/targets:ro
+      - prometheus_data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=15d"
+      - "--storage.tsdb.retention.size=20GB"
+      - "--web.enable-lifecycle"                 # POST /-/reload  (hot config reload)
+      - "--web.enable-remote-write-receiver"     # OTel Collector span-metrics land here
+      - "--enable-feature=exemplar-storage"      # trace exemplars on metrics
+    ports:
+      - "9090:9090"
+    networks: [monitoring]
+    depends_on: [cadvisor, node-exporter]
+
+  # host + LXC container OS metrics (CPU/mem/disk/net/filesystem)
+  # For LXC/Proxmox coverage you also run node-exporter INSIDE or NEXT TO each
+  # box and point Prometheus at it - see docs/06-lxc-proxmox.md
+  node-exporter:
+    image: prom/node-exporter:v1.8.2
+    container_name: node-exporter
+    restart: unless-stopped
+    pid: host
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--path.rootfs=/rootfs"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+    ports:
+      - "9100:9100"
+    networks: [monitoring]
+
+  # per-container metrics for everything running under Docker on this host
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
+    container_name: cadvisor
+    restart: unless-stopped
+    privileged: true
+    devices:
+      - /dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /dev/disk:/dev/disk:ro
+    ports:
+      - "8080:8080"
+    networks: [monitoring]
+
+  # batch / cron / short-lived jobs PUSH their metrics here; Prometheus scrapes it
+  pushgateway:
+    image: prom/pushgateway:v1.10.0
+    container_name: pushgateway
+    restart: unless-stopped
+    command:
+      - "--web.enable-admin-api"      # allows DELETE of stale pushed groups
+    ports:
+      - "9091:9091"
+    networks: [monitoring]
+
+  # ==========================================================================
+  #  LOGS
+  # ==========================================================================
+  loki:
+    image: grafana/loki:3.4.2
+    container_name: loki
+    restart: unless-stopped
+    user: root
+    volumes:
+      - ./loki/loki.yml:/etc/loki/loki.yml:ro
+      - loki_data:/loki
+    command:
+      - "-config.file=/etc/loki/loki.yml"
+    ports:
+      - "3100:3100"
+    networks: [monitoring]
+
+  # Alloy = Grafana's OpenTelemetry Collector distribution.
+  # Here it does ONE job: tail every Docker container's stdout/stderr -> Loki.
+  # (App OTLP logs/traces/metrics go to the otel-collector service below.)
+  alloy:
+    image: grafana/alloy:v1.7.1
+    container_name: alloy
+    restart: unless-stopped
+    volumes:
+      - ./alloy/config.alloy:/etc/alloy/config.alloy:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
+    ports:
+      - "12345:12345"        # Alloy UI  (http://localhost:12345)
+    networks: [monitoring]
+    depends_on: [loki]
+
+  # ==========================================================================
+  #  TRACES
+  # ==========================================================================
+  # The single OTLP front door for applications.
+  #   apps --OTLP--> otel-collector --> Jaeger        (traces)
+  #                                 --> Prometheus    (RED span-metrics)
+  #                                 --> Loki          (OTLP logs, optional)
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.117.0
+    container_name: otel-collector
+    restart: unless-stopped
+    volumes:
+      - ./otel-collector/config.yaml:/etc/otelcol-contrib/config.yaml:ro
+    command:
+      - "--config=/etc/otelcol-contrib/config.yaml"
+    ports:
+      - "4317:4317"          # OTLP gRPC  <- point your apps here
+      - "4318:4318"          # OTLP HTTP  <- or here
+      - "8888:8888"          # collector's own metrics (Prometheus scrapes this)
+      - "13133:13133"        # health_check extension
+      - "55679:55679"        # zpages (live pipeline debugging)
+    networks: [monitoring]
+    depends_on: [jaeger, prometheus]
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.65.0
+    container_name: jaeger
+    restart: unless-stopped
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+      - SPAN_STORAGE_TYPE=badger
+      - BADGER_EPHEMERAL=false
+      - BADGER_DIRECTORY_VALUE=/badger/data
+      - BADGER_DIRECTORY_KEY=/badger/key
+      # "Monitor" tab (Service Performance Monitoring) reads RED metrics from Prometheus
+      - METRICS_STORAGE_TYPE=prometheus
+      - PROMETHEUS_SERVER_URL=http://prometheus:9090
+      - PROMETHEUS_QUERY_NORMALIZE_CALLS=true
+      - PROMETHEUS_QUERY_NORMALIZE_DURATION=true
+    volumes:
+      - jaeger_data:/badger
+    ports:
+      - "16686:16686"        # Jaeger UI
+      - "14317:4317"          # Jaeger's own OTLP gRPC (collector -> jaeger); handy for direct testing
+      - "14318:4318"          # Jaeger's own OTLP HTTP
+      - "14269:14269"         # Jaeger admin/metrics (Prometheus scrapes this)
+    networks: [monitoring]
+
+  # ==========================================================================
+  #  VISUALIZATION + ALERTING
+  # ==========================================================================
+  grafana:
+    image: grafana/grafana:11.5.1
+    container_name: grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_FEATURE_TOGGLES_ENABLE=traceToMetrics
+      - GF_INSTALL_PLUGINS=
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "3000:3000"
+    networks: [monitoring]
+    depends_on: [prometheus, loki, jaeger]
+
+  alertmanager:
+    image: prom/alertmanager:v0.28.0
+    container_name: alertmanager
+    restart: unless-stopped
+    volumes:
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager_data:/alertmanager
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+      - "--storage.path=/alertmanager"
+      - "--web.external-url=http://localhost:9093"
+    ports:
+      - "9093:9093"
+    networks: [monitoring]
+
+  # ==========================================================================
+  #  ECS METRICS  (opt-in:  docker compose --profile ecs up -d)
+  #  Pulls ECS/Fargate metrics out of AWS CloudWatch. Needs AWS creds in .env.
+  #  Full explanation + the other two ECS approaches: docs/05-ecs-metrics.md
+  # ==========================================================================
+  yace:
+    image: ghcr.io/nerdswords/yet-another-cloudwatch-exporter:v0.62.2
+    container_name: yace
+    restart: unless-stopped
+    profiles: ["ecs"]
+    env_file: [.env]
+    volumes:
+      - ./ecs/yace/config.yml:/tmp/config.yml:ro
+    command:
+      - "-config.file=/tmp/config.yml"
+      - "-listen-address=:5000"
+    ports:
+      - "5000:5000"
+    networks: [monitoring]

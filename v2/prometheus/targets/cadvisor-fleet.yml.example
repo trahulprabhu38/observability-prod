@@ -1,0 +1,19 @@
+# file_sd target list for the `cadvisor-fleet` job.
+# Copy to cadvisor-fleet.yml (drop .example) and edit.
+#
+# One entry per Docker host running a cAdvisor container. Publish cAdvisor on a
+# fixed port on each host (8080 here) and open it to the observability box only.
+
+- targets:
+    - "10.0.0.30:8080"
+  labels:
+    box: app-docker-01
+    kind: docker-host
+    env: prod
+
+- targets:
+    - "10.0.0.31:8080"
+  labels:
+    box: app-docker-02
+    kind: docker-host
+    env: staging
