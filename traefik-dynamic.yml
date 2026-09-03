@@ -1,0 +1,926 @@
+http:
+  routers:
+    web-valtax-api-router:
+      rule: Host(`valtax-api.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: web-valtax-api-service
+    ogold-stg-router:
+      rule: Host(`ogold-stg.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: ogold-stg-service
+    ogold-v2-stg-router:
+      rule: Host(`ogoldv2-stg.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: ogoldv2-stg-service
+    web-aldar-router:
+      rule: Host(`app-aldar.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: web-aldar-service
+    n8n-router:
+      rule: Host(`n8n.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: n8n-service
+    chatwoot-router:
+      rule: Host(`chatwoot.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: chatwoot-service
+    reacher-router:
+      rule: Host(`reacher.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: reacher-service
+    reacher-backend-router:
+      rule: Host(`reacher-backend.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: reacher-backend-service
+    reacher-frontend-router:
+      rule: Host(`reacher-frontend.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: reacher-frontend-service
+    aldar-web:
+      rule: Host(`aldar.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: aldar-service
+    env-router:
+      rule: Host(`infisical.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: env-service
+    web-prod-router:
+      rule: Host(`app.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: web-prod-service
+    ogold-prod-router:
+      rule: Host(`ogold.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: ogold-prod-service
+    ogold-v2-prod-router:
+      rule: Host(`ogoldv2.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: ogold-v2-prod-service
+    ledger-prod-router:
+      rule: Host(`ledger.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: ledger-prod-service
+    ledger-backend-prod-router:
+      rule: Host(`ledger-backend.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: ledger-backend-prod-service
+    uae-bank-prod-router:
+      rule: Host(`uae-bank.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: uae-bank-prod-service
+    api-prod-router:
+      rule: Host(`apis.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: api-prod-service
+    gtn-prod-router:
+      rule: Host(`gtnprod.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: gtn-prod-service
+    gtn-ws-prod-router:
+      rule: Host(`gtnwsprod.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: gtn-ws-prod-service
+    gtn-sse-prod-router:
+      rule: Host(`gtnsseprod.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: gtn-sse-prod-service
+    admin-prod-router:
+      rule: Host(`adminprod.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: admin-prod-service
+    analysis-prod-router:
+      rule: Host(`analysisprod.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: analysis-prod-service
+    zag-prod-router:
+      rule: Host(`zagprod.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: zag-prod-service
+    ai-agents-prod-router:
+      rule: Host(`aiprod.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: ai-agents-prod-service
+    web-stg-router:
+      rule: Host(`app-stg.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: web-stg-service
+    ledger-stg-router:
+      rule: Host(`ledger-stg.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: ledger-stg-service
+    ledger-backend-stg-router:
+      rule: Host(`ledger-backend-stg.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: ledger-backend-stg-service
+    uae-bank-stg-router:
+      rule: Host(`uae-bank-stg.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: uae-bank-stg-service
+    api-stg-router:
+      rule: Host(`api-stg.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: api-stg-service
+    gtn-stg-router:
+      rule: Host(`gtn-stg.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: gtn-stg-service
+    gtn-ws-stg-router:
+      rule: Host(`gtnws-stg.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: gtn-ws-stg-service
+    gtn-sse-stg-router:
+      rule: Host(`gtnsse-stg.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: gtn-sse-stg-service
+    admin-stg-router:
+      rule: Host(`admin-stg.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: admin-stg-service
+    analysis-stg-router:
+      rule: Host(`analysis-stg.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: analysis-stg-service
+    zag-stg-router:
+      rule: Host(`zag-stg.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: zag-stg-service
+    ai-agents-stg-router:
+      rule: Host(`ai-stg.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: ai-agents-stg-service
+    valura-web-router:
+      rule: Host(`webdev.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-web-service
+    valura-narnolia-router:
+      rule: Host(`narnolia-app.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-narnolia-service
+    narnolia-landing-router:
+      rule: Host(`narnolia.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: narnolia-landing-service
+    mira-money-landing-router:
+      rule: Host(`mira-money.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: mira-money-landing-service
+    valura-mira-money-router:
+      rule: Host(`mira-money-app.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-mira-money-service
+    valura-ledger-router:
+      rule: Host(`ledger.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-ledger-service
+    valura-ledger-backend-router:
+      rule: Host(`ledger-backend.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-ledger-backend-service
+    valura-uae-bank-router:
+      rule: Host(`uae-bank.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-uae-bank-service
+    valura-api-router:
+      rule: Host(`apidev.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-api-service
+    valura-gtn-router:
+      rule: Host(`gtndev.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-gtn-service
+    valura-gtn-ws-router:
+      rule: Host(`gtnwsdev.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-gtn-ws-service
+    valura-gtn-sse-router:
+      rule: Host(`gtnssedev.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-gtn-sse-service
+    valura-admin-router:
+      rule: Host(`admindev.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-admin-service
+    valura-analysis-router:
+      rule: Host(`analysisdev.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-analysis-service
+    valura-zag-router:
+      rule: Host(`zagdev.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-zag-service
+    valura-ai-agent-router:
+      rule: Host(`aiagentsdev.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-ai-agent-service
+    betterAuth-router:
+      rule: Host(`auth.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: auth-service
+    ogold-router:
+      rule: Host(`ogold.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: ogold-service
+    valura-api-global-router:
+      rule: Host(`indapi.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-api-global-service
+    valura-web-global-router:
+      rule: Host(`indweb.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-web-global-service
+    valura-viewTrade-global-router:
+      rule: Host(`indviewtrade.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-viewTrade-global-service
+    partner-router:
+      rule: Host(`partner.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: partner-service
+    admin-global-router:
+      rule: Host(`indadmin.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: admin-global-service
+    waitlist-global-router:
+      rule: Host(`global.valura.ai`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: waitlist-global-service
+    temp-valura-web-router:
+      rule: Host(`webtemp.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: temp-valura-web-service
+    temp-valura-api-router:
+      rule: Host(`apitemp.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: temp-valura-api-service
+    temp-valura-gtn-router:
+      rule: Host(`gtntemp.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: temp-valura-gtn-service
+    temp-valura-gtn-ws-router:
+      rule: Host(`gtnwstemp.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: temp-valura-gtn-ws-service
+    temp-valura-gtn-sse-router:
+      rule: Host(`gtnssetemp.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: temp-valura-gtn-sse-service
+    temp-valura-admin-router:
+      rule: Host(`admintemp.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: temp-valura-admin-service
+    temp-valura-analysis-router:
+      rule: Host(`analysistemp.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: temp-valura-analysis-service
+    temp-valura-zag-router:
+      rule: Host(`zagtemp.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: temp-valura-zag-service
+    temp-valura-ai-agent-router:
+      rule: Host(`aiagentstemp.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: temp-valura-ai-agent-service
+    monarch-router:
+      rule: Host(`monarch-api.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: monarch-service
+  services:
+    ogoldv2-stg-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.56:9001'
+    n8n-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:5678'
+    chatwoot-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.53:3000'
+    reacher-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:8087'
+    reacher-backend-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:8000'
+    reacher-frontend-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:3002'
+    aldar-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.53:5175'
+    env-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:8089'
+    web-prod-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.54:3000'
+    ogold-prod-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.54:9001'
+    ogold-v2-prod-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.54:9001'
+    ledger-prod-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.54:3100'
+    ledger-backend-prod-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.54:8077'
+    uae-bank-prod-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.54:8006'
+    api-prod-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.54:4000'
+    gtn-prod-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.54:9005'
+    gtn-ws-prod-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.54:8081'
+    gtn-sse-prod-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.54:3001'
+    admin-prod-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.54:8080'
+    analysis-prod-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.54:8001'
+    zag-prod-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.54:8082'
+    ai-agents-prod-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.54:8000'
+    web-stg-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.56:3000'
+    ledger-stg-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.56:3100'
+    ledger-backend-stg-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.56:8077'
+    uae-bank-stg-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.56:8006'
+    api-stg-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.56:4000'
+    gtn-stg-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.56:9005'
+    gtn-ws-stg-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.56:8081'
+    gtn-sse-stg-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.56:3001'
+    admin-stg-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.56:8080'
+    analysis-stg-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.56:8001'
+    zag-stg-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.56:8082'
+    ai-agents-stg-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.56:8000'
+    valura-web-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:3000'
+    valura-vogue-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:3111'
+    valura-narnolia-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:3095'
+    narnolia-landing-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.0.1.19:3000'
+    mira-money-landing-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.0.1.18:3000'
+    valura-mira-money-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:3096'
+    valura-ledger-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:3100'
+    valura-ledger-backend-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:8077'
+    valura-uae-bank-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:8006'
+    valura-api-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:4000'
+    valura-gtn-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:9005'
+    valura-gtn-ws-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:8081'
+    valura-gtn-sse-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:3001'
+    valura-admin-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:8080'
+    valura-analysis-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:8001'
+    valura-zag-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:8082'
+    valura-ai-agent-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:8000'
+    auth-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:3000'
+    ogold-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:9000'
+    valura-api-global-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:8005'
+    valura-web-global-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:3002'
+    valura-viewTrade-global-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:9006'
+    partner-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:3003'
+    admin-global-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:5002'
+    waitlist-global-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:3004'
+    temp-valura-web-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:3000'
+    temp-valura-api-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:4000'
+    temp-valura-gtn-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:9005'
+    temp-valura-gtn-ws-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:8081'
+    temp-valura-gtn-sse-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:3001'
+    temp-valura-admin-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:8080'
+    temp-valura-analysis-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:8001'
+    temp-valura-zag-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:8082'
+    temp-valura-ai-agent-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:8000'
+    monarch-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:9060'
+    web-aldar-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.53:3000'
+    web-valtax-api-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.51:8009'

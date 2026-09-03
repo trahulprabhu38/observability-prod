@@ -1,0 +1,110 @@
+# Traefik dynamic config - observability stack (v2)
+# Split out of the main dynamic config. Backend host stays 10.200.2.52;
+# ports updated to match the v2 docker-compose (v2/docker-compose.yml).
+http:
+  routers:
+    valura-prometheus-router:
+      rule: Host(`prometheus-infra.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-prometheus-service
+    valura-grafana-router:
+      rule: Host(`grafana-infra.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-grafana-service
+    valura-loki-router:
+      rule: Host(`loki-infra.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-loki-service
+    valura-cadvisor-router:
+      rule: Host(`cadvisor-infra.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-cadvisor-service
+    valura-jaeger-router:
+      rule: Host(`jaeger-infra.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-jaeger-service
+    valura-alertmanager-router:
+      rule: Host(`alertmanager-infra.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-alertmanager-service
+    valura-kuma-router:
+      rule: Host(`kuma-infra.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-kuma-service
+    valura-vault-router:
+      rule: Host(`vault-infra.valura.co.in`)
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      service: valura-vault-service
+  services:
+    valura-prometheus-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:9090'
+    valura-grafana-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:3000'
+    valura-loki-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:3100'
+    valura-cadvisor-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:8080'
+    valura-jaeger-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:16686'
+    valura-alertmanager-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:9093'
+    valura-kuma-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:3003'
+    valura-vault-service:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          -
+            url: 'http://10.200.2.52:8200'
