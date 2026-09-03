@@ -76,8 +76,8 @@ v2/
 ├── otel-collector/config.yaml  # OTLP in -> Jaeger + Prometheus(spanmetrics) + Loki
 │
 ├── grafana/provisioning/
-│   ├── datasources/datasources.yml  # Prometheus + Loki + Jaeger, all correlation wired
-│   └── dashboards/                  # provider + hand-written "Stack Health" dashboard
+│   ├── datasources/datasources.yml  # Prometheus + Loki + Jaeger (+ Infinity, opt-in CloudWatch)
+│   └── dashboards/                  # "Stack Health" + community + dashboards imported from prod (see its README)
 │
 ├── ecs/
 │   ├── yace/config.yml         # CloudWatch exporter config (compose profile: ecs)

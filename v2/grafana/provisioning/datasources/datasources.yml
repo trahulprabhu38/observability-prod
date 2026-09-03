@@ -5,6 +5,8 @@ deleteDatasources:
   - { name: Prometheus, orgId: 1 }
   - { name: Loki,       orgId: 1 }
   - { name: Jaeger,     orgId: 1 }
+  - { name: Infinity,   orgId: 1 }
+  - { name: CloudWatch, orgId: 1 }
 
 datasources:
   # ---------------------------------------------------------------- METRICS ---
@@ -77,3 +79,42 @@ datasources:
         enabled: true
       spanBar:
         type: None
+
+  # --------------------------------------------------------- HTTP / JSON APIs ---
+  # Infinity queries arbitrary REST/GraphQL endpoints. Used by the imported
+  # "valura.ai - Cloudflare Analytics" dashboard, which calls the Cloudflare
+  # GraphQL Analytics API. Set CF_API_TOKEN (+ CF_ZONE_ID / CF_ACCOUNT_ID used
+  # inside the dashboard queries) in .env. Plugin is installed via
+  # GF_INSTALL_PLUGINS in docker-compose.yml.
+  - name: Infinity
+    uid: infinity
+    type: yesoreyeram-infinity-datasource
+    access: proxy
+    url: https://api.cloudflare.com/client/v4
+    jsonData:
+      auth_method: bearerToken
+      customHealthCheckEnabled: true
+      httpHeaderName1: Content-Type
+      unsecuredQueryHandling: allow
+      allowedHosts:
+        - https://api.cloudflare.com
+    secureJsonData:
+      bearerToken: ${CF_API_TOKEN}
+
+  # ----------------------------------------------------- AWS CloudWatch (logs) ---
+  # OPT-IN. v2's design pulls AWS *metrics* through YACE into Prometheus (see the
+  # aws-alb / aws-ecs-metrics / aws-rds dashboards), so you normally do NOT need
+  # this. It exists only for the "AWS ECS - individual container logs" dashboard,
+  # which uses CloudWatch Logs Insights - a query language Prometheus has no
+  # equivalent for. Enable by uncommenting; needs the same AWS creds as YACE.
+  #
+  # - name: CloudWatch
+  #   uid: cloudwatch
+  #   type: cloudwatch
+  #   access: proxy
+  #   jsonData:
+  #     authType: keys
+  #     defaultRegion: ${AWS_REGION}
+  #   secureJsonData:
+  #     accessKey: ${AWS_ACCESS_KEY_ID}
+  #     secretKey: ${AWS_SECRET_ACCESS_KEY}

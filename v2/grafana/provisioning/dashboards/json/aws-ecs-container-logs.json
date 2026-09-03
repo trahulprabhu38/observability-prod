@@ -1,0 +1,327 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 170,
+      "panels": [],
+      "title": "━━━━━  ECS  ▸  Service Logs  ━━━━━",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "cloudwatch"
+      },
+      "gridPos": {
+        "h": 23,
+        "w": 11,
+        "x": 0,
+        "y": 1
+      },
+      "id": 71,
+      "options": {
+        "dedupStrategy": "none",
+        "enableInfiniteScrolling": false,
+        "enableLogDetails": true,
+        "prettifyLogMessage": true,
+        "showCommonLabels": false,
+        "showControls": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "dimensions": {},
+          "expression": "fields @timestamp, @message, @logStream\n| sort @timestamp desc\n| limit 200",
+          "id": "",
+          "logGroupNames": [
+            "$loggroup"
+          ],
+          "logGroups": [],
+          "matchExact": true,
+          "metricEditorMode": 0,
+          "metricQueryType": 0,
+          "namespace": "",
+          "period": "",
+          "queryMode": "Logs",
+          "refId": "A",
+          "region": "$region",
+          "sqlExpression": "",
+          "statsGroups": []
+        }
+      ],
+      "title": "Live Logs — $loggroup",
+      "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "cloudwatch"
+      },
+      "gridPos": {
+        "h": 23,
+        "w": 13,
+        "x": 11,
+        "y": 1
+      },
+      "id": 72,
+      "options": {
+        "dedupStrategy": "none",
+        "enableInfiniteScrolling": false,
+        "enableLogDetails": true,
+        "prettifyLogMessage": true,
+        "showCommonLabels": false,
+        "showControls": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "dimensions": {},
+          "expression": "fields @timestamp, @message, @logStream\n| filter @message like /(?i)(error|exception|fatal|critical|traceback|panic)/\n| sort @timestamp desc\n| limit 100",
+          "id": "",
+          "logGroupNames": [
+            "$loggroup"
+          ],
+          "logGroups": [],
+          "matchExact": true,
+          "metricEditorMode": 0,
+          "metricQueryType": 0,
+          "namespace": "",
+          "period": "",
+          "queryMode": "Logs",
+          "refId": "A",
+          "region": "$region",
+          "sqlExpression": "",
+          "statsGroups": []
+        }
+      ],
+      "title": "Errors & Exceptions",
+      "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "cloudwatch",
+        "uid": "cloudwatch"
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 73,
+      "options": {
+        "dedupStrategy": "none",
+        "enableInfiniteScrolling": false,
+        "enableLogDetails": true,
+        "prettifyLogMessage": true,
+        "showCommonLabels": false,
+        "showControls": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "cloudwatch",
+            "uid": "cloudwatch"
+          },
+          "dimensions": {},
+          "expression": "fields @timestamp, @message, @logStream\n| filter @message like /(?i)(warn|warning|slow|timeout|retry)/\n| sort @timestamp desc\n| limit 100",
+          "id": "",
+          "logGroupNames": [
+            "$loggroup"
+          ],
+          "logGroups": [],
+          "matchExact": true,
+          "metricEditorMode": 0,
+          "metricQueryType": 0,
+          "namespace": "",
+          "period": "",
+          "queryMode": "Logs",
+          "refId": "A",
+          "region": "$region",
+          "sqlExpression": "",
+          "statsGroups": []
+        }
+      ],
+      "title": "Warnings & Slow Requests",
+      "type": "logs"
+    }
+  ],
+  "preload": false,
+  "refresh": "1m",
+  "schemaVersion": 42,
+  "tags": [
+    "aws",
+    "ecs",
+    "cloudwatch",
+    "logs"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "ap-south-1",
+          "value": "ap-south-1"
+        },
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "cloudwatch"
+        },
+        "includeAll": false,
+        "label": "Region",
+        "name": "region",
+        "options": [],
+        "query": {
+          "queryType": "regions",
+          "refId": "region"
+        },
+        "refresh": 1,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "valura-global-prod-cluster",
+          "value": "valura-global-prod-cluster"
+        },
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "cloudwatch"
+        },
+        "includeAll": false,
+        "label": "Cluster",
+        "name": "cluster",
+        "options": [],
+        "query": {
+          "dimensionFilters": {},
+          "dimensionKey": "ClusterName",
+          "metricName": "CPUUtilization",
+          "namespace": "AWS/ECS",
+          "queryType": "dimensionValues",
+          "refId": "cluster",
+          "region": "$region"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "/ecs/valura-global-prod-cluster/api-global",
+          "value": "arn:aws:logs:ap-south-1:570380297274:log-group:/ecs/valura-global-prod-cluster/api-global:*"
+        },
+        "datasource": {
+          "type": "cloudwatch",
+          "uid": "cloudwatch"
+        },
+        "includeAll": false,
+        "label": "Log Group",
+        "name": "loggroup",
+        "options": [],
+        "query": {
+          "logGroupPrefix": "/ecs/",
+          "queryType": "logGroups",
+          "refId": "loggroup",
+          "region": "$region"
+        },
+        "refresh": 2,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "300",
+          "value": "300"
+        },
+        "includeAll": false,
+        "label": "Period",
+        "name": "period",
+        "options": [
+          {
+            "selected": false,
+            "text": "60",
+            "value": "60"
+          },
+          {
+            "selected": false,
+            "text": "120",
+            "value": "120"
+          },
+          {
+            "selected": true,
+            "text": "300",
+            "value": "300"
+          },
+          {
+            "selected": false,
+            "text": "900",
+            "value": "900"
+          },
+          {
+            "selected": false,
+            "text": "3600",
+            "value": "3600"
+          }
+        ],
+        "query": "60,120,300,900,3600",
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "AWS ECS — individual container logs",
+  "uid": "aws-ecs-final",
+  "weekStart": ""
+}

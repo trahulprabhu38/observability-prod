@@ -1,0 +1,1974 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 100,
+      "panels": [],
+      "title": "🌐 valura.ai — Cloudflare Health  |  2026-04-11 → 2026-05-11",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "Peak: 2026-05-06 (60,375)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "id": 1,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "requests",
+              "text": "Value",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"date\": \"2026-04-11\", \"requests\": 14650, \"cachedRequests\": 29, \"uncachedRequests\": 14621, \"bytes\": 32610822, \"cachedBytes\": 879286, \"pageViews\": 56, \"threats\": 5280, \"uniques\": 74, \"cacheHitPct\": 0.2}, {\"date\": \"2026-04-12\", \"requests\": 13611, \"cachedRequests\": 138, \"uncachedRequests\": 13473, \"bytes\": 46048818, \"cachedBytes\": 2531335, \"pageViews\": 33, \"threats\": 5093, \"uniques\": 65, \"cacheHitPct\": 1.0}, {\"date\": \"2026-04-13\", \"requests\": 28633, \"cachedRequests\": 928, \"uncachedRequests\": 27705, \"bytes\": 366701988, \"cachedBytes\": 89708021, \"pageViews\": 246, \"threats\": 1313, \"uniques\": 299, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-14\", \"requests\": 30398, \"cachedRequests\": 1077, \"uncachedRequests\": 29321, \"bytes\": 353257470, \"cachedBytes\": 89767501, \"pageViews\": 240, \"threats\": 358, \"uniques\": 256, \"cacheHitPct\": 3.5}, {\"date\": \"2026-04-15\", \"requests\": 24782, \"cachedRequests\": 733, \"uncachedRequests\": 24049, \"bytes\": 342369113, \"cachedBytes\": 77508593, \"pageViews\": 193, \"threats\": 4, \"uniques\": 203, \"cacheHitPct\": 3.0}, {\"date\": \"2026-04-16\", \"requests\": 29188, \"cachedRequests\": 503, \"uncachedRequests\": 28685, \"bytes\": 311676072, \"cachedBytes\": 31683354, \"pageViews\": 196, \"threats\": 3, \"uniques\": 178, \"cacheHitPct\": 1.7}, {\"date\": \"2026-04-17\", \"requests\": 25687, \"cachedRequests\": 1000, \"uncachedRequests\": 24687, \"bytes\": 450981988, \"cachedBytes\": 75440512, \"pageViews\": 184, \"threats\": 20, \"uniques\": 186, \"cacheHitPct\": 3.9}, {\"date\": \"2026-04-18\", \"requests\": 21712, \"cachedRequests\": 1136, \"uncachedRequests\": 20576, \"bytes\": 291714864, \"cachedBytes\": 71414681, \"pageViews\": 203, \"threats\": 13, \"uniques\": 140, \"cacheHitPct\": 5.2}, {\"date\": \"2026-04-19\", \"requests\": 19618, \"cachedRequests\": 668, \"uncachedRequests\": 18950, \"bytes\": 166942929, \"cachedBytes\": 34568480, \"pageViews\": 81, \"threats\": 3015, \"uniques\": 97, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-20\", \"requests\": 34529, \"cachedRequests\": 643, \"uncachedRequests\": 33886, \"bytes\": 264252567, \"cachedBytes\": 32002855, \"pageViews\": 160, \"threats\": 5197, \"uniques\": 166, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-21\", \"requests\": 34524, \"cachedRequests\": 1079, \"uncachedRequests\": 33445, \"bytes\": 407537494, \"cachedBytes\": 145423145, \"pageViews\": 182, \"threats\": 5127, \"uniques\": 158, \"cacheHitPct\": 3.1}, {\"date\": \"2026-04-22\", \"requests\": 39233, \"cachedRequests\": 744, \"uncachedRequests\": 38489, \"bytes\": 380725213, \"cachedBytes\": 66241316, \"pageViews\": 234, \"threats\": 5201, \"uniques\": 185, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-23\", \"requests\": 30869, \"cachedRequests\": 457, \"uncachedRequests\": 30412, \"bytes\": 299511164, \"cachedBytes\": 12583987, \"pageViews\": 106, \"threats\": 5141, \"uniques\": 129, \"cacheHitPct\": 1.5}, {\"date\": \"2026-04-24\", \"requests\": 33379, \"cachedRequests\": 718, \"uncachedRequests\": 32661, \"bytes\": 422595473, \"cachedBytes\": 57964189, \"pageViews\": 117, \"threats\": 5292, \"uniques\": 202, \"cacheHitPct\": 2.2}, {\"date\": \"2026-04-25\", \"requests\": 26947, \"cachedRequests\": 444, \"uncachedRequests\": 26503, \"bytes\": 279616902, \"cachedBytes\": 35397872, \"pageViews\": 92, \"threats\": 5156, \"uniques\": 155, \"cacheHitPct\": 1.6}, {\"date\": \"2026-04-26\", \"requests\": 24886, \"cachedRequests\": 225, \"uncachedRequests\": 24661, \"bytes\": 111080914, \"cachedBytes\": 20001465, \"pageViews\": 68, \"threats\": 5160, \"uniques\": 104, \"cacheHitPct\": 0.9}, {\"date\": \"2026-04-27\", \"requests\": 44357, \"cachedRequests\": 1401, \"uncachedRequests\": 42956, \"bytes\": 585049294, \"cachedBytes\": 177038461, \"pageViews\": 366, \"threats\": 5156, \"uniques\": 265, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-28\", \"requests\": 35152, \"cachedRequests\": 669, \"uncachedRequests\": 34483, \"bytes\": 501835801, \"cachedBytes\": 44468815, \"pageViews\": 353, \"threats\": 5157, \"uniques\": 206, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-29\", \"requests\": 44958, \"cachedRequests\": 1527, \"uncachedRequests\": 43431, \"bytes\": 629629439, \"cachedBytes\": 192541747, \"pageViews\": 318, \"threats\": 5147, \"uniques\": 236, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-30\", \"requests\": 57081, \"cachedRequests\": 638, \"uncachedRequests\": 56443, \"bytes\": 669506141, \"cachedBytes\": 84781794, \"pageViews\": 213, \"threats\": 5138, \"uniques\": 163, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-01\", \"requests\": 43118, \"cachedRequests\": 702, \"uncachedRequests\": 42416, \"bytes\": 525775634, \"cachedBytes\": 73730356, \"pageViews\": 157, \"threats\": 5114, \"uniques\": 226, \"cacheHitPct\": 1.6}, {\"date\": \"2026-05-02\", \"requests\": 39586, \"cachedRequests\": 422, \"uncachedRequests\": 39164, \"bytes\": 543878778, \"cachedBytes\": 88718508, \"pageViews\": 113, \"threats\": 5103, \"uniques\": 244, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-03\", \"requests\": 21900, \"cachedRequests\": 145, \"uncachedRequests\": 21755, \"bytes\": 215622812, \"cachedBytes\": 17390583, \"pageViews\": 68, \"threats\": 5180, \"uniques\": 204, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-04\", \"requests\": 39981, \"cachedRequests\": 296, \"uncachedRequests\": 39685, \"bytes\": 373540363, \"cachedBytes\": 49623260, \"pageViews\": 140, \"threats\": 5096, \"uniques\": 146, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-05\", \"requests\": 33533, \"cachedRequests\": 483, \"uncachedRequests\": 33050, \"bytes\": 477990455, \"cachedBytes\": 84089723, \"pageViews\": 113, \"threats\": 5098, \"uniques\": 187, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-06\", \"requests\": 60375, \"cachedRequests\": 304, \"uncachedRequests\": 60071, \"bytes\": 280913410, \"cachedBytes\": 25266298, \"pageViews\": 85, \"threats\": 5123, \"uniques\": 226, \"cacheHitPct\": 0.5}, {\"date\": \"2026-05-07\", \"requests\": 39787, \"cachedRequests\": 551, \"uncachedRequests\": 39236, \"bytes\": 433640692, \"cachedBytes\": 84825290, \"pageViews\": 284, \"threats\": 5663, \"uniques\": 201, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-08\", \"requests\": 48278, \"cachedRequests\": 174, \"uncachedRequests\": 48104, \"bytes\": 524513772, \"cachedBytes\": 37061009, \"pageViews\": 227, \"threats\": 5143, \"uniques\": 184, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-09\", \"requests\": 32323, \"cachedRequests\": 132, \"uncachedRequests\": 32191, \"bytes\": 234973248, \"cachedBytes\": 17325822, \"pageViews\": 149, \"threats\": 5119, \"uniques\": 191, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-10\", \"requests\": 22642, \"cachedRequests\": 274, \"uncachedRequests\": 22368, \"bytes\": 231463261, \"cachedBytes\": 23396079, \"pageViews\": 66, \"threats\": 5095, \"uniques\": 160, \"cacheHitPct\": 1.2}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Total Requests",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "Total bytes served from Cloudflare edge",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "blue",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "blue",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "bytes",
+              "text": "Value",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"date\": \"2026-04-11\", \"requests\": 14650, \"cachedRequests\": 29, \"uncachedRequests\": 14621, \"bytes\": 32610822, \"cachedBytes\": 879286, \"pageViews\": 56, \"threats\": 5280, \"uniques\": 74, \"cacheHitPct\": 0.2}, {\"date\": \"2026-04-12\", \"requests\": 13611, \"cachedRequests\": 138, \"uncachedRequests\": 13473, \"bytes\": 46048818, \"cachedBytes\": 2531335, \"pageViews\": 33, \"threats\": 5093, \"uniques\": 65, \"cacheHitPct\": 1.0}, {\"date\": \"2026-04-13\", \"requests\": 28633, \"cachedRequests\": 928, \"uncachedRequests\": 27705, \"bytes\": 366701988, \"cachedBytes\": 89708021, \"pageViews\": 246, \"threats\": 1313, \"uniques\": 299, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-14\", \"requests\": 30398, \"cachedRequests\": 1077, \"uncachedRequests\": 29321, \"bytes\": 353257470, \"cachedBytes\": 89767501, \"pageViews\": 240, \"threats\": 358, \"uniques\": 256, \"cacheHitPct\": 3.5}, {\"date\": \"2026-04-15\", \"requests\": 24782, \"cachedRequests\": 733, \"uncachedRequests\": 24049, \"bytes\": 342369113, \"cachedBytes\": 77508593, \"pageViews\": 193, \"threats\": 4, \"uniques\": 203, \"cacheHitPct\": 3.0}, {\"date\": \"2026-04-16\", \"requests\": 29188, \"cachedRequests\": 503, \"uncachedRequests\": 28685, \"bytes\": 311676072, \"cachedBytes\": 31683354, \"pageViews\": 196, \"threats\": 3, \"uniques\": 178, \"cacheHitPct\": 1.7}, {\"date\": \"2026-04-17\", \"requests\": 25687, \"cachedRequests\": 1000, \"uncachedRequests\": 24687, \"bytes\": 450981988, \"cachedBytes\": 75440512, \"pageViews\": 184, \"threats\": 20, \"uniques\": 186, \"cacheHitPct\": 3.9}, {\"date\": \"2026-04-18\", \"requests\": 21712, \"cachedRequests\": 1136, \"uncachedRequests\": 20576, \"bytes\": 291714864, \"cachedBytes\": 71414681, \"pageViews\": 203, \"threats\": 13, \"uniques\": 140, \"cacheHitPct\": 5.2}, {\"date\": \"2026-04-19\", \"requests\": 19618, \"cachedRequests\": 668, \"uncachedRequests\": 18950, \"bytes\": 166942929, \"cachedBytes\": 34568480, \"pageViews\": 81, \"threats\": 3015, \"uniques\": 97, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-20\", \"requests\": 34529, \"cachedRequests\": 643, \"uncachedRequests\": 33886, \"bytes\": 264252567, \"cachedBytes\": 32002855, \"pageViews\": 160, \"threats\": 5197, \"uniques\": 166, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-21\", \"requests\": 34524, \"cachedRequests\": 1079, \"uncachedRequests\": 33445, \"bytes\": 407537494, \"cachedBytes\": 145423145, \"pageViews\": 182, \"threats\": 5127, \"uniques\": 158, \"cacheHitPct\": 3.1}, {\"date\": \"2026-04-22\", \"requests\": 39233, \"cachedRequests\": 744, \"uncachedRequests\": 38489, \"bytes\": 380725213, \"cachedBytes\": 66241316, \"pageViews\": 234, \"threats\": 5201, \"uniques\": 185, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-23\", \"requests\": 30869, \"cachedRequests\": 457, \"uncachedRequests\": 30412, \"bytes\": 299511164, \"cachedBytes\": 12583987, \"pageViews\": 106, \"threats\": 5141, \"uniques\": 129, \"cacheHitPct\": 1.5}, {\"date\": \"2026-04-24\", \"requests\": 33379, \"cachedRequests\": 718, \"uncachedRequests\": 32661, \"bytes\": 422595473, \"cachedBytes\": 57964189, \"pageViews\": 117, \"threats\": 5292, \"uniques\": 202, \"cacheHitPct\": 2.2}, {\"date\": \"2026-04-25\", \"requests\": 26947, \"cachedRequests\": 444, \"uncachedRequests\": 26503, \"bytes\": 279616902, \"cachedBytes\": 35397872, \"pageViews\": 92, \"threats\": 5156, \"uniques\": 155, \"cacheHitPct\": 1.6}, {\"date\": \"2026-04-26\", \"requests\": 24886, \"cachedRequests\": 225, \"uncachedRequests\": 24661, \"bytes\": 111080914, \"cachedBytes\": 20001465, \"pageViews\": 68, \"threats\": 5160, \"uniques\": 104, \"cacheHitPct\": 0.9}, {\"date\": \"2026-04-27\", \"requests\": 44357, \"cachedRequests\": 1401, \"uncachedRequests\": 42956, \"bytes\": 585049294, \"cachedBytes\": 177038461, \"pageViews\": 366, \"threats\": 5156, \"uniques\": 265, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-28\", \"requests\": 35152, \"cachedRequests\": 669, \"uncachedRequests\": 34483, \"bytes\": 501835801, \"cachedBytes\": 44468815, \"pageViews\": 353, \"threats\": 5157, \"uniques\": 206, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-29\", \"requests\": 44958, \"cachedRequests\": 1527, \"uncachedRequests\": 43431, \"bytes\": 629629439, \"cachedBytes\": 192541747, \"pageViews\": 318, \"threats\": 5147, \"uniques\": 236, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-30\", \"requests\": 57081, \"cachedRequests\": 638, \"uncachedRequests\": 56443, \"bytes\": 669506141, \"cachedBytes\": 84781794, \"pageViews\": 213, \"threats\": 5138, \"uniques\": 163, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-01\", \"requests\": 43118, \"cachedRequests\": 702, \"uncachedRequests\": 42416, \"bytes\": 525775634, \"cachedBytes\": 73730356, \"pageViews\": 157, \"threats\": 5114, \"uniques\": 226, \"cacheHitPct\": 1.6}, {\"date\": \"2026-05-02\", \"requests\": 39586, \"cachedRequests\": 422, \"uncachedRequests\": 39164, \"bytes\": 543878778, \"cachedBytes\": 88718508, \"pageViews\": 113, \"threats\": 5103, \"uniques\": 244, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-03\", \"requests\": 21900, \"cachedRequests\": 145, \"uncachedRequests\": 21755, \"bytes\": 215622812, \"cachedBytes\": 17390583, \"pageViews\": 68, \"threats\": 5180, \"uniques\": 204, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-04\", \"requests\": 39981, \"cachedRequests\": 296, \"uncachedRequests\": 39685, \"bytes\": 373540363, \"cachedBytes\": 49623260, \"pageViews\": 140, \"threats\": 5096, \"uniques\": 146, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-05\", \"requests\": 33533, \"cachedRequests\": 483, \"uncachedRequests\": 33050, \"bytes\": 477990455, \"cachedBytes\": 84089723, \"pageViews\": 113, \"threats\": 5098, \"uniques\": 187, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-06\", \"requests\": 60375, \"cachedRequests\": 304, \"uncachedRequests\": 60071, \"bytes\": 280913410, \"cachedBytes\": 25266298, \"pageViews\": 85, \"threats\": 5123, \"uniques\": 226, \"cacheHitPct\": 0.5}, {\"date\": \"2026-05-07\", \"requests\": 39787, \"cachedRequests\": 551, \"uncachedRequests\": 39236, \"bytes\": 433640692, \"cachedBytes\": 84825290, \"pageViews\": 284, \"threats\": 5663, \"uniques\": 201, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-08\", \"requests\": 48278, \"cachedRequests\": 174, \"uncachedRequests\": 48104, \"bytes\": 524513772, \"cachedBytes\": 37061009, \"pageViews\": 227, \"threats\": 5143, \"uniques\": 184, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-09\", \"requests\": 32323, \"cachedRequests\": 132, \"uncachedRequests\": 32191, \"bytes\": 234973248, \"cachedBytes\": 17325822, \"pageViews\": 149, \"threats\": 5119, \"uniques\": 191, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-10\", \"requests\": 22642, \"cachedRequests\": 274, \"uncachedRequests\": 22368, \"bytes\": 231463261, \"cachedBytes\": 23396079, \"pageViews\": 66, \"threats\": 5095, \"uniques\": 160, \"cacheHitPct\": 1.2}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Total Bandwidth",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "Unique IPs across the period",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "purple",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "purple",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "uniques",
+              "text": "Value",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"date\": \"2026-04-11\", \"requests\": 14650, \"cachedRequests\": 29, \"uncachedRequests\": 14621, \"bytes\": 32610822, \"cachedBytes\": 879286, \"pageViews\": 56, \"threats\": 5280, \"uniques\": 74, \"cacheHitPct\": 0.2}, {\"date\": \"2026-04-12\", \"requests\": 13611, \"cachedRequests\": 138, \"uncachedRequests\": 13473, \"bytes\": 46048818, \"cachedBytes\": 2531335, \"pageViews\": 33, \"threats\": 5093, \"uniques\": 65, \"cacheHitPct\": 1.0}, {\"date\": \"2026-04-13\", \"requests\": 28633, \"cachedRequests\": 928, \"uncachedRequests\": 27705, \"bytes\": 366701988, \"cachedBytes\": 89708021, \"pageViews\": 246, \"threats\": 1313, \"uniques\": 299, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-14\", \"requests\": 30398, \"cachedRequests\": 1077, \"uncachedRequests\": 29321, \"bytes\": 353257470, \"cachedBytes\": 89767501, \"pageViews\": 240, \"threats\": 358, \"uniques\": 256, \"cacheHitPct\": 3.5}, {\"date\": \"2026-04-15\", \"requests\": 24782, \"cachedRequests\": 733, \"uncachedRequests\": 24049, \"bytes\": 342369113, \"cachedBytes\": 77508593, \"pageViews\": 193, \"threats\": 4, \"uniques\": 203, \"cacheHitPct\": 3.0}, {\"date\": \"2026-04-16\", \"requests\": 29188, \"cachedRequests\": 503, \"uncachedRequests\": 28685, \"bytes\": 311676072, \"cachedBytes\": 31683354, \"pageViews\": 196, \"threats\": 3, \"uniques\": 178, \"cacheHitPct\": 1.7}, {\"date\": \"2026-04-17\", \"requests\": 25687, \"cachedRequests\": 1000, \"uncachedRequests\": 24687, \"bytes\": 450981988, \"cachedBytes\": 75440512, \"pageViews\": 184, \"threats\": 20, \"uniques\": 186, \"cacheHitPct\": 3.9}, {\"date\": \"2026-04-18\", \"requests\": 21712, \"cachedRequests\": 1136, \"uncachedRequests\": 20576, \"bytes\": 291714864, \"cachedBytes\": 71414681, \"pageViews\": 203, \"threats\": 13, \"uniques\": 140, \"cacheHitPct\": 5.2}, {\"date\": \"2026-04-19\", \"requests\": 19618, \"cachedRequests\": 668, \"uncachedRequests\": 18950, \"bytes\": 166942929, \"cachedBytes\": 34568480, \"pageViews\": 81, \"threats\": 3015, \"uniques\": 97, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-20\", \"requests\": 34529, \"cachedRequests\": 643, \"uncachedRequests\": 33886, \"bytes\": 264252567, \"cachedBytes\": 32002855, \"pageViews\": 160, \"threats\": 5197, \"uniques\": 166, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-21\", \"requests\": 34524, \"cachedRequests\": 1079, \"uncachedRequests\": 33445, \"bytes\": 407537494, \"cachedBytes\": 145423145, \"pageViews\": 182, \"threats\": 5127, \"uniques\": 158, \"cacheHitPct\": 3.1}, {\"date\": \"2026-04-22\", \"requests\": 39233, \"cachedRequests\": 744, \"uncachedRequests\": 38489, \"bytes\": 380725213, \"cachedBytes\": 66241316, \"pageViews\": 234, \"threats\": 5201, \"uniques\": 185, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-23\", \"requests\": 30869, \"cachedRequests\": 457, \"uncachedRequests\": 30412, \"bytes\": 299511164, \"cachedBytes\": 12583987, \"pageViews\": 106, \"threats\": 5141, \"uniques\": 129, \"cacheHitPct\": 1.5}, {\"date\": \"2026-04-24\", \"requests\": 33379, \"cachedRequests\": 718, \"uncachedRequests\": 32661, \"bytes\": 422595473, \"cachedBytes\": 57964189, \"pageViews\": 117, \"threats\": 5292, \"uniques\": 202, \"cacheHitPct\": 2.2}, {\"date\": \"2026-04-25\", \"requests\": 26947, \"cachedRequests\": 444, \"uncachedRequests\": 26503, \"bytes\": 279616902, \"cachedBytes\": 35397872, \"pageViews\": 92, \"threats\": 5156, \"uniques\": 155, \"cacheHitPct\": 1.6}, {\"date\": \"2026-04-26\", \"requests\": 24886, \"cachedRequests\": 225, \"uncachedRequests\": 24661, \"bytes\": 111080914, \"cachedBytes\": 20001465, \"pageViews\": 68, \"threats\": 5160, \"uniques\": 104, \"cacheHitPct\": 0.9}, {\"date\": \"2026-04-27\", \"requests\": 44357, \"cachedRequests\": 1401, \"uncachedRequests\": 42956, \"bytes\": 585049294, \"cachedBytes\": 177038461, \"pageViews\": 366, \"threats\": 5156, \"uniques\": 265, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-28\", \"requests\": 35152, \"cachedRequests\": 669, \"uncachedRequests\": 34483, \"bytes\": 501835801, \"cachedBytes\": 44468815, \"pageViews\": 353, \"threats\": 5157, \"uniques\": 206, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-29\", \"requests\": 44958, \"cachedRequests\": 1527, \"uncachedRequests\": 43431, \"bytes\": 629629439, \"cachedBytes\": 192541747, \"pageViews\": 318, \"threats\": 5147, \"uniques\": 236, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-30\", \"requests\": 57081, \"cachedRequests\": 638, \"uncachedRequests\": 56443, \"bytes\": 669506141, \"cachedBytes\": 84781794, \"pageViews\": 213, \"threats\": 5138, \"uniques\": 163, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-01\", \"requests\": 43118, \"cachedRequests\": 702, \"uncachedRequests\": 42416, \"bytes\": 525775634, \"cachedBytes\": 73730356, \"pageViews\": 157, \"threats\": 5114, \"uniques\": 226, \"cacheHitPct\": 1.6}, {\"date\": \"2026-05-02\", \"requests\": 39586, \"cachedRequests\": 422, \"uncachedRequests\": 39164, \"bytes\": 543878778, \"cachedBytes\": 88718508, \"pageViews\": 113, \"threats\": 5103, \"uniques\": 244, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-03\", \"requests\": 21900, \"cachedRequests\": 145, \"uncachedRequests\": 21755, \"bytes\": 215622812, \"cachedBytes\": 17390583, \"pageViews\": 68, \"threats\": 5180, \"uniques\": 204, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-04\", \"requests\": 39981, \"cachedRequests\": 296, \"uncachedRequests\": 39685, \"bytes\": 373540363, \"cachedBytes\": 49623260, \"pageViews\": 140, \"threats\": 5096, \"uniques\": 146, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-05\", \"requests\": 33533, \"cachedRequests\": 483, \"uncachedRequests\": 33050, \"bytes\": 477990455, \"cachedBytes\": 84089723, \"pageViews\": 113, \"threats\": 5098, \"uniques\": 187, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-06\", \"requests\": 60375, \"cachedRequests\": 304, \"uncachedRequests\": 60071, \"bytes\": 280913410, \"cachedBytes\": 25266298, \"pageViews\": 85, \"threats\": 5123, \"uniques\": 226, \"cacheHitPct\": 0.5}, {\"date\": \"2026-05-07\", \"requests\": 39787, \"cachedRequests\": 551, \"uncachedRequests\": 39236, \"bytes\": 433640692, \"cachedBytes\": 84825290, \"pageViews\": 284, \"threats\": 5663, \"uniques\": 201, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-08\", \"requests\": 48278, \"cachedRequests\": 174, \"uncachedRequests\": 48104, \"bytes\": 524513772, \"cachedBytes\": 37061009, \"pageViews\": 227, \"threats\": 5143, \"uniques\": 184, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-09\", \"requests\": 32323, \"cachedRequests\": 132, \"uncachedRequests\": 32191, \"bytes\": 234973248, \"cachedBytes\": 17325822, \"pageViews\": 149, \"threats\": 5119, \"uniques\": 191, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-10\", \"requests\": 22642, \"cachedRequests\": 274, \"uncachedRequests\": 22368, \"bytes\": 231463261, \"cachedBytes\": 23396079, \"pageViews\": 66, \"threats\": 5095, \"uniques\": 160, \"cacheHitPct\": 1.2}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Unique Visitors",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "Threat rate: 12.42% of all traffic",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "red",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "threats",
+              "text": "Value",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"date\": \"2026-04-11\", \"requests\": 14650, \"cachedRequests\": 29, \"uncachedRequests\": 14621, \"bytes\": 32610822, \"cachedBytes\": 879286, \"pageViews\": 56, \"threats\": 5280, \"uniques\": 74, \"cacheHitPct\": 0.2}, {\"date\": \"2026-04-12\", \"requests\": 13611, \"cachedRequests\": 138, \"uncachedRequests\": 13473, \"bytes\": 46048818, \"cachedBytes\": 2531335, \"pageViews\": 33, \"threats\": 5093, \"uniques\": 65, \"cacheHitPct\": 1.0}, {\"date\": \"2026-04-13\", \"requests\": 28633, \"cachedRequests\": 928, \"uncachedRequests\": 27705, \"bytes\": 366701988, \"cachedBytes\": 89708021, \"pageViews\": 246, \"threats\": 1313, \"uniques\": 299, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-14\", \"requests\": 30398, \"cachedRequests\": 1077, \"uncachedRequests\": 29321, \"bytes\": 353257470, \"cachedBytes\": 89767501, \"pageViews\": 240, \"threats\": 358, \"uniques\": 256, \"cacheHitPct\": 3.5}, {\"date\": \"2026-04-15\", \"requests\": 24782, \"cachedRequests\": 733, \"uncachedRequests\": 24049, \"bytes\": 342369113, \"cachedBytes\": 77508593, \"pageViews\": 193, \"threats\": 4, \"uniques\": 203, \"cacheHitPct\": 3.0}, {\"date\": \"2026-04-16\", \"requests\": 29188, \"cachedRequests\": 503, \"uncachedRequests\": 28685, \"bytes\": 311676072, \"cachedBytes\": 31683354, \"pageViews\": 196, \"threats\": 3, \"uniques\": 178, \"cacheHitPct\": 1.7}, {\"date\": \"2026-04-17\", \"requests\": 25687, \"cachedRequests\": 1000, \"uncachedRequests\": 24687, \"bytes\": 450981988, \"cachedBytes\": 75440512, \"pageViews\": 184, \"threats\": 20, \"uniques\": 186, \"cacheHitPct\": 3.9}, {\"date\": \"2026-04-18\", \"requests\": 21712, \"cachedRequests\": 1136, \"uncachedRequests\": 20576, \"bytes\": 291714864, \"cachedBytes\": 71414681, \"pageViews\": 203, \"threats\": 13, \"uniques\": 140, \"cacheHitPct\": 5.2}, {\"date\": \"2026-04-19\", \"requests\": 19618, \"cachedRequests\": 668, \"uncachedRequests\": 18950, \"bytes\": 166942929, \"cachedBytes\": 34568480, \"pageViews\": 81, \"threats\": 3015, \"uniques\": 97, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-20\", \"requests\": 34529, \"cachedRequests\": 643, \"uncachedRequests\": 33886, \"bytes\": 264252567, \"cachedBytes\": 32002855, \"pageViews\": 160, \"threats\": 5197, \"uniques\": 166, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-21\", \"requests\": 34524, \"cachedRequests\": 1079, \"uncachedRequests\": 33445, \"bytes\": 407537494, \"cachedBytes\": 145423145, \"pageViews\": 182, \"threats\": 5127, \"uniques\": 158, \"cacheHitPct\": 3.1}, {\"date\": \"2026-04-22\", \"requests\": 39233, \"cachedRequests\": 744, \"uncachedRequests\": 38489, \"bytes\": 380725213, \"cachedBytes\": 66241316, \"pageViews\": 234, \"threats\": 5201, \"uniques\": 185, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-23\", \"requests\": 30869, \"cachedRequests\": 457, \"uncachedRequests\": 30412, \"bytes\": 299511164, \"cachedBytes\": 12583987, \"pageViews\": 106, \"threats\": 5141, \"uniques\": 129, \"cacheHitPct\": 1.5}, {\"date\": \"2026-04-24\", \"requests\": 33379, \"cachedRequests\": 718, \"uncachedRequests\": 32661, \"bytes\": 422595473, \"cachedBytes\": 57964189, \"pageViews\": 117, \"threats\": 5292, \"uniques\": 202, \"cacheHitPct\": 2.2}, {\"date\": \"2026-04-25\", \"requests\": 26947, \"cachedRequests\": 444, \"uncachedRequests\": 26503, \"bytes\": 279616902, \"cachedBytes\": 35397872, \"pageViews\": 92, \"threats\": 5156, \"uniques\": 155, \"cacheHitPct\": 1.6}, {\"date\": \"2026-04-26\", \"requests\": 24886, \"cachedRequests\": 225, \"uncachedRequests\": 24661, \"bytes\": 111080914, \"cachedBytes\": 20001465, \"pageViews\": 68, \"threats\": 5160, \"uniques\": 104, \"cacheHitPct\": 0.9}, {\"date\": \"2026-04-27\", \"requests\": 44357, \"cachedRequests\": 1401, \"uncachedRequests\": 42956, \"bytes\": 585049294, \"cachedBytes\": 177038461, \"pageViews\": 366, \"threats\": 5156, \"uniques\": 265, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-28\", \"requests\": 35152, \"cachedRequests\": 669, \"uncachedRequests\": 34483, \"bytes\": 501835801, \"cachedBytes\": 44468815, \"pageViews\": 353, \"threats\": 5157, \"uniques\": 206, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-29\", \"requests\": 44958, \"cachedRequests\": 1527, \"uncachedRequests\": 43431, \"bytes\": 629629439, \"cachedBytes\": 192541747, \"pageViews\": 318, \"threats\": 5147, \"uniques\": 236, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-30\", \"requests\": 57081, \"cachedRequests\": 638, \"uncachedRequests\": 56443, \"bytes\": 669506141, \"cachedBytes\": 84781794, \"pageViews\": 213, \"threats\": 5138, \"uniques\": 163, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-01\", \"requests\": 43118, \"cachedRequests\": 702, \"uncachedRequests\": 42416, \"bytes\": 525775634, \"cachedBytes\": 73730356, \"pageViews\": 157, \"threats\": 5114, \"uniques\": 226, \"cacheHitPct\": 1.6}, {\"date\": \"2026-05-02\", \"requests\": 39586, \"cachedRequests\": 422, \"uncachedRequests\": 39164, \"bytes\": 543878778, \"cachedBytes\": 88718508, \"pageViews\": 113, \"threats\": 5103, \"uniques\": 244, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-03\", \"requests\": 21900, \"cachedRequests\": 145, \"uncachedRequests\": 21755, \"bytes\": 215622812, \"cachedBytes\": 17390583, \"pageViews\": 68, \"threats\": 5180, \"uniques\": 204, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-04\", \"requests\": 39981, \"cachedRequests\": 296, \"uncachedRequests\": 39685, \"bytes\": 373540363, \"cachedBytes\": 49623260, \"pageViews\": 140, \"threats\": 5096, \"uniques\": 146, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-05\", \"requests\": 33533, \"cachedRequests\": 483, \"uncachedRequests\": 33050, \"bytes\": 477990455, \"cachedBytes\": 84089723, \"pageViews\": 113, \"threats\": 5098, \"uniques\": 187, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-06\", \"requests\": 60375, \"cachedRequests\": 304, \"uncachedRequests\": 60071, \"bytes\": 280913410, \"cachedBytes\": 25266298, \"pageViews\": 85, \"threats\": 5123, \"uniques\": 226, \"cacheHitPct\": 0.5}, {\"date\": \"2026-05-07\", \"requests\": 39787, \"cachedRequests\": 551, \"uncachedRequests\": 39236, \"bytes\": 433640692, \"cachedBytes\": 84825290, \"pageViews\": 284, \"threats\": 5663, \"uniques\": 201, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-08\", \"requests\": 48278, \"cachedRequests\": 174, \"uncachedRequests\": 48104, \"bytes\": 524513772, \"cachedBytes\": 37061009, \"pageViews\": 227, \"threats\": 5143, \"uniques\": 184, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-09\", \"requests\": 32323, \"cachedRequests\": 132, \"uncachedRequests\": 32191, \"bytes\": 234973248, \"cachedBytes\": 17325822, \"pageViews\": 149, \"threats\": 5119, \"uniques\": 191, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-10\", \"requests\": 22642, \"cachedRequests\": 274, \"uncachedRequests\": 22368, \"bytes\": 231463261, \"cachedBytes\": 23396079, \"pageViews\": 66, \"threats\": 5095, \"uniques\": 160, \"cacheHitPct\": 1.2}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "🛡️ Threats Blocked",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "Human page views (excludes bots)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "orange",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "orange",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 1
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "pageViews",
+              "text": "Value",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"date\": \"2026-04-11\", \"requests\": 14650, \"cachedRequests\": 29, \"uncachedRequests\": 14621, \"bytes\": 32610822, \"cachedBytes\": 879286, \"pageViews\": 56, \"threats\": 5280, \"uniques\": 74, \"cacheHitPct\": 0.2}, {\"date\": \"2026-04-12\", \"requests\": 13611, \"cachedRequests\": 138, \"uncachedRequests\": 13473, \"bytes\": 46048818, \"cachedBytes\": 2531335, \"pageViews\": 33, \"threats\": 5093, \"uniques\": 65, \"cacheHitPct\": 1.0}, {\"date\": \"2026-04-13\", \"requests\": 28633, \"cachedRequests\": 928, \"uncachedRequests\": 27705, \"bytes\": 366701988, \"cachedBytes\": 89708021, \"pageViews\": 246, \"threats\": 1313, \"uniques\": 299, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-14\", \"requests\": 30398, \"cachedRequests\": 1077, \"uncachedRequests\": 29321, \"bytes\": 353257470, \"cachedBytes\": 89767501, \"pageViews\": 240, \"threats\": 358, \"uniques\": 256, \"cacheHitPct\": 3.5}, {\"date\": \"2026-04-15\", \"requests\": 24782, \"cachedRequests\": 733, \"uncachedRequests\": 24049, \"bytes\": 342369113, \"cachedBytes\": 77508593, \"pageViews\": 193, \"threats\": 4, \"uniques\": 203, \"cacheHitPct\": 3.0}, {\"date\": \"2026-04-16\", \"requests\": 29188, \"cachedRequests\": 503, \"uncachedRequests\": 28685, \"bytes\": 311676072, \"cachedBytes\": 31683354, \"pageViews\": 196, \"threats\": 3, \"uniques\": 178, \"cacheHitPct\": 1.7}, {\"date\": \"2026-04-17\", \"requests\": 25687, \"cachedRequests\": 1000, \"uncachedRequests\": 24687, \"bytes\": 450981988, \"cachedBytes\": 75440512, \"pageViews\": 184, \"threats\": 20, \"uniques\": 186, \"cacheHitPct\": 3.9}, {\"date\": \"2026-04-18\", \"requests\": 21712, \"cachedRequests\": 1136, \"uncachedRequests\": 20576, \"bytes\": 291714864, \"cachedBytes\": 71414681, \"pageViews\": 203, \"threats\": 13, \"uniques\": 140, \"cacheHitPct\": 5.2}, {\"date\": \"2026-04-19\", \"requests\": 19618, \"cachedRequests\": 668, \"uncachedRequests\": 18950, \"bytes\": 166942929, \"cachedBytes\": 34568480, \"pageViews\": 81, \"threats\": 3015, \"uniques\": 97, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-20\", \"requests\": 34529, \"cachedRequests\": 643, \"uncachedRequests\": 33886, \"bytes\": 264252567, \"cachedBytes\": 32002855, \"pageViews\": 160, \"threats\": 5197, \"uniques\": 166, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-21\", \"requests\": 34524, \"cachedRequests\": 1079, \"uncachedRequests\": 33445, \"bytes\": 407537494, \"cachedBytes\": 145423145, \"pageViews\": 182, \"threats\": 5127, \"uniques\": 158, \"cacheHitPct\": 3.1}, {\"date\": \"2026-04-22\", \"requests\": 39233, \"cachedRequests\": 744, \"uncachedRequests\": 38489, \"bytes\": 380725213, \"cachedBytes\": 66241316, \"pageViews\": 234, \"threats\": 5201, \"uniques\": 185, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-23\", \"requests\": 30869, \"cachedRequests\": 457, \"uncachedRequests\": 30412, \"bytes\": 299511164, \"cachedBytes\": 12583987, \"pageViews\": 106, \"threats\": 5141, \"uniques\": 129, \"cacheHitPct\": 1.5}, {\"date\": \"2026-04-24\", \"requests\": 33379, \"cachedRequests\": 718, \"uncachedRequests\": 32661, \"bytes\": 422595473, \"cachedBytes\": 57964189, \"pageViews\": 117, \"threats\": 5292, \"uniques\": 202, \"cacheHitPct\": 2.2}, {\"date\": \"2026-04-25\", \"requests\": 26947, \"cachedRequests\": 444, \"uncachedRequests\": 26503, \"bytes\": 279616902, \"cachedBytes\": 35397872, \"pageViews\": 92, \"threats\": 5156, \"uniques\": 155, \"cacheHitPct\": 1.6}, {\"date\": \"2026-04-26\", \"requests\": 24886, \"cachedRequests\": 225, \"uncachedRequests\": 24661, \"bytes\": 111080914, \"cachedBytes\": 20001465, \"pageViews\": 68, \"threats\": 5160, \"uniques\": 104, \"cacheHitPct\": 0.9}, {\"date\": \"2026-04-27\", \"requests\": 44357, \"cachedRequests\": 1401, \"uncachedRequests\": 42956, \"bytes\": 585049294, \"cachedBytes\": 177038461, \"pageViews\": 366, \"threats\": 5156, \"uniques\": 265, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-28\", \"requests\": 35152, \"cachedRequests\": 669, \"uncachedRequests\": 34483, \"bytes\": 501835801, \"cachedBytes\": 44468815, \"pageViews\": 353, \"threats\": 5157, \"uniques\": 206, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-29\", \"requests\": 44958, \"cachedRequests\": 1527, \"uncachedRequests\": 43431, \"bytes\": 629629439, \"cachedBytes\": 192541747, \"pageViews\": 318, \"threats\": 5147, \"uniques\": 236, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-30\", \"requests\": 57081, \"cachedRequests\": 638, \"uncachedRequests\": 56443, \"bytes\": 669506141, \"cachedBytes\": 84781794, \"pageViews\": 213, \"threats\": 5138, \"uniques\": 163, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-01\", \"requests\": 43118, \"cachedRequests\": 702, \"uncachedRequests\": 42416, \"bytes\": 525775634, \"cachedBytes\": 73730356, \"pageViews\": 157, \"threats\": 5114, \"uniques\": 226, \"cacheHitPct\": 1.6}, {\"date\": \"2026-05-02\", \"requests\": 39586, \"cachedRequests\": 422, \"uncachedRequests\": 39164, \"bytes\": 543878778, \"cachedBytes\": 88718508, \"pageViews\": 113, \"threats\": 5103, \"uniques\": 244, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-03\", \"requests\": 21900, \"cachedRequests\": 145, \"uncachedRequests\": 21755, \"bytes\": 215622812, \"cachedBytes\": 17390583, \"pageViews\": 68, \"threats\": 5180, \"uniques\": 204, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-04\", \"requests\": 39981, \"cachedRequests\": 296, \"uncachedRequests\": 39685, \"bytes\": 373540363, \"cachedBytes\": 49623260, \"pageViews\": 140, \"threats\": 5096, \"uniques\": 146, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-05\", \"requests\": 33533, \"cachedRequests\": 483, \"uncachedRequests\": 33050, \"bytes\": 477990455, \"cachedBytes\": 84089723, \"pageViews\": 113, \"threats\": 5098, \"uniques\": 187, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-06\", \"requests\": 60375, \"cachedRequests\": 304, \"uncachedRequests\": 60071, \"bytes\": 280913410, \"cachedBytes\": 25266298, \"pageViews\": 85, \"threats\": 5123, \"uniques\": 226, \"cacheHitPct\": 0.5}, {\"date\": \"2026-05-07\", \"requests\": 39787, \"cachedRequests\": 551, \"uncachedRequests\": 39236, \"bytes\": 433640692, \"cachedBytes\": 84825290, \"pageViews\": 284, \"threats\": 5663, \"uniques\": 201, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-08\", \"requests\": 48278, \"cachedRequests\": 174, \"uncachedRequests\": 48104, \"bytes\": 524513772, \"cachedBytes\": 37061009, \"pageViews\": 227, \"threats\": 5143, \"uniques\": 184, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-09\", \"requests\": 32323, \"cachedRequests\": 132, \"uncachedRequests\": 32191, \"bytes\": 234973248, \"cachedBytes\": 17325822, \"pageViews\": 149, \"threats\": 5119, \"uniques\": 191, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-10\", \"requests\": 22642, \"cachedRequests\": 274, \"uncachedRequests\": 22368, \"bytes\": 231463261, \"cachedBytes\": 23396079, \"pageViews\": 66, \"threats\": 5095, \"uniques\": 160, \"cacheHitPct\": 1.2}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Page Views",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "Avg over 30 days",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "semi-dark-blue",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-blue",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 1
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "requests",
+              "text": "Value",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"date\": \"2026-04-11\", \"requests\": 14650, \"cachedRequests\": 29, \"uncachedRequests\": 14621, \"bytes\": 32610822, \"cachedBytes\": 879286, \"pageViews\": 56, \"threats\": 5280, \"uniques\": 74, \"cacheHitPct\": 0.2}, {\"date\": \"2026-04-12\", \"requests\": 13611, \"cachedRequests\": 138, \"uncachedRequests\": 13473, \"bytes\": 46048818, \"cachedBytes\": 2531335, \"pageViews\": 33, \"threats\": 5093, \"uniques\": 65, \"cacheHitPct\": 1.0}, {\"date\": \"2026-04-13\", \"requests\": 28633, \"cachedRequests\": 928, \"uncachedRequests\": 27705, \"bytes\": 366701988, \"cachedBytes\": 89708021, \"pageViews\": 246, \"threats\": 1313, \"uniques\": 299, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-14\", \"requests\": 30398, \"cachedRequests\": 1077, \"uncachedRequests\": 29321, \"bytes\": 353257470, \"cachedBytes\": 89767501, \"pageViews\": 240, \"threats\": 358, \"uniques\": 256, \"cacheHitPct\": 3.5}, {\"date\": \"2026-04-15\", \"requests\": 24782, \"cachedRequests\": 733, \"uncachedRequests\": 24049, \"bytes\": 342369113, \"cachedBytes\": 77508593, \"pageViews\": 193, \"threats\": 4, \"uniques\": 203, \"cacheHitPct\": 3.0}, {\"date\": \"2026-04-16\", \"requests\": 29188, \"cachedRequests\": 503, \"uncachedRequests\": 28685, \"bytes\": 311676072, \"cachedBytes\": 31683354, \"pageViews\": 196, \"threats\": 3, \"uniques\": 178, \"cacheHitPct\": 1.7}, {\"date\": \"2026-04-17\", \"requests\": 25687, \"cachedRequests\": 1000, \"uncachedRequests\": 24687, \"bytes\": 450981988, \"cachedBytes\": 75440512, \"pageViews\": 184, \"threats\": 20, \"uniques\": 186, \"cacheHitPct\": 3.9}, {\"date\": \"2026-04-18\", \"requests\": 21712, \"cachedRequests\": 1136, \"uncachedRequests\": 20576, \"bytes\": 291714864, \"cachedBytes\": 71414681, \"pageViews\": 203, \"threats\": 13, \"uniques\": 140, \"cacheHitPct\": 5.2}, {\"date\": \"2026-04-19\", \"requests\": 19618, \"cachedRequests\": 668, \"uncachedRequests\": 18950, \"bytes\": 166942929, \"cachedBytes\": 34568480, \"pageViews\": 81, \"threats\": 3015, \"uniques\": 97, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-20\", \"requests\": 34529, \"cachedRequests\": 643, \"uncachedRequests\": 33886, \"bytes\": 264252567, \"cachedBytes\": 32002855, \"pageViews\": 160, \"threats\": 5197, \"uniques\": 166, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-21\", \"requests\": 34524, \"cachedRequests\": 1079, \"uncachedRequests\": 33445, \"bytes\": 407537494, \"cachedBytes\": 145423145, \"pageViews\": 182, \"threats\": 5127, \"uniques\": 158, \"cacheHitPct\": 3.1}, {\"date\": \"2026-04-22\", \"requests\": 39233, \"cachedRequests\": 744, \"uncachedRequests\": 38489, \"bytes\": 380725213, \"cachedBytes\": 66241316, \"pageViews\": 234, \"threats\": 5201, \"uniques\": 185, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-23\", \"requests\": 30869, \"cachedRequests\": 457, \"uncachedRequests\": 30412, \"bytes\": 299511164, \"cachedBytes\": 12583987, \"pageViews\": 106, \"threats\": 5141, \"uniques\": 129, \"cacheHitPct\": 1.5}, {\"date\": \"2026-04-24\", \"requests\": 33379, \"cachedRequests\": 718, \"uncachedRequests\": 32661, \"bytes\": 422595473, \"cachedBytes\": 57964189, \"pageViews\": 117, \"threats\": 5292, \"uniques\": 202, \"cacheHitPct\": 2.2}, {\"date\": \"2026-04-25\", \"requests\": 26947, \"cachedRequests\": 444, \"uncachedRequests\": 26503, \"bytes\": 279616902, \"cachedBytes\": 35397872, \"pageViews\": 92, \"threats\": 5156, \"uniques\": 155, \"cacheHitPct\": 1.6}, {\"date\": \"2026-04-26\", \"requests\": 24886, \"cachedRequests\": 225, \"uncachedRequests\": 24661, \"bytes\": 111080914, \"cachedBytes\": 20001465, \"pageViews\": 68, \"threats\": 5160, \"uniques\": 104, \"cacheHitPct\": 0.9}, {\"date\": \"2026-04-27\", \"requests\": 44357, \"cachedRequests\": 1401, \"uncachedRequests\": 42956, \"bytes\": 585049294, \"cachedBytes\": 177038461, \"pageViews\": 366, \"threats\": 5156, \"uniques\": 265, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-28\", \"requests\": 35152, \"cachedRequests\": 669, \"uncachedRequests\": 34483, \"bytes\": 501835801, \"cachedBytes\": 44468815, \"pageViews\": 353, \"threats\": 5157, \"uniques\": 206, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-29\", \"requests\": 44958, \"cachedRequests\": 1527, \"uncachedRequests\": 43431, \"bytes\": 629629439, \"cachedBytes\": 192541747, \"pageViews\": 318, \"threats\": 5147, \"uniques\": 236, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-30\", \"requests\": 57081, \"cachedRequests\": 638, \"uncachedRequests\": 56443, \"bytes\": 669506141, \"cachedBytes\": 84781794, \"pageViews\": 213, \"threats\": 5138, \"uniques\": 163, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-01\", \"requests\": 43118, \"cachedRequests\": 702, \"uncachedRequests\": 42416, \"bytes\": 525775634, \"cachedBytes\": 73730356, \"pageViews\": 157, \"threats\": 5114, \"uniques\": 226, \"cacheHitPct\": 1.6}, {\"date\": \"2026-05-02\", \"requests\": 39586, \"cachedRequests\": 422, \"uncachedRequests\": 39164, \"bytes\": 543878778, \"cachedBytes\": 88718508, \"pageViews\": 113, \"threats\": 5103, \"uniques\": 244, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-03\", \"requests\": 21900, \"cachedRequests\": 145, \"uncachedRequests\": 21755, \"bytes\": 215622812, \"cachedBytes\": 17390583, \"pageViews\": 68, \"threats\": 5180, \"uniques\": 204, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-04\", \"requests\": 39981, \"cachedRequests\": 296, \"uncachedRequests\": 39685, \"bytes\": 373540363, \"cachedBytes\": 49623260, \"pageViews\": 140, \"threats\": 5096, \"uniques\": 146, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-05\", \"requests\": 33533, \"cachedRequests\": 483, \"uncachedRequests\": 33050, \"bytes\": 477990455, \"cachedBytes\": 84089723, \"pageViews\": 113, \"threats\": 5098, \"uniques\": 187, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-06\", \"requests\": 60375, \"cachedRequests\": 304, \"uncachedRequests\": 60071, \"bytes\": 280913410, \"cachedBytes\": 25266298, \"pageViews\": 85, \"threats\": 5123, \"uniques\": 226, \"cacheHitPct\": 0.5}, {\"date\": \"2026-05-07\", \"requests\": 39787, \"cachedRequests\": 551, \"uncachedRequests\": 39236, \"bytes\": 433640692, \"cachedBytes\": 84825290, \"pageViews\": 284, \"threats\": 5663, \"uniques\": 201, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-08\", \"requests\": 48278, \"cachedRequests\": 174, \"uncachedRequests\": 48104, \"bytes\": 524513772, \"cachedBytes\": 37061009, \"pageViews\": 227, \"threats\": 5143, \"uniques\": 184, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-09\", \"requests\": 32323, \"cachedRequests\": 132, \"uncachedRequests\": 32191, \"bytes\": 234973248, \"cachedBytes\": 17325822, \"pageViews\": 149, \"threats\": 5119, \"uniques\": 191, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-10\", \"requests\": 22642, \"cachedRequests\": 274, \"uncachedRequests\": 22368, \"bytes\": 231463261, \"cachedBytes\": 23396079, \"pageViews\": 66, \"threats\": 5095, \"uniques\": 160, \"cacheHitPct\": 1.2}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Avg Daily Requests",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 101,
+      "panels": [],
+      "title": "📊 Health Gauges",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "% requests from cache. Green = >70% (healthy)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 20
+              },
+              {
+                "color": "yellow",
+                "value": 40
+              },
+              {
+                "color": "green",
+                "value": 70
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 6
+      },
+      "id": 10,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "cacheHitPct",
+              "text": "Value",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"cacheHitPct\": 1.8}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Cache Hit Ratio",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "% of traffic that was threats. Green = <5%",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 20,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "yellow",
+                "value": 5
+              },
+              {
+                "color": "orange",
+                "value": 10
+              },
+              {
+                "color": "red",
+                "value": 15
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 6
+      },
+      "id": 11,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "threatRate",
+              "text": "Value",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"threatRate\": 12.42}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Threat Rate",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "% of bytes served from cache. Higher = more origin bandwidth saved",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "orange",
+                "value": 20
+              },
+              {
+                "color": "yellow",
+                "value": 40
+              },
+              {
+                "color": "green",
+                "value": 60
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 6
+      },
+      "id": 12,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "v",
+              "text": "Value",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"v\": 17.1}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Bandwidth Cache Savings",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "Breakdown of cached / uncached / threat traffic",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "max": 995717,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 6
+      },
+      "id": 13,
+      "options": {
+        "displayMode": "gradient",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "value",
+              "text": "Value",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"label\": \"Cached\", \"value\": 18240}, {\"label\": \"Uncached\", \"value\": 853772}, {\"label\": \"Threats\", \"value\": 123705}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Traffic Composition",
+      "type": "bargauge"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 104,
+      "panels": [],
+      "title": "🔢 HTTP Status Codes",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "HTTP response codes from Cloudflare edge",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 8,
+        "x": 0,
+        "y": 14
+      },
+      "id": 40,
+      "options": {
+        "displayLabels": [
+          "name",
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "status",
+              "text": "Status Code",
+              "type": "string"
+            },
+            {
+              "selector": "requests",
+              "text": "Requests",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"status\": \"0\", \"requests\": 530}, {\"status\": \"101\", \"requests\": 49985}, {\"status\": \"200\", \"requests\": 389733}, {\"status\": \"201\", \"requests\": 9343}, {\"status\": \"202\", \"requests\": 55}, {\"status\": \"204\", \"requests\": 133357}, {\"status\": \"206\", \"requests\": 814}, {\"status\": \"301\", \"requests\": 979}, {\"status\": \"304\", \"requests\": 13394}, {\"status\": \"307\", \"requests\": 626}, {\"status\": \"308\", \"requests\": 390}, {\"status\": \"400\", \"requests\": 24818}, {\"status\": \"401\", \"requests\": 5276}, {\"status\": \"403\", \"requests\": 193475}, {\"status\": \"404\", \"requests\": 176339}, {\"status\": \"405\", \"requests\": 12}, {\"status\": \"409\", \"requests\": 7}, {\"status\": \"429\", \"requests\": 364}, {\"status\": \"440\", \"requests\": 437}, {\"status\": \"463\", \"requests\": 5}, {\"status\": \"499\", \"requests\": 2562}, {\"status\": \"500\", \"requests\": 41608}, {\"status\": \"502\", \"requests\": 527}, {\"status\": \"503\", \"requests\": 63}, {\"status\": \"504\", \"requests\": 228}, {\"status\": \"520\", \"requests\": 3}, {\"status\": \"521\", \"requests\": 9}, {\"status\": \"522\", \"requests\": 71}, {\"status\": \"524\", \"requests\": 2}, {\"status\": \"525\", \"requests\": 10}, {\"status\": \"526\", \"requests\": 10}, {\"status\": \"530\", \"requests\": 44}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Status Code Distribution",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "2xx=success  3xx=redirect  4xx=client error  5xx=server error",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 85,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 0,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 16,
+        "x": 8,
+        "y": 14
+      },
+      "id": 41,
+      "options": {
+        "barRadius": 0.06,
+        "barWidth": 0.75,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "vertical",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "desc"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 200
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "status",
+              "text": "Status Code",
+              "type": "string"
+            },
+            {
+              "selector": "requests",
+              "text": "Requests",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"status\": \"0\", \"requests\": 530}, {\"status\": \"101\", \"requests\": 49985}, {\"status\": \"200\", \"requests\": 389733}, {\"status\": \"201\", \"requests\": 9343}, {\"status\": \"202\", \"requests\": 55}, {\"status\": \"204\", \"requests\": 133357}, {\"status\": \"206\", \"requests\": 814}, {\"status\": \"301\", \"requests\": 979}, {\"status\": \"304\", \"requests\": 13394}, {\"status\": \"307\", \"requests\": 626}, {\"status\": \"308\", \"requests\": 390}, {\"status\": \"400\", \"requests\": 24818}, {\"status\": \"401\", \"requests\": 5276}, {\"status\": \"403\", \"requests\": 193475}, {\"status\": \"404\", \"requests\": 176339}, {\"status\": \"405\", \"requests\": 12}, {\"status\": \"409\", \"requests\": 7}, {\"status\": \"429\", \"requests\": 364}, {\"status\": \"440\", \"requests\": 437}, {\"status\": \"463\", \"requests\": 5}, {\"status\": \"499\", \"requests\": 2562}, {\"status\": \"500\", \"requests\": 41608}, {\"status\": \"502\", \"requests\": 527}, {\"status\": \"503\", \"requests\": 63}, {\"status\": \"504\", \"requests\": 228}, {\"status\": \"520\", \"requests\": 3}, {\"status\": \"521\", \"requests\": 9}, {\"status\": \"522\", \"requests\": 71}, {\"status\": \"524\", \"requests\": 2}, {\"status\": \"525\", \"requests\": 10}, {\"status\": \"526\", \"requests\": 10}, {\"status\": \"530\", \"requests\": 44}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Requests by HTTP Status Code",
+      "type": "barchart"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 105,
+      "panels": [],
+      "title": "🌍 Geographic Distribution",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "Top 15 countries sending traffic to valura.ai",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 85,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 0,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 15,
+        "x": 0,
+        "y": 26
+      },
+      "id": 50,
+      "options": {
+        "barRadius": 0.06,
+        "barWidth": 0.75,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "horizontal",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "desc"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 200
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "country",
+              "text": "Country",
+              "type": "string"
+            },
+            {
+              "selector": "requests",
+              "text": "Requests",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"country\": \"IN\", \"requests\": 822857}, {\"country\": \"AE\", \"requests\": 194235}, {\"country\": \"US\", \"requests\": 10156}, {\"country\": \"FR\", \"requests\": 8544}, {\"country\": \"NL\", \"requests\": 2940}, {\"country\": \"CA\", \"requests\": 1338}, {\"country\": \"SG\", \"requests\": 656}, {\"country\": \"GB\", \"requests\": 640}, {\"country\": \"DE\", \"requests\": 610}, {\"country\": \"IE\", \"requests\": 560}, {\"country\": \"BR\", \"requests\": 386}, {\"country\": \"CH\", \"requests\": 283}, {\"country\": \"KE\", \"requests\": 278}, {\"country\": \"AU\", \"requests\": 194}, {\"country\": \"RU\", \"requests\": 169}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Top 15 Countries by Requests",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "Top 10 countries by share of total traffic",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 9,
+        "x": 15,
+        "y": 26
+      },
+      "id": 51,
+      "options": {
+        "displayLabels": [
+          "name",
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "country",
+              "text": "Country",
+              "type": "string"
+            },
+            {
+              "selector": "requests",
+              "text": "Requests",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"country\": \"IN\", \"requests\": 822857}, {\"country\": \"AE\", \"requests\": 194235}, {\"country\": \"US\", \"requests\": 10156}, {\"country\": \"FR\", \"requests\": 8544}, {\"country\": \"NL\", \"requests\": 2940}, {\"country\": \"CA\", \"requests\": 1338}, {\"country\": \"SG\", \"requests\": 656}, {\"country\": \"GB\", \"requests\": 640}, {\"country\": \"DE\", \"requests\": 610}, {\"country\": \"IE\", \"requests\": 560}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Country Traffic Share",
+      "type": "piechart"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 42
+      },
+      "id": 106,
+      "panels": [],
+      "title": "🌐 Browser Analysis",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "Human page views by browser family",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 85,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 0,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 0,
+        "y": 43
+      },
+      "id": 60,
+      "options": {
+        "barRadius": 0.06,
+        "barWidth": 0.75,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "horizontal",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "desc"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 200
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "browser",
+              "text": "Browser",
+              "type": "string"
+            },
+            {
+              "selector": "pageViews",
+              "text": "Page Views",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"browser\": \"Chrome\", \"pageViews\": 3798}, {\"browser\": \"Unknown\", \"pageViews\": 608}, {\"browser\": \"Safari\", \"pageViews\": 262}, {\"browser\": \"ChromeMobile\", \"pageViews\": 170}, {\"browser\": \"MobileSafari\", \"pageViews\": 117}, {\"browser\": \"Firefox\", \"pageViews\": 103}, {\"browser\": \"Edge\", \"pageViews\": 89}, {\"browser\": \"BingBot\", \"pageViews\": 51}, {\"browser\": \"GoogleBot\", \"pageViews\": 32}, {\"browser\": \"SamsungInternet\", \"pageViews\": 23}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Page Views by Browser",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "Browser distribution for human page views",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 12,
+        "x": 12,
+        "y": 43
+      },
+      "id": 61,
+      "options": {
+        "displayLabels": [
+          "name",
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "donut",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "browser",
+              "text": "Browser",
+              "type": "string"
+            },
+            {
+              "selector": "pageViews",
+              "text": "Page Views",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"browser\": \"Chrome\", \"pageViews\": 3798}, {\"browser\": \"Unknown\", \"pageViews\": 608}, {\"browser\": \"Safari\", \"pageViews\": 262}, {\"browser\": \"ChromeMobile\", \"pageViews\": 170}, {\"browser\": \"MobileSafari\", \"pageViews\": 117}, {\"browser\": \"Firefox\", \"pageViews\": 103}, {\"browser\": \"Edge\", \"pageViews\": 89}, {\"browser\": \"BingBot\", \"pageViews\": 51}, {\"browser\": \"GoogleBot\", \"pageViews\": 32}, {\"browser\": \"SamsungInternet\", \"pageViews\": 23}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Browser Market Share",
+      "type": "piechart"
+    },
+    {
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 54
+      },
+      "id": 99,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "## valura.ai Cloudflare Dashboard &nbsp;&nbsp; `2026-04-11` → `2026-05-11`\n\n| | | | |\n|---|---|---|---|\n| **Total Requests** | 995,717 | **Cache Hit Rate** | 1.8% |\n| **Bandwidth** | 10.76 GB | **BW Cache Savings** | 17.1% |\n| **Threats Blocked** | 123,705 (12.42%) | **Peak Day** | 2026-05-06 (60,375 req) |\n| **Page Views** | 5,043 | **Avg Daily** | 33,191 req/day |\n\n> Zone `6029a7ccec2ee1b903d425a20363f689` · Account `cbb70156e4dd3cc203e8e9a819f84b40` · Data embedded inline · [Open Cloudflare →](https://dash.cloudflare.com/cbb70156e4dd3cc203e8e9a819f84b40/valura.ai)",
+        "mode": "markdown"
+      },
+      "pluginVersion": "12.3.2",
+      "title": "ℹ️ Summary",
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "Daily request volume with cache breakdown",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 11,
+        "w": 24,
+        "x": 0,
+        "y": 59
+      },
+      "id": 20,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum",
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "date",
+              "text": "Date",
+              "type": "timestamp_epoch_s"
+            },
+            {
+              "selector": "requests",
+              "text": "Total Requests",
+              "type": "number"
+            },
+            {
+              "selector": "cachedRequests",
+              "text": "Cached Requests",
+              "type": "number"
+            },
+            {
+              "selector": "uncachedRequests",
+              "text": "Uncached Requests",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"date\": \"2026-04-11\", \"requests\": 14650, \"cachedRequests\": 29, \"uncachedRequests\": 14621, \"bytes\": 32610822, \"cachedBytes\": 879286, \"pageViews\": 56, \"threats\": 5280, \"uniques\": 74, \"cacheHitPct\": 0.2}, {\"date\": \"2026-04-12\", \"requests\": 13611, \"cachedRequests\": 138, \"uncachedRequests\": 13473, \"bytes\": 46048818, \"cachedBytes\": 2531335, \"pageViews\": 33, \"threats\": 5093, \"uniques\": 65, \"cacheHitPct\": 1.0}, {\"date\": \"2026-04-13\", \"requests\": 28633, \"cachedRequests\": 928, \"uncachedRequests\": 27705, \"bytes\": 366701988, \"cachedBytes\": 89708021, \"pageViews\": 246, \"threats\": 1313, \"uniques\": 299, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-14\", \"requests\": 30398, \"cachedRequests\": 1077, \"uncachedRequests\": 29321, \"bytes\": 353257470, \"cachedBytes\": 89767501, \"pageViews\": 240, \"threats\": 358, \"uniques\": 256, \"cacheHitPct\": 3.5}, {\"date\": \"2026-04-15\", \"requests\": 24782, \"cachedRequests\": 733, \"uncachedRequests\": 24049, \"bytes\": 342369113, \"cachedBytes\": 77508593, \"pageViews\": 193, \"threats\": 4, \"uniques\": 203, \"cacheHitPct\": 3.0}, {\"date\": \"2026-04-16\", \"requests\": 29188, \"cachedRequests\": 503, \"uncachedRequests\": 28685, \"bytes\": 311676072, \"cachedBytes\": 31683354, \"pageViews\": 196, \"threats\": 3, \"uniques\": 178, \"cacheHitPct\": 1.7}, {\"date\": \"2026-04-17\", \"requests\": 25687, \"cachedRequests\": 1000, \"uncachedRequests\": 24687, \"bytes\": 450981988, \"cachedBytes\": 75440512, \"pageViews\": 184, \"threats\": 20, \"uniques\": 186, \"cacheHitPct\": 3.9}, {\"date\": \"2026-04-18\", \"requests\": 21712, \"cachedRequests\": 1136, \"uncachedRequests\": 20576, \"bytes\": 291714864, \"cachedBytes\": 71414681, \"pageViews\": 203, \"threats\": 13, \"uniques\": 140, \"cacheHitPct\": 5.2}, {\"date\": \"2026-04-19\", \"requests\": 19618, \"cachedRequests\": 668, \"uncachedRequests\": 18950, \"bytes\": 166942929, \"cachedBytes\": 34568480, \"pageViews\": 81, \"threats\": 3015, \"uniques\": 97, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-20\", \"requests\": 34529, \"cachedRequests\": 643, \"uncachedRequests\": 33886, \"bytes\": 264252567, \"cachedBytes\": 32002855, \"pageViews\": 160, \"threats\": 5197, \"uniques\": 166, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-21\", \"requests\": 34524, \"cachedRequests\": 1079, \"uncachedRequests\": 33445, \"bytes\": 407537494, \"cachedBytes\": 145423145, \"pageViews\": 182, \"threats\": 5127, \"uniques\": 158, \"cacheHitPct\": 3.1}, {\"date\": \"2026-04-22\", \"requests\": 39233, \"cachedRequests\": 744, \"uncachedRequests\": 38489, \"bytes\": 380725213, \"cachedBytes\": 66241316, \"pageViews\": 234, \"threats\": 5201, \"uniques\": 185, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-23\", \"requests\": 30869, \"cachedRequests\": 457, \"uncachedRequests\": 30412, \"bytes\": 299511164, \"cachedBytes\": 12583987, \"pageViews\": 106, \"threats\": 5141, \"uniques\": 129, \"cacheHitPct\": 1.5}, {\"date\": \"2026-04-24\", \"requests\": 33379, \"cachedRequests\": 718, \"uncachedRequests\": 32661, \"bytes\": 422595473, \"cachedBytes\": 57964189, \"pageViews\": 117, \"threats\": 5292, \"uniques\": 202, \"cacheHitPct\": 2.2}, {\"date\": \"2026-04-25\", \"requests\": 26947, \"cachedRequests\": 444, \"uncachedRequests\": 26503, \"bytes\": 279616902, \"cachedBytes\": 35397872, \"pageViews\": 92, \"threats\": 5156, \"uniques\": 155, \"cacheHitPct\": 1.6}, {\"date\": \"2026-04-26\", \"requests\": 24886, \"cachedRequests\": 225, \"uncachedRequests\": 24661, \"bytes\": 111080914, \"cachedBytes\": 20001465, \"pageViews\": 68, \"threats\": 5160, \"uniques\": 104, \"cacheHitPct\": 0.9}, {\"date\": \"2026-04-27\", \"requests\": 44357, \"cachedRequests\": 1401, \"uncachedRequests\": 42956, \"bytes\": 585049294, \"cachedBytes\": 177038461, \"pageViews\": 366, \"threats\": 5156, \"uniques\": 265, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-28\", \"requests\": 35152, \"cachedRequests\": 669, \"uncachedRequests\": 34483, \"bytes\": 501835801, \"cachedBytes\": 44468815, \"pageViews\": 353, \"threats\": 5157, \"uniques\": 206, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-29\", \"requests\": 44958, \"cachedRequests\": 1527, \"uncachedRequests\": 43431, \"bytes\": 629629439, \"cachedBytes\": 192541747, \"pageViews\": 318, \"threats\": 5147, \"uniques\": 236, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-30\", \"requests\": 57081, \"cachedRequests\": 638, \"uncachedRequests\": 56443, \"bytes\": 669506141, \"cachedBytes\": 84781794, \"pageViews\": 213, \"threats\": 5138, \"uniques\": 163, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-01\", \"requests\": 43118, \"cachedRequests\": 702, \"uncachedRequests\": 42416, \"bytes\": 525775634, \"cachedBytes\": 73730356, \"pageViews\": 157, \"threats\": 5114, \"uniques\": 226, \"cacheHitPct\": 1.6}, {\"date\": \"2026-05-02\", \"requests\": 39586, \"cachedRequests\": 422, \"uncachedRequests\": 39164, \"bytes\": 543878778, \"cachedBytes\": 88718508, \"pageViews\": 113, \"threats\": 5103, \"uniques\": 244, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-03\", \"requests\": 21900, \"cachedRequests\": 145, \"uncachedRequests\": 21755, \"bytes\": 215622812, \"cachedBytes\": 17390583, \"pageViews\": 68, \"threats\": 5180, \"uniques\": 204, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-04\", \"requests\": 39981, \"cachedRequests\": 296, \"uncachedRequests\": 39685, \"bytes\": 373540363, \"cachedBytes\": 49623260, \"pageViews\": 140, \"threats\": 5096, \"uniques\": 146, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-05\", \"requests\": 33533, \"cachedRequests\": 483, \"uncachedRequests\": 33050, \"bytes\": 477990455, \"cachedBytes\": 84089723, \"pageViews\": 113, \"threats\": 5098, \"uniques\": 187, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-06\", \"requests\": 60375, \"cachedRequests\": 304, \"uncachedRequests\": 60071, \"bytes\": 280913410, \"cachedBytes\": 25266298, \"pageViews\": 85, \"threats\": 5123, \"uniques\": 226, \"cacheHitPct\": 0.5}, {\"date\": \"2026-05-07\", \"requests\": 39787, \"cachedRequests\": 551, \"uncachedRequests\": 39236, \"bytes\": 433640692, \"cachedBytes\": 84825290, \"pageViews\": 284, \"threats\": 5663, \"uniques\": 201, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-08\", \"requests\": 48278, \"cachedRequests\": 174, \"uncachedRequests\": 48104, \"bytes\": 524513772, \"cachedBytes\": 37061009, \"pageViews\": 227, \"threats\": 5143, \"uniques\": 184, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-09\", \"requests\": 32323, \"cachedRequests\": 132, \"uncachedRequests\": 32191, \"bytes\": 234973248, \"cachedBytes\": 17325822, \"pageViews\": 149, \"threats\": 5119, \"uniques\": 191, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-10\", \"requests\": 22642, \"cachedRequests\": 274, \"uncachedRequests\": 22368, \"bytes\": 231463261, \"cachedBytes\": 23396079, \"pageViews\": 66, \"threats\": 5095, \"uniques\": 160, \"cacheHitPct\": 1.2}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Daily Requests — Total vs Cached vs Uncached",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "Daily threats blocked by Cloudflare WAF",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "bars",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 70
+      },
+      "id": 21,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum",
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "date",
+              "text": "Date",
+              "type": "timestamp_epoch_s"
+            },
+            {
+              "selector": "threats",
+              "text": "Threats Blocked",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"date\": \"2026-04-11\", \"requests\": 14650, \"cachedRequests\": 29, \"uncachedRequests\": 14621, \"bytes\": 32610822, \"cachedBytes\": 879286, \"pageViews\": 56, \"threats\": 5280, \"uniques\": 74, \"cacheHitPct\": 0.2}, {\"date\": \"2026-04-12\", \"requests\": 13611, \"cachedRequests\": 138, \"uncachedRequests\": 13473, \"bytes\": 46048818, \"cachedBytes\": 2531335, \"pageViews\": 33, \"threats\": 5093, \"uniques\": 65, \"cacheHitPct\": 1.0}, {\"date\": \"2026-04-13\", \"requests\": 28633, \"cachedRequests\": 928, \"uncachedRequests\": 27705, \"bytes\": 366701988, \"cachedBytes\": 89708021, \"pageViews\": 246, \"threats\": 1313, \"uniques\": 299, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-14\", \"requests\": 30398, \"cachedRequests\": 1077, \"uncachedRequests\": 29321, \"bytes\": 353257470, \"cachedBytes\": 89767501, \"pageViews\": 240, \"threats\": 358, \"uniques\": 256, \"cacheHitPct\": 3.5}, {\"date\": \"2026-04-15\", \"requests\": 24782, \"cachedRequests\": 733, \"uncachedRequests\": 24049, \"bytes\": 342369113, \"cachedBytes\": 77508593, \"pageViews\": 193, \"threats\": 4, \"uniques\": 203, \"cacheHitPct\": 3.0}, {\"date\": \"2026-04-16\", \"requests\": 29188, \"cachedRequests\": 503, \"uncachedRequests\": 28685, \"bytes\": 311676072, \"cachedBytes\": 31683354, \"pageViews\": 196, \"threats\": 3, \"uniques\": 178, \"cacheHitPct\": 1.7}, {\"date\": \"2026-04-17\", \"requests\": 25687, \"cachedRequests\": 1000, \"uncachedRequests\": 24687, \"bytes\": 450981988, \"cachedBytes\": 75440512, \"pageViews\": 184, \"threats\": 20, \"uniques\": 186, \"cacheHitPct\": 3.9}, {\"date\": \"2026-04-18\", \"requests\": 21712, \"cachedRequests\": 1136, \"uncachedRequests\": 20576, \"bytes\": 291714864, \"cachedBytes\": 71414681, \"pageViews\": 203, \"threats\": 13, \"uniques\": 140, \"cacheHitPct\": 5.2}, {\"date\": \"2026-04-19\", \"requests\": 19618, \"cachedRequests\": 668, \"uncachedRequests\": 18950, \"bytes\": 166942929, \"cachedBytes\": 34568480, \"pageViews\": 81, \"threats\": 3015, \"uniques\": 97, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-20\", \"requests\": 34529, \"cachedRequests\": 643, \"uncachedRequests\": 33886, \"bytes\": 264252567, \"cachedBytes\": 32002855, \"pageViews\": 160, \"threats\": 5197, \"uniques\": 166, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-21\", \"requests\": 34524, \"cachedRequests\": 1079, \"uncachedRequests\": 33445, \"bytes\": 407537494, \"cachedBytes\": 145423145, \"pageViews\": 182, \"threats\": 5127, \"uniques\": 158, \"cacheHitPct\": 3.1}, {\"date\": \"2026-04-22\", \"requests\": 39233, \"cachedRequests\": 744, \"uncachedRequests\": 38489, \"bytes\": 380725213, \"cachedBytes\": 66241316, \"pageViews\": 234, \"threats\": 5201, \"uniques\": 185, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-23\", \"requests\": 30869, \"cachedRequests\": 457, \"uncachedRequests\": 30412, \"bytes\": 299511164, \"cachedBytes\": 12583987, \"pageViews\": 106, \"threats\": 5141, \"uniques\": 129, \"cacheHitPct\": 1.5}, {\"date\": \"2026-04-24\", \"requests\": 33379, \"cachedRequests\": 718, \"uncachedRequests\": 32661, \"bytes\": 422595473, \"cachedBytes\": 57964189, \"pageViews\": 117, \"threats\": 5292, \"uniques\": 202, \"cacheHitPct\": 2.2}, {\"date\": \"2026-04-25\", \"requests\": 26947, \"cachedRequests\": 444, \"uncachedRequests\": 26503, \"bytes\": 279616902, \"cachedBytes\": 35397872, \"pageViews\": 92, \"threats\": 5156, \"uniques\": 155, \"cacheHitPct\": 1.6}, {\"date\": \"2026-04-26\", \"requests\": 24886, \"cachedRequests\": 225, \"uncachedRequests\": 24661, \"bytes\": 111080914, \"cachedBytes\": 20001465, \"pageViews\": 68, \"threats\": 5160, \"uniques\": 104, \"cacheHitPct\": 0.9}, {\"date\": \"2026-04-27\", \"requests\": 44357, \"cachedRequests\": 1401, \"uncachedRequests\": 42956, \"bytes\": 585049294, \"cachedBytes\": 177038461, \"pageViews\": 366, \"threats\": 5156, \"uniques\": 265, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-28\", \"requests\": 35152, \"cachedRequests\": 669, \"uncachedRequests\": 34483, \"bytes\": 501835801, \"cachedBytes\": 44468815, \"pageViews\": 353, \"threats\": 5157, \"uniques\": 206, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-29\", \"requests\": 44958, \"cachedRequests\": 1527, \"uncachedRequests\": 43431, \"bytes\": 629629439, \"cachedBytes\": 192541747, \"pageViews\": 318, \"threats\": 5147, \"uniques\": 236, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-30\", \"requests\": 57081, \"cachedRequests\": 638, \"uncachedRequests\": 56443, \"bytes\": 669506141, \"cachedBytes\": 84781794, \"pageViews\": 213, \"threats\": 5138, \"uniques\": 163, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-01\", \"requests\": 43118, \"cachedRequests\": 702, \"uncachedRequests\": 42416, \"bytes\": 525775634, \"cachedBytes\": 73730356, \"pageViews\": 157, \"threats\": 5114, \"uniques\": 226, \"cacheHitPct\": 1.6}, {\"date\": \"2026-05-02\", \"requests\": 39586, \"cachedRequests\": 422, \"uncachedRequests\": 39164, \"bytes\": 543878778, \"cachedBytes\": 88718508, \"pageViews\": 113, \"threats\": 5103, \"uniques\": 244, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-03\", \"requests\": 21900, \"cachedRequests\": 145, \"uncachedRequests\": 21755, \"bytes\": 215622812, \"cachedBytes\": 17390583, \"pageViews\": 68, \"threats\": 5180, \"uniques\": 204, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-04\", \"requests\": 39981, \"cachedRequests\": 296, \"uncachedRequests\": 39685, \"bytes\": 373540363, \"cachedBytes\": 49623260, \"pageViews\": 140, \"threats\": 5096, \"uniques\": 146, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-05\", \"requests\": 33533, \"cachedRequests\": 483, \"uncachedRequests\": 33050, \"bytes\": 477990455, \"cachedBytes\": 84089723, \"pageViews\": 113, \"threats\": 5098, \"uniques\": 187, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-06\", \"requests\": 60375, \"cachedRequests\": 304, \"uncachedRequests\": 60071, \"bytes\": 280913410, \"cachedBytes\": 25266298, \"pageViews\": 85, \"threats\": 5123, \"uniques\": 226, \"cacheHitPct\": 0.5}, {\"date\": \"2026-05-07\", \"requests\": 39787, \"cachedRequests\": 551, \"uncachedRequests\": 39236, \"bytes\": 433640692, \"cachedBytes\": 84825290, \"pageViews\": 284, \"threats\": 5663, \"uniques\": 201, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-08\", \"requests\": 48278, \"cachedRequests\": 174, \"uncachedRequests\": 48104, \"bytes\": 524513772, \"cachedBytes\": 37061009, \"pageViews\": 227, \"threats\": 5143, \"uniques\": 184, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-09\", \"requests\": 32323, \"cachedRequests\": 132, \"uncachedRequests\": 32191, \"bytes\": 234973248, \"cachedBytes\": 17325822, \"pageViews\": 149, \"threats\": 5119, \"uniques\": 191, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-10\", \"requests\": 22642, \"cachedRequests\": 274, \"uncachedRequests\": 22368, \"bytes\": 231463261, \"cachedBytes\": 23396079, \"pageViews\": 66, \"threats\": 5095, \"uniques\": 160, \"cacheHitPct\": 1.2}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Daily Threats",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "Human traffic trends over the period",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 70
+      },
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum",
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "date",
+              "text": "Date",
+              "type": "timestamp_epoch_s"
+            },
+            {
+              "selector": "pageViews",
+              "text": "Page Views",
+              "type": "number"
+            },
+            {
+              "selector": "uniques",
+              "text": "Unique Visitors",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"date\": \"2026-04-11\", \"requests\": 14650, \"cachedRequests\": 29, \"uncachedRequests\": 14621, \"bytes\": 32610822, \"cachedBytes\": 879286, \"pageViews\": 56, \"threats\": 5280, \"uniques\": 74, \"cacheHitPct\": 0.2}, {\"date\": \"2026-04-12\", \"requests\": 13611, \"cachedRequests\": 138, \"uncachedRequests\": 13473, \"bytes\": 46048818, \"cachedBytes\": 2531335, \"pageViews\": 33, \"threats\": 5093, \"uniques\": 65, \"cacheHitPct\": 1.0}, {\"date\": \"2026-04-13\", \"requests\": 28633, \"cachedRequests\": 928, \"uncachedRequests\": 27705, \"bytes\": 366701988, \"cachedBytes\": 89708021, \"pageViews\": 246, \"threats\": 1313, \"uniques\": 299, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-14\", \"requests\": 30398, \"cachedRequests\": 1077, \"uncachedRequests\": 29321, \"bytes\": 353257470, \"cachedBytes\": 89767501, \"pageViews\": 240, \"threats\": 358, \"uniques\": 256, \"cacheHitPct\": 3.5}, {\"date\": \"2026-04-15\", \"requests\": 24782, \"cachedRequests\": 733, \"uncachedRequests\": 24049, \"bytes\": 342369113, \"cachedBytes\": 77508593, \"pageViews\": 193, \"threats\": 4, \"uniques\": 203, \"cacheHitPct\": 3.0}, {\"date\": \"2026-04-16\", \"requests\": 29188, \"cachedRequests\": 503, \"uncachedRequests\": 28685, \"bytes\": 311676072, \"cachedBytes\": 31683354, \"pageViews\": 196, \"threats\": 3, \"uniques\": 178, \"cacheHitPct\": 1.7}, {\"date\": \"2026-04-17\", \"requests\": 25687, \"cachedRequests\": 1000, \"uncachedRequests\": 24687, \"bytes\": 450981988, \"cachedBytes\": 75440512, \"pageViews\": 184, \"threats\": 20, \"uniques\": 186, \"cacheHitPct\": 3.9}, {\"date\": \"2026-04-18\", \"requests\": 21712, \"cachedRequests\": 1136, \"uncachedRequests\": 20576, \"bytes\": 291714864, \"cachedBytes\": 71414681, \"pageViews\": 203, \"threats\": 13, \"uniques\": 140, \"cacheHitPct\": 5.2}, {\"date\": \"2026-04-19\", \"requests\": 19618, \"cachedRequests\": 668, \"uncachedRequests\": 18950, \"bytes\": 166942929, \"cachedBytes\": 34568480, \"pageViews\": 81, \"threats\": 3015, \"uniques\": 97, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-20\", \"requests\": 34529, \"cachedRequests\": 643, \"uncachedRequests\": 33886, \"bytes\": 264252567, \"cachedBytes\": 32002855, \"pageViews\": 160, \"threats\": 5197, \"uniques\": 166, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-21\", \"requests\": 34524, \"cachedRequests\": 1079, \"uncachedRequests\": 33445, \"bytes\": 407537494, \"cachedBytes\": 145423145, \"pageViews\": 182, \"threats\": 5127, \"uniques\": 158, \"cacheHitPct\": 3.1}, {\"date\": \"2026-04-22\", \"requests\": 39233, \"cachedRequests\": 744, \"uncachedRequests\": 38489, \"bytes\": 380725213, \"cachedBytes\": 66241316, \"pageViews\": 234, \"threats\": 5201, \"uniques\": 185, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-23\", \"requests\": 30869, \"cachedRequests\": 457, \"uncachedRequests\": 30412, \"bytes\": 299511164, \"cachedBytes\": 12583987, \"pageViews\": 106, \"threats\": 5141, \"uniques\": 129, \"cacheHitPct\": 1.5}, {\"date\": \"2026-04-24\", \"requests\": 33379, \"cachedRequests\": 718, \"uncachedRequests\": 32661, \"bytes\": 422595473, \"cachedBytes\": 57964189, \"pageViews\": 117, \"threats\": 5292, \"uniques\": 202, \"cacheHitPct\": 2.2}, {\"date\": \"2026-04-25\", \"requests\": 26947, \"cachedRequests\": 444, \"uncachedRequests\": 26503, \"bytes\": 279616902, \"cachedBytes\": 35397872, \"pageViews\": 92, \"threats\": 5156, \"uniques\": 155, \"cacheHitPct\": 1.6}, {\"date\": \"2026-04-26\", \"requests\": 24886, \"cachedRequests\": 225, \"uncachedRequests\": 24661, \"bytes\": 111080914, \"cachedBytes\": 20001465, \"pageViews\": 68, \"threats\": 5160, \"uniques\": 104, \"cacheHitPct\": 0.9}, {\"date\": \"2026-04-27\", \"requests\": 44357, \"cachedRequests\": 1401, \"uncachedRequests\": 42956, \"bytes\": 585049294, \"cachedBytes\": 177038461, \"pageViews\": 366, \"threats\": 5156, \"uniques\": 265, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-28\", \"requests\": 35152, \"cachedRequests\": 669, \"uncachedRequests\": 34483, \"bytes\": 501835801, \"cachedBytes\": 44468815, \"pageViews\": 353, \"threats\": 5157, \"uniques\": 206, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-29\", \"requests\": 44958, \"cachedRequests\": 1527, \"uncachedRequests\": 43431, \"bytes\": 629629439, \"cachedBytes\": 192541747, \"pageViews\": 318, \"threats\": 5147, \"uniques\": 236, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-30\", \"requests\": 57081, \"cachedRequests\": 638, \"uncachedRequests\": 56443, \"bytes\": 669506141, \"cachedBytes\": 84781794, \"pageViews\": 213, \"threats\": 5138, \"uniques\": 163, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-01\", \"requests\": 43118, \"cachedRequests\": 702, \"uncachedRequests\": 42416, \"bytes\": 525775634, \"cachedBytes\": 73730356, \"pageViews\": 157, \"threats\": 5114, \"uniques\": 226, \"cacheHitPct\": 1.6}, {\"date\": \"2026-05-02\", \"requests\": 39586, \"cachedRequests\": 422, \"uncachedRequests\": 39164, \"bytes\": 543878778, \"cachedBytes\": 88718508, \"pageViews\": 113, \"threats\": 5103, \"uniques\": 244, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-03\", \"requests\": 21900, \"cachedRequests\": 145, \"uncachedRequests\": 21755, \"bytes\": 215622812, \"cachedBytes\": 17390583, \"pageViews\": 68, \"threats\": 5180, \"uniques\": 204, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-04\", \"requests\": 39981, \"cachedRequests\": 296, \"uncachedRequests\": 39685, \"bytes\": 373540363, \"cachedBytes\": 49623260, \"pageViews\": 140, \"threats\": 5096, \"uniques\": 146, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-05\", \"requests\": 33533, \"cachedRequests\": 483, \"uncachedRequests\": 33050, \"bytes\": 477990455, \"cachedBytes\": 84089723, \"pageViews\": 113, \"threats\": 5098, \"uniques\": 187, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-06\", \"requests\": 60375, \"cachedRequests\": 304, \"uncachedRequests\": 60071, \"bytes\": 280913410, \"cachedBytes\": 25266298, \"pageViews\": 85, \"threats\": 5123, \"uniques\": 226, \"cacheHitPct\": 0.5}, {\"date\": \"2026-05-07\", \"requests\": 39787, \"cachedRequests\": 551, \"uncachedRequests\": 39236, \"bytes\": 433640692, \"cachedBytes\": 84825290, \"pageViews\": 284, \"threats\": 5663, \"uniques\": 201, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-08\", \"requests\": 48278, \"cachedRequests\": 174, \"uncachedRequests\": 48104, \"bytes\": 524513772, \"cachedBytes\": 37061009, \"pageViews\": 227, \"threats\": 5143, \"uniques\": 184, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-09\", \"requests\": 32323, \"cachedRequests\": 132, \"uncachedRequests\": 32191, \"bytes\": 234973248, \"cachedBytes\": 17325822, \"pageViews\": 149, \"threats\": 5119, \"uniques\": 191, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-10\", \"requests\": 22642, \"cachedRequests\": 274, \"uncachedRequests\": 22368, \"bytes\": 231463261, \"cachedBytes\": 23396079, \"pageViews\": 66, \"threats\": 5095, \"uniques\": 160, \"cacheHitPct\": 1.2}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Page Views & Unique Visitors",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "yesoreyeram-infinity-datasource",
+        "uid": "aflqsyjh3qneoc"
+      },
+      "description": "Daily bytes served. Cached = saved origin bandwidth",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "bars",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 79
+      },
+      "id": 30,
+      "options": {
+        "legend": {
+          "calcs": [
+            "sum",
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "12.3.2",
+      "targets": [
+        {
+          "columns": [
+            {
+              "selector": "date",
+              "text": "Date",
+              "type": "timestamp_epoch_s"
+            },
+            {
+              "selector": "cachedBytes",
+              "text": "Cached Bytes",
+              "type": "number"
+            },
+            {
+              "selector": "bytes",
+              "text": "Total Bytes",
+              "type": "number"
+            }
+          ],
+          "data": "[{\"date\": \"2026-04-11\", \"requests\": 14650, \"cachedRequests\": 29, \"uncachedRequests\": 14621, \"bytes\": 32610822, \"cachedBytes\": 879286, \"pageViews\": 56, \"threats\": 5280, \"uniques\": 74, \"cacheHitPct\": 0.2}, {\"date\": \"2026-04-12\", \"requests\": 13611, \"cachedRequests\": 138, \"uncachedRequests\": 13473, \"bytes\": 46048818, \"cachedBytes\": 2531335, \"pageViews\": 33, \"threats\": 5093, \"uniques\": 65, \"cacheHitPct\": 1.0}, {\"date\": \"2026-04-13\", \"requests\": 28633, \"cachedRequests\": 928, \"uncachedRequests\": 27705, \"bytes\": 366701988, \"cachedBytes\": 89708021, \"pageViews\": 246, \"threats\": 1313, \"uniques\": 299, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-14\", \"requests\": 30398, \"cachedRequests\": 1077, \"uncachedRequests\": 29321, \"bytes\": 353257470, \"cachedBytes\": 89767501, \"pageViews\": 240, \"threats\": 358, \"uniques\": 256, \"cacheHitPct\": 3.5}, {\"date\": \"2026-04-15\", \"requests\": 24782, \"cachedRequests\": 733, \"uncachedRequests\": 24049, \"bytes\": 342369113, \"cachedBytes\": 77508593, \"pageViews\": 193, \"threats\": 4, \"uniques\": 203, \"cacheHitPct\": 3.0}, {\"date\": \"2026-04-16\", \"requests\": 29188, \"cachedRequests\": 503, \"uncachedRequests\": 28685, \"bytes\": 311676072, \"cachedBytes\": 31683354, \"pageViews\": 196, \"threats\": 3, \"uniques\": 178, \"cacheHitPct\": 1.7}, {\"date\": \"2026-04-17\", \"requests\": 25687, \"cachedRequests\": 1000, \"uncachedRequests\": 24687, \"bytes\": 450981988, \"cachedBytes\": 75440512, \"pageViews\": 184, \"threats\": 20, \"uniques\": 186, \"cacheHitPct\": 3.9}, {\"date\": \"2026-04-18\", \"requests\": 21712, \"cachedRequests\": 1136, \"uncachedRequests\": 20576, \"bytes\": 291714864, \"cachedBytes\": 71414681, \"pageViews\": 203, \"threats\": 13, \"uniques\": 140, \"cacheHitPct\": 5.2}, {\"date\": \"2026-04-19\", \"requests\": 19618, \"cachedRequests\": 668, \"uncachedRequests\": 18950, \"bytes\": 166942929, \"cachedBytes\": 34568480, \"pageViews\": 81, \"threats\": 3015, \"uniques\": 97, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-20\", \"requests\": 34529, \"cachedRequests\": 643, \"uncachedRequests\": 33886, \"bytes\": 264252567, \"cachedBytes\": 32002855, \"pageViews\": 160, \"threats\": 5197, \"uniques\": 166, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-21\", \"requests\": 34524, \"cachedRequests\": 1079, \"uncachedRequests\": 33445, \"bytes\": 407537494, \"cachedBytes\": 145423145, \"pageViews\": 182, \"threats\": 5127, \"uniques\": 158, \"cacheHitPct\": 3.1}, {\"date\": \"2026-04-22\", \"requests\": 39233, \"cachedRequests\": 744, \"uncachedRequests\": 38489, \"bytes\": 380725213, \"cachedBytes\": 66241316, \"pageViews\": 234, \"threats\": 5201, \"uniques\": 185, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-23\", \"requests\": 30869, \"cachedRequests\": 457, \"uncachedRequests\": 30412, \"bytes\": 299511164, \"cachedBytes\": 12583987, \"pageViews\": 106, \"threats\": 5141, \"uniques\": 129, \"cacheHitPct\": 1.5}, {\"date\": \"2026-04-24\", \"requests\": 33379, \"cachedRequests\": 718, \"uncachedRequests\": 32661, \"bytes\": 422595473, \"cachedBytes\": 57964189, \"pageViews\": 117, \"threats\": 5292, \"uniques\": 202, \"cacheHitPct\": 2.2}, {\"date\": \"2026-04-25\", \"requests\": 26947, \"cachedRequests\": 444, \"uncachedRequests\": 26503, \"bytes\": 279616902, \"cachedBytes\": 35397872, \"pageViews\": 92, \"threats\": 5156, \"uniques\": 155, \"cacheHitPct\": 1.6}, {\"date\": \"2026-04-26\", \"requests\": 24886, \"cachedRequests\": 225, \"uncachedRequests\": 24661, \"bytes\": 111080914, \"cachedBytes\": 20001465, \"pageViews\": 68, \"threats\": 5160, \"uniques\": 104, \"cacheHitPct\": 0.9}, {\"date\": \"2026-04-27\", \"requests\": 44357, \"cachedRequests\": 1401, \"uncachedRequests\": 42956, \"bytes\": 585049294, \"cachedBytes\": 177038461, \"pageViews\": 366, \"threats\": 5156, \"uniques\": 265, \"cacheHitPct\": 3.2}, {\"date\": \"2026-04-28\", \"requests\": 35152, \"cachedRequests\": 669, \"uncachedRequests\": 34483, \"bytes\": 501835801, \"cachedBytes\": 44468815, \"pageViews\": 353, \"threats\": 5157, \"uniques\": 206, \"cacheHitPct\": 1.9}, {\"date\": \"2026-04-29\", \"requests\": 44958, \"cachedRequests\": 1527, \"uncachedRequests\": 43431, \"bytes\": 629629439, \"cachedBytes\": 192541747, \"pageViews\": 318, \"threats\": 5147, \"uniques\": 236, \"cacheHitPct\": 3.4}, {\"date\": \"2026-04-30\", \"requests\": 57081, \"cachedRequests\": 638, \"uncachedRequests\": 56443, \"bytes\": 669506141, \"cachedBytes\": 84781794, \"pageViews\": 213, \"threats\": 5138, \"uniques\": 163, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-01\", \"requests\": 43118, \"cachedRequests\": 702, \"uncachedRequests\": 42416, \"bytes\": 525775634, \"cachedBytes\": 73730356, \"pageViews\": 157, \"threats\": 5114, \"uniques\": 226, \"cacheHitPct\": 1.6}, {\"date\": \"2026-05-02\", \"requests\": 39586, \"cachedRequests\": 422, \"uncachedRequests\": 39164, \"bytes\": 543878778, \"cachedBytes\": 88718508, \"pageViews\": 113, \"threats\": 5103, \"uniques\": 244, \"cacheHitPct\": 1.1}, {\"date\": \"2026-05-03\", \"requests\": 21900, \"cachedRequests\": 145, \"uncachedRequests\": 21755, \"bytes\": 215622812, \"cachedBytes\": 17390583, \"pageViews\": 68, \"threats\": 5180, \"uniques\": 204, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-04\", \"requests\": 39981, \"cachedRequests\": 296, \"uncachedRequests\": 39685, \"bytes\": 373540363, \"cachedBytes\": 49623260, \"pageViews\": 140, \"threats\": 5096, \"uniques\": 146, \"cacheHitPct\": 0.7}, {\"date\": \"2026-05-05\", \"requests\": 33533, \"cachedRequests\": 483, \"uncachedRequests\": 33050, \"bytes\": 477990455, \"cachedBytes\": 84089723, \"pageViews\": 113, \"threats\": 5098, \"uniques\": 187, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-06\", \"requests\": 60375, \"cachedRequests\": 304, \"uncachedRequests\": 60071, \"bytes\": 280913410, \"cachedBytes\": 25266298, \"pageViews\": 85, \"threats\": 5123, \"uniques\": 226, \"cacheHitPct\": 0.5}, {\"date\": \"2026-05-07\", \"requests\": 39787, \"cachedRequests\": 551, \"uncachedRequests\": 39236, \"bytes\": 433640692, \"cachedBytes\": 84825290, \"pageViews\": 284, \"threats\": 5663, \"uniques\": 201, \"cacheHitPct\": 1.4}, {\"date\": \"2026-05-08\", \"requests\": 48278, \"cachedRequests\": 174, \"uncachedRequests\": 48104, \"bytes\": 524513772, \"cachedBytes\": 37061009, \"pageViews\": 227, \"threats\": 5143, \"uniques\": 184, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-09\", \"requests\": 32323, \"cachedRequests\": 132, \"uncachedRequests\": 32191, \"bytes\": 234973248, \"cachedBytes\": 17325822, \"pageViews\": 149, \"threats\": 5119, \"uniques\": 191, \"cacheHitPct\": 0.4}, {\"date\": \"2026-05-10\", \"requests\": 22642, \"cachedRequests\": 274, \"uncachedRequests\": 22368, \"bytes\": 231463261, \"cachedBytes\": 23396079, \"pageViews\": 66, \"threats\": 5095, \"uniques\": 160, \"cacheHitPct\": 1.2}]",
+          "datasource": {
+            "type": "yesoreyeram-infinity-datasource",
+            "uid": "aflqsyjh3qneoc"
+          },
+          "parser": "backend",
+          "refId": "A",
+          "root_selector": "",
+          "source": "inline",
+          "type": "json"
+        }
+      ],
+      "title": "Daily Bandwidth — Stacked (Cached + Uncached)",
+      "type": "timeseries"
+    }
+  ],
+  "preload": false,
+  "refresh": "1h",
+  "schemaVersion": 42,
+  "tags": [
+    "cloudflare",
+    "valura"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-30d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "valura.ai — Cloudflare Analytics",
+  "uid": "valura-cf-v3",
+  "weekStart": ""
+}

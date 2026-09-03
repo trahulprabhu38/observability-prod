@@ -189,15 +189,22 @@ services:
   #  VISUALIZATION + ALERTING
   # ==========================================================================
   grafana:
-    image: grafana/grafana:11.5.1
+    # 12.3.x to match the source instance the imported dashboards came from
+    # (grafana/provisioning/dashboards/json/*.json are schemaVersion 42).
+    image: grafana/grafana:12.3.2
     container_name: grafana
     restart: unless-stopped
+    # .env is loaded so the provisioned datasources can interpolate
+    # ${CF_API_TOKEN} (Infinity) and ${AWS_*} (opt-in CloudWatch datasource).
+    env_file: [.env]
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_FEATURE_TOGGLES_ENABLE=traceToMetrics
-      - GF_INSTALL_PLUGINS=
+      # Infinity powers the imported "Cloudflare Analytics" dashboard.
+      # First boot needs outbound internet to fetch the plugin.
+      - GF_INSTALL_PLUGINS=yesoreyeram-infinity-datasource
     volumes:
       - grafana_data:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning:ro

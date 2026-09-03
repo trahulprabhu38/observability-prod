@@ -154,3 +154,29 @@ Not possible on Fargate (no host).
 2. Add **B** when you want your apps' own metrics per task and the obs box can
    reach the VPC.
 3. Switch B -> **C** if inbound-to-tasks is a non-starter (strict Fargate).
+
+---
+
+## Imported AWS dashboards
+
+The old prod Grafana had four CloudWatch-datasource dashboards (ALB, ECS
+metrics, ECS container logs, RDS). In v2 they land like this:
+
+| Dashboard (`json/…`) | How it works in v2 |
+|---|---|
+| `aws-alb.json`, `aws-ecs-metrics.json`, `aws-rds.json` | **Rewritten to PromQL** against YACE metrics. No CloudWatch datasource needed - `make ecs-up` and the panels fill in. |
+| `aws-ecs-container-logs.json` | Still **CloudWatch Logs Insights** - there's no Prometheus/Loki equivalent for that query language. Enable the commented `CloudWatch` datasource in `grafana/provisioning/datasources/datasources.yml`. |
+
+To feed the three rewritten dashboards, `ecs/yace/config.yml` was expanded from
+the starter metric list to the full set they query - all of `AWS/RDS`, the ALB
+status-code / latency-percentile / connection metrics, and the extra
+`ECS/ContainerInsights` series (`ServiceCount`, `DeploymentCount`, storage,
+ephemeral storage). `GetMetricData` is billed per metric per request, so trim
+anything you don't look at.
+
+Gotchas are listed in
+[`grafana/provisioning/dashboards/README.md`](../grafana/provisioning/dashboards/README.md)
+- the short version: YACE metric spelling can vary by version (check
+`http://localhost:9090/api/v1/label/__name__/values`), cluster-level panels also
+show per-service series, and the "Capacity Provider Reservation" panel stays
+empty because `AWS/ECS/ManagedScaling` isn't a YACE discovery type.

@@ -1,11 +1,26 @@
-# yet-another-cloudwatch-exporter (YACE) - pulls ECS/Fargate metrics from AWS
-# CloudWatch and exposes them as Prometheus metrics on :5000/metrics.
+# yet-another-cloudwatch-exporter (YACE) - pulls ECS/Fargate/ALB/RDS metrics from
+# AWS CloudWatch and re-exposes them as Prometheus metrics on :5000/metrics.
 #
 # Enable with:   make ecs-up      (starts the `ecs` compose profile)
 # Then uncomment the `ecs-cloudwatch` job in prometheus/prometheus.yml.
 #
 # Docs & full metric list: docs/05-ecs-metrics.md
-# YACE metric naming: aws_ecs_<metric>_<stat>, e.g. aws_ecs_cpuutilization_average
+#
+# YACE metric naming:  aws_<namespace>_<metric>_<stat>
+#   AWS/ECS               -> aws_ecs_cpuutilization_average
+#   ECS/ContainerInsights -> aws_ecs_containerinsights_running_task_count_average
+#   AWS/ApplicationELB    -> aws_applicationelb_httpcode_target_5xx_count_sum
+#   AWS/RDS               -> aws_rds_freeable_memory_average
+# Rule of thumb: lowercase the CloudWatch metric name and put "_" before every
+# word boundary (lower->UPPER). Statistic becomes the suffix (average / sum /
+# maximum / minimum / p95 ...). CloudWatch dimensions become labels prefixed
+# with `dimension_`, e.g. dimension_LoadBalancer, dimension_DBInstanceIdentifier.
+#
+# The metric lists below are sized to feed the imported Grafana dashboards:
+#   grafana/provisioning/dashboards/json/aws-alb.json
+#   grafana/provisioning/dashboards/json/aws-ecs-metrics.json
+#   grafana/provisioning/dashboards/json/aws-rds.json
+# Trim anything you don't need - GetMetricData is billed per metric per request.
 
 apiVersion: v1alpha1
 
@@ -16,8 +31,12 @@ discovery:
     AWS/ECS:
       - Name
       - Environment
+    AWS/RDS:
+      - Name
+      - Environment
   jobs:
-    # ---- Cluster + service level metrics (AWS/ECS namespace) ----
+    # ================================================================= ECS ===
+    # ---- Cluster + service level (AWS/ECS namespace) ----
     - type: AWS/ECS
       regions: [ap-south-1]
       period: 300
@@ -26,31 +45,85 @@ discovery:
         - { name: CPUUtilization,    statistics: [Average, Maximum] }
         - { name: MemoryUtilization, statistics: [Average, Maximum] }
 
-    # ---- Container Insights: task/container level (needs Insights enabled on the cluster) ----
+    # ---- Container Insights: task/container level ----
+    # Requires Container Insights enabled on the cluster:
+    #   aws ecs update-cluster-settings --cluster <c> \
+    #       --settings name=containerInsights,value=enabled
     - type: ECS/ContainerInsights
       regions: [ap-south-1]
       period: 60
       length: 300
       metrics:
-        - { name: RunningTaskCount,        statistics: [Average] }
-        - { name: PendingTaskCount,        statistics: [Average] }
-        - { name: DesiredTaskCount,        statistics: [Average] }
-        - { name: CpuUtilized,             statistics: [Average] }
-        - { name: CpuReserved,             statistics: [Average] }
-        - { name: MemoryUtilized,          statistics: [Average] }
-        - { name: MemoryReserved,          statistics: [Average] }
-        - { name: NetworkRxBytes,          statistics: [Average] }
-        - { name: NetworkTxBytes,          statistics: [Average] }
-        - { name: EphemeralStorageUtilized, statistics: [Average] }
+        - { name: RunningTaskCount,          statistics: [Average] }
+        - { name: PendingTaskCount,          statistics: [Average] }
+        - { name: DesiredTaskCount,          statistics: [Average] }
+        - { name: ServiceCount,              statistics: [Average] }
+        - { name: DeploymentCount,           statistics: [Average] }
+        - { name: TaskSetCount,              statistics: [Average] }
+        - { name: CpuUtilized,               statistics: [Average] }
+        - { name: CpuReserved,               statistics: [Average] }
+        - { name: MemoryUtilized,            statistics: [Average] }
+        - { name: MemoryReserved,            statistics: [Average] }
+        - { name: NetworkRxBytes,            statistics: [Average] }
+        - { name: NetworkTxBytes,            statistics: [Average] }
+        - { name: StorageReadBytes,          statistics: [Average] }
+        - { name: StorageWriteBytes,         statistics: [Average] }
+        - { name: EphemeralStorageUtilized,  statistics: [Average] }
+        - { name: EphemeralStorageReserved,  statistics: [Average] }
 
-    # ---- Optional: the ALB in front of your ECS services ----
+    # NOTE: the "Capacity Provider Reservation" panel in aws-ecs-metrics.json
+    # queries aws_ecs_managedscaling_capacity_provider_reservation_average.
+    # AWS/ECS/ManagedScaling is not a YACE discovery type, so that one panel
+    # stays empty unless you add it via a customNamespace job. Everything else
+    # on the dashboard is covered below.
+
+    # ============================================================ ALB / ELB ===
     - type: AWS/ApplicationELB
       regions: [ap-south-1]
       period: 60
       length: 300
       metrics:
-        - { name: RequestCount,            statistics: [Sum] }
-        - { name: HTTPCode_Target_5XX_Count, statistics: [Sum] }
-        - { name: TargetResponseTime,      statistics: [Average, p95] }
-        - { name: HealthyHostCount,        statistics: [Average] }
-        - { name: UnHealthyHostCount,      statistics: [Average] }
+        - { name: RequestCount,                    statistics: [Sum] }
+        - { name: ActiveConnectionCount,           statistics: [Sum] }
+        - { name: NewConnectionCount,              statistics: [Sum] }
+        - { name: RejectedConnectionCount,         statistics: [Sum] }
+        - { name: ProcessedBytes,                  statistics: [Sum] }
+        - { name: ConsumedLCUs,                    statistics: [Sum] }
+        - { name: TargetResponseTime,              statistics: [Average, p50, p95, p99] }
+        - { name: TargetConnectionTime,            statistics: [Average] }
+        - { name: TargetProcessingTime,            statistics: [Average] }
+        - { name: HTTPCode_Target_2XX_Count,       statistics: [Sum] }
+        - { name: HTTPCode_Target_3XX_Count,       statistics: [Sum] }
+        - { name: HTTPCode_Target_4XX_Count,       statistics: [Sum] }
+        - { name: HTTPCode_Target_5XX_Count,       statistics: [Sum] }
+        - { name: HTTPCode_ELB_3XX_Count,          statistics: [Sum] }
+        - { name: HTTPCode_ELB_4XX_Count,          statistics: [Sum] }
+        - { name: HTTPCode_ELB_5XX_Count,          statistics: [Sum] }
+        - { name: HealthyHostCount,                statistics: [Average] }
+        - { name: UnHealthyHostCount,              statistics: [Average] }
+        - { name: TargetConnectionErrorCount,      statistics: [Sum] }
+        - { name: TargetTLSNegotiationErrorCount,  statistics: [Sum] }
+        - { name: ClientTLSNegotiationErrorCount,  statistics: [Sum] }
+
+    # ================================================================= RDS ===
+    - type: AWS/RDS
+      regions: [ap-south-1]
+      period: 60
+      length: 300
+      metrics:
+        - { name: CPUUtilization,               statistics: [Average] }
+        - { name: CPUCreditBalance,             statistics: [Average] }
+        - { name: FreeableMemory,               statistics: [Average] }
+        - { name: SwapUsage,                    statistics: [Average] }
+        - { name: FreeStorageSpace,             statistics: [Average] }
+        - { name: DatabaseConnections,          statistics: [Average] }
+        - { name: ReadIOPS,                     statistics: [Average] }
+        - { name: WriteIOPS,                    statistics: [Average] }
+        - { name: ReadLatency,                  statistics: [Average] }
+        - { name: WriteLatency,                 statistics: [Average] }
+        - { name: ReadThroughput,               statistics: [Average] }
+        - { name: WriteThroughput,              statistics: [Average] }
+        - { name: NetworkReceiveThroughput,     statistics: [Average] }
+        - { name: NetworkTransmitThroughput,    statistics: [Average] }
+        - { name: DiskQueueDepth,               statistics: [Average] }
+        - { name: ReplicaLag,                   statistics: [Average] }
