@@ -1,9 +1,9 @@
 {
-  "uid": "dev-ind",
-  "title": "dev-IND",
+  "uid": "stg-uae",
+  "title": "stg-UAE",
   "tags": [
     "dev",
-    "ind",
+    "uae staging",
     "valura",
     "generated"
   ],
@@ -26,10 +26,10 @@
         "type": "constant",
         "name": "project",
         "label": "Coolify project",
-        "query": "global-valura-dev",
+        "query": "valura-uae-staging",
         "current": {
-          "text": "global-valura-dev",
-          "value": "global-valura-dev"
+          "text": "valura-uae-staging",
+          "value": "valura-uae-staging"
         },
         "hide": 2
       },
@@ -41,10 +41,10 @@
           "type": "prometheus",
           "uid": "prometheus"
         },
-        "definition": "label_values(container_last_seen{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"}, container_label_coolify_resourceName)",
+        "definition": "label_values(container_last_seen{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\"}, container_label_coolify_resourceName)",
         "query": {
           "qryType": 1,
-          "query": "label_values(container_last_seen{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"}, container_label_coolify_resourceName)",
+          "query": "label_values(container_last_seen{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\"}, container_label_coolify_resourceName)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "includeAll": true,
@@ -84,11 +84,11 @@
   },
   "links": [
     {
-      "title": "\u2194 dev-UAE",
+      "title": "\u2194 stg-IND",
       "type": "link",
-      "url": "/d/dev-uae/dev-uae?${__url_time_range}",
+      "url": "/d/stg-ind/stg-ind?${__url_time_range}",
       "icon": "external link",
-      "tooltip": "switch to dev-UAE"
+      "tooltip": "switch to stg-IND"
     },
     {
       "title": "Jaeger UI",
@@ -100,7 +100,7 @@
     {
       "title": "Explore logs",
       "type": "link",
-      "url": "/explore?left={\"datasource\":\"loki\",\"queries\":[{\"expr\":\"{coolify_project=\\\"global-valura-dev\\\", host=\\\"dev-server-1\\\"}\"}],\"range\":{\"from\":\"now-1h\",\"to\":\"now\"}}",
+      "url": "/explore?left={\"datasource\":\"loki\",\"queries\":[{\"expr\":\"{coolify_project=\\\"valura-uae-staging\\\", host=\\\"uae-stg\\\"}\"}],\"range\":{\"from\":\"now-1h\",\"to\":\"now\"}}",
       "icon": "external link",
       "targetBlank": true
     }
@@ -124,7 +124,7 @@
     {
       "id": 1,
       "type": "row",
-      "title": "IND  \u2022  summary",
+      "title": "UAE staging  \u2022  summary",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -191,7 +191,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "count(container_last_seen{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"})",
+          "expr": "count(container_last_seen{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\"})",
           "instant": true
         }
       ]
@@ -257,7 +257,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(changes(container_start_time_seconds{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"}[1h])) or vector(0)",
+          "expr": "sum(changes(container_start_time_seconds{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\"}[1h])) or vector(0)",
           "instant": true
         }
       ]
@@ -316,7 +316,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"}[5m]))",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\"}[5m]))",
           "instant": true
         }
       ]
@@ -374,7 +374,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(container_memory_working_set_bytes{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"})",
+          "expr": "sum(container_memory_working_set_bytes{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\"})",
           "instant": true
         }
       ]
@@ -440,7 +440,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({coolify_project=\"global-valura-dev\", host=\"dev-server-1\", level=~\"error|fatal\"} [5m]))",
+          "expr": "sum(count_over_time({coolify_project=\"valura-uae-staging\", host=\"uae-stg\", level=~\"error|fatal\"} [5m]))",
           "queryType": "instant"
         }
       ]
@@ -502,7 +502,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({coolify_project=\"global-valura-dev\", host=\"dev-server-1\", level=\"warn\"} [5m]))",
+          "expr": "sum(count_over_time({coolify_project=\"valura-uae-staging\", host=\"uae-stg\", level=\"warn\"} [5m]))",
           "queryType": "instant"
         }
       ]
@@ -560,7 +560,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({coolify_project=\"global-valura-dev\", host=\"dev-server-1\"} [1m]))",
+          "expr": "sum(count_over_time({coolify_project=\"valura-uae-staging\", host=\"uae-stg\"} [1m]))",
           "queryType": "instant"
         }
       ]
@@ -618,7 +618,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "count(count by (container_label_coolify_resourceName) (container_last_seen{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"}))",
+          "expr": "count(count by (container_label_coolify_resourceName) (container_last_seen{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\"}))",
           "instant": true
         }
       ]
@@ -626,7 +626,7 @@
     {
       "id": 10,
       "type": "row",
-      "title": "IND  \u2022  restarts & health",
+      "title": "UAE staging  \u2022  restarts & health",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -669,7 +669,7 @@
           "links": [
             {
               "title": "Focus this service",
-              "url": "/d/dev-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
+              "url": "/d/stg-uae?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
             }
           ]
         },
@@ -697,7 +697,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (container_label_coolify_resourceName) (changes(container_start_time_seconds{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\", container_label_coolify_resourceName=~\"$resource\"}[1h]))",
+          "expr": "sum by (container_label_coolify_resourceName) (changes(container_start_time_seconds{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\", container_label_coolify_resourceName=~\"$resource\"}[1h]))",
           "legendFormat": "{{container_label_coolify_resourceName}}"
         }
       ]
@@ -759,7 +759,7 @@
                 "value": [
                   {
                     "title": "Focus this service",
-                    "url": "/d/dev-ind?var-resource=${__data.fields.container_label_coolify_resourceName}&${__url_time_range}"
+                    "url": "/d/stg-uae?var-resource=${__data.fields.container_label_coolify_resourceName}&${__url_time_range}"
                   }
                 ]
               }
@@ -784,7 +784,7 @@
           },
           "format": "table",
           "instant": true,
-          "expr": "time() - (container_start_time_seconds{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"} > 0)"
+          "expr": "time() - (container_start_time_seconds{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\"} > 0)"
         }
       ],
       "transformations": [
@@ -813,7 +813,7 @@
     {
       "id": 13,
       "type": "row",
-      "title": "IND  \u2022  CPU",
+      "title": "UAE staging  \u2022  CPU",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -857,7 +857,7 @@
           "links": [
             {
               "title": "Focus this service",
-              "url": "/d/dev-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
+              "url": "/d/stg-uae?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
             }
           ]
         },
@@ -885,7 +885,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (container_label_coolify_resourceName) (rate(container_cpu_usage_seconds_total{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\", container_label_coolify_resourceName=~\"$resource\"}[$__rate_interval]))",
+          "expr": "sum by (container_label_coolify_resourceName) (rate(container_cpu_usage_seconds_total{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\", container_label_coolify_resourceName=~\"$resource\"}[$__rate_interval]))",
           "legendFormat": "{{container_label_coolify_resourceName}}"
         }
       ]
@@ -962,7 +962,7 @@
                 "value": [
                   {
                     "title": "Focus this service",
-                    "url": "/d/dev-ind?var-resource=${__data.fields.service}&${__url_time_range}"
+                    "url": "/d/stg-uae?var-resource=${__data.fields.service}&${__url_time_range}"
                   }
                 ]
               }
@@ -987,7 +987,7 @@
           },
           "format": "table",
           "instant": true,
-          "expr": "topk(25, sum by (container_label_coolify_resourceName) (rate(container_cpu_usage_seconds_total{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"}[5m])))"
+          "expr": "topk(25, sum by (container_label_coolify_resourceName) (rate(container_cpu_usage_seconds_total{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\"}[5m])))"
         },
         {
           "refId": "mem",
@@ -997,7 +997,7 @@
           },
           "format": "table",
           "instant": true,
-          "expr": "sum by (container_label_coolify_resourceName) (container_memory_working_set_bytes{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"})"
+          "expr": "sum by (container_label_coolify_resourceName) (container_memory_working_set_bytes{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\"})"
         },
         {
           "refId": "rst",
@@ -1007,7 +1007,7 @@
           },
           "format": "table",
           "instant": true,
-          "expr": "sum by (container_label_coolify_resourceName) (changes(container_start_time_seconds{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"}[1h]))"
+          "expr": "sum by (container_label_coolify_resourceName) (changes(container_start_time_seconds{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\"}[1h]))"
         }
       ],
       "transformations": [
@@ -1034,7 +1034,7 @@
     {
       "id": 16,
       "type": "row",
-      "title": "IND  \u2022  memory",
+      "title": "UAE staging  \u2022  memory",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -1077,7 +1077,7 @@
           "links": [
             {
               "title": "Focus this service",
-              "url": "/d/dev-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
+              "url": "/d/stg-uae?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
             }
           ]
         },
@@ -1105,7 +1105,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (container_label_coolify_resourceName) (container_memory_working_set_bytes{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\", container_label_coolify_resourceName=~\"$resource\"})",
+          "expr": "sum by (container_label_coolify_resourceName) (container_memory_working_set_bytes{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\", container_label_coolify_resourceName=~\"$resource\"})",
           "legendFormat": "{{container_label_coolify_resourceName}}"
         }
       ]
@@ -1143,7 +1143,7 @@
           "links": [
             {
               "title": "Focus this service",
-              "url": "/d/dev-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
+              "url": "/d/stg-uae?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
             }
           ]
         },
@@ -1171,7 +1171,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "100 * sum by (container_label_coolify_resourceName) (container_memory_working_set_bytes{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\", container_label_coolify_resourceName=~\"$resource\"}) / (sum by (container_label_coolify_resourceName) (container_spec_memory_limit_bytes{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\", container_label_coolify_resourceName=~\"$resource\"}) > 0)",
+          "expr": "100 * sum by (container_label_coolify_resourceName) (container_memory_working_set_bytes{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\", container_label_coolify_resourceName=~\"$resource\"}) / (sum by (container_label_coolify_resourceName) (container_spec_memory_limit_bytes{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\", container_label_coolify_resourceName=~\"$resource\"}) > 0)",
           "legendFormat": "{{container_label_coolify_resourceName}}"
         }
       ]
@@ -1179,7 +1179,7 @@
     {
       "id": 19,
       "type": "row",
-      "title": "IND  \u2022  logs   (filtered by the Service dropdown)",
+      "title": "UAE staging  \u2022  logs   (filtered by the Service dropdown)",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -1297,7 +1297,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (level) (count_over_time({coolify_project=\"global-valura-dev\", host=\"dev-server-1\", coolify_resource=~\"$resource\"}[$__interval]))",
+          "expr": "sum by (level) (count_over_time({coolify_project=\"valura-uae-staging\", host=\"uae-stg\", coolify_resource=~\"$resource\"}[$__interval]))",
           "legendFormat": "{{level}}",
           "queryType": "range"
         }
@@ -1350,7 +1350,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (coolify_resource) (count_over_time({coolify_project=\"global-valura-dev\", host=\"dev-server-1\", coolify_resource=~\"$resource\"} |~ \"(?i)(error|warn|fatal|exception|critical)\" [$__interval]))",
+          "expr": "sum by (coolify_resource) (count_over_time({coolify_project=\"valura-uae-staging\", host=\"uae-stg\", coolify_resource=~\"$resource\"} |~ \"(?i)(error|warn|fatal|exception|critical)\" [$__interval]))",
           "legendFormat": "{{coolify_resource}}",
           "queryType": "range"
         }
@@ -1391,7 +1391,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{coolify_project=\"global-valura-dev\", host=\"dev-server-1\", coolify_resource=~\"$resource\"} |~ \"(?i)(error|warn|fatal|critical|exception|traceback|panic)\"",
+          "expr": "{coolify_project=\"valura-uae-staging\", host=\"uae-stg\", coolify_resource=~\"$resource\"} |~ \"(?i)(error|warn|fatal|critical|exception|traceback|panic)\"",
           "maxLines": 500,
           "legendFormat": ""
         }
@@ -1432,7 +1432,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{coolify_project=\"global-valura-dev\", host=\"dev-server-1\", coolify_resource=~\"$resource\"}",
+          "expr": "{coolify_project=\"valura-uae-staging\", host=\"uae-stg\", coolify_resource=~\"$resource\"}",
           "maxLines": 500,
           "legendFormat": ""
         }
@@ -1441,7 +1441,7 @@
     {
       "id": 24,
       "type": "row",
-      "title": "IND  \u2022  traces  (Jaeger + RED)",
+      "title": "UAE staging  \u2022  traces  (Jaeger + RED)",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -1462,7 +1462,7 @@
       },
       "options": {
         "mode": "markdown",
-        "content": "**Traces are wired but empty until the apps emit spans.** On each Coolify service set `OTEL_EXPORTER_OTLP_ENDPOINT=http://10.200.2.51:4318`, `OTEL_SERVICE_NAME=<name>`, `OTEL_TRACES_EXPORTER=otlp`. Flow: `app \u2192 Alloy(10.200.2.51) \u2192 OTel Collector(.52) \u2192 Jaeger`; RED metrics (`traces_spanmetrics_*`) are derived automatically. See [docs/dev-dashboards.md]."
+        "content": "**Traces are wired but empty until the apps emit spans.** On each Coolify service set `OTEL_EXPORTER_OTLP_ENDPOINT=http://10.200.2.56:4318`, `OTEL_SERVICE_NAME=<name>`, `OTEL_TRACES_EXPORTER=otlp`. Flow: `app \u2192 Alloy(10.200.2.56) \u2192 OTel Collector(.52) \u2192 Jaeger`; RED metrics (`traces_spanmetrics_*`) are derived automatically. See [docs/dev-dashboards.md]."
       }
     },
     {
@@ -1676,7 +1676,7 @@
     {
       "id": 30,
       "type": "row",
-      "title": "IND  \u2022  network  (lower priority)",
+      "title": "UAE staging  \u2022  network  (lower priority)",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -1719,7 +1719,7 @@
           "links": [
             {
               "title": "Focus this service",
-              "url": "/d/dev-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
+              "url": "/d/stg-uae?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
             }
           ]
         },
@@ -1747,7 +1747,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (container_label_coolify_resourceName) (rate(container_network_receive_bytes_total{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\", container_label_coolify_resourceName=~\"$resource\"}[$__rate_interval]))",
+          "expr": "sum by (container_label_coolify_resourceName) (rate(container_network_receive_bytes_total{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\", container_label_coolify_resourceName=~\"$resource\"}[$__rate_interval]))",
           "legendFormat": "{{container_label_coolify_resourceName}}"
         }
       ]
@@ -1785,7 +1785,7 @@
           "links": [
             {
               "title": "Focus this service",
-              "url": "/d/dev-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
+              "url": "/d/stg-uae?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
             }
           ]
         },
@@ -1813,7 +1813,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (container_label_coolify_resourceName) (rate(container_network_transmit_bytes_total{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\", container_label_coolify_resourceName=~\"$resource\"}[$__rate_interval]))",
+          "expr": "sum by (container_label_coolify_resourceName) (rate(container_network_transmit_bytes_total{container_label_coolify_projectName=\"valura-uae-staging\", box=\"uae-staging\", container_label_coolify_resourceName=~\"$resource\"}[$__rate_interval]))",
           "legendFormat": "{{container_label_coolify_resourceName}}"
         }
       ]
@@ -1821,7 +1821,7 @@
     {
       "id": 33,
       "type": "row",
-      "title": "dev host  \u2022  10.200.2.51  (shared by dev-UAE + dev-IND)",
+      "title": "staging host  \u2022  10.200.2.56 (UAE)",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -1892,7 +1892,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{job=\"node-fleet\", box=\"valura-dev\", mode=\"idle\"}[5m])))",
+          "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{job=\"node-fleet\", box=\"uae-staging\", mode=\"idle\"}[5m])))",
           "instant": true
         }
       ]
@@ -1950,7 +1950,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "node_load1{job=\"node-fleet\", box=\"valura-dev\"}",
+          "expr": "node_load1{job=\"node-fleet\", box=\"uae-staging\"}",
           "instant": true
         }
       ]
@@ -2016,7 +2016,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "100 * (1 - node_memory_MemAvailable_bytes{job=\"node-fleet\", box=\"valura-dev\"} / node_memory_MemTotal_bytes{job=\"node-fleet\", box=\"valura-dev\"})",
+          "expr": "100 * (1 - node_memory_MemAvailable_bytes{job=\"node-fleet\", box=\"uae-staging\"} / node_memory_MemTotal_bytes{job=\"node-fleet\", box=\"uae-staging\"})",
           "instant": true
         }
       ]
@@ -2074,7 +2074,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "node_memory_MemTotal_bytes{job=\"node-fleet\", box=\"valura-dev\"}",
+          "expr": "node_memory_MemTotal_bytes{job=\"node-fleet\", box=\"uae-staging\"}",
           "instant": true
         }
       ]
@@ -2140,7 +2140,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "100 * (1 - node_filesystem_avail_bytes{job=\"node-fleet\", box=\"valura-dev\", mountpoint=\"/\"} / node_filesystem_size_bytes{job=\"node-fleet\", box=\"valura-dev\", mountpoint=\"/\"})",
+          "expr": "100 * (1 - node_filesystem_avail_bytes{job=\"node-fleet\", box=\"uae-staging\", mountpoint=\"/\"} / node_filesystem_size_bytes{job=\"node-fleet\", box=\"uae-staging\", mountpoint=\"/\"})",
           "instant": true
         }
       ]
@@ -2198,7 +2198,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "time() - node_boot_time_seconds{job=\"node-fleet\", box=\"valura-dev\"}",
+          "expr": "time() - node_boot_time_seconds{job=\"node-fleet\", box=\"uae-staging\"}",
           "instant": true
         }
       ]
@@ -2259,7 +2259,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (mode) (rate(node_cpu_seconds_total{job=\"node-fleet\", box=\"valura-dev\", mode!=\"idle\"}[$__rate_interval]))",
+          "expr": "sum by (mode) (rate(node_cpu_seconds_total{job=\"node-fleet\", box=\"uae-staging\", mode!=\"idle\"}[$__rate_interval]))",
           "legendFormat": "{{mode}}"
         }
       ]
@@ -2319,7 +2319,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "rate(node_network_receive_bytes_total{job=\"node-fleet\", box=\"valura-dev\", device!~\"lo|veth.*|docker.*|br-.*\"}[$__rate_interval])",
+          "expr": "rate(node_network_receive_bytes_total{job=\"node-fleet\", box=\"uae-staging\", device!~\"lo|veth.*|docker.*|br-.*\"}[$__rate_interval])",
           "legendFormat": "rx {{device}}"
         },
         {
@@ -2328,7 +2328,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "- rate(node_network_transmit_bytes_total{job=\"node-fleet\", box=\"valura-dev\", device!~\"lo|veth.*|docker.*|br-.*\"}[$__rate_interval])",
+          "expr": "- rate(node_network_transmit_bytes_total{job=\"node-fleet\", box=\"uae-staging\", device!~\"lo|veth.*|docker.*|br-.*\"}[$__rate_interval])",
           "legendFormat": "tx {{device}}"
         }
       ]
@@ -2388,7 +2388,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "node_memory_MemTotal_bytes{job=\"node-fleet\", box=\"valura-dev\"}",
+          "expr": "node_memory_MemTotal_bytes{job=\"node-fleet\", box=\"uae-staging\"}",
           "legendFormat": "total"
         },
         {
@@ -2397,7 +2397,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "node_memory_MemTotal_bytes{job=\"node-fleet\", box=\"valura-dev\"} - node_memory_MemAvailable_bytes{job=\"node-fleet\", box=\"valura-dev\"}",
+          "expr": "node_memory_MemTotal_bytes{job=\"node-fleet\", box=\"uae-staging\"} - node_memory_MemAvailable_bytes{job=\"node-fleet\", box=\"uae-staging\"}",
           "legendFormat": "used"
         }
       ]
@@ -2457,7 +2457,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "rate(node_disk_read_bytes_total{job=\"node-fleet\", box=\"valura-dev\"}[$__rate_interval])",
+          "expr": "rate(node_disk_read_bytes_total{job=\"node-fleet\", box=\"uae-staging\"}[$__rate_interval])",
           "legendFormat": "read {{device}}"
         },
         {
@@ -2466,7 +2466,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "- rate(node_disk_written_bytes_total{job=\"node-fleet\", box=\"valura-dev\"}[$__rate_interval])",
+          "expr": "- rate(node_disk_written_bytes_total{job=\"node-fleet\", box=\"uae-staging\"}[$__rate_interval])",
           "legendFormat": "write {{device}}"
         }
       ]

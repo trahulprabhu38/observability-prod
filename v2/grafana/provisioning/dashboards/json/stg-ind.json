@@ -1,9 +1,9 @@
 {
-  "uid": "dev-ind",
-  "title": "dev-IND",
+  "uid": "stg-ind",
+  "title": "stg-IND",
   "tags": [
     "dev",
-    "ind",
+    "ind staging",
     "valura",
     "generated"
   ],
@@ -26,10 +26,10 @@
         "type": "constant",
         "name": "project",
         "label": "Coolify project",
-        "query": "global-valura-dev",
+        "query": "global-valura-staging",
         "current": {
-          "text": "global-valura-dev",
-          "value": "global-valura-dev"
+          "text": "global-valura-staging",
+          "value": "global-valura-staging"
         },
         "hide": 2
       },
@@ -41,10 +41,10 @@
           "type": "prometheus",
           "uid": "prometheus"
         },
-        "definition": "label_values(container_last_seen{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"}, container_label_coolify_resourceName)",
+        "definition": "label_values(container_last_seen{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\"}, container_label_coolify_resourceName)",
         "query": {
           "qryType": 1,
-          "query": "label_values(container_last_seen{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"}, container_label_coolify_resourceName)",
+          "query": "label_values(container_last_seen{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\"}, container_label_coolify_resourceName)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "includeAll": true,
@@ -84,11 +84,11 @@
   },
   "links": [
     {
-      "title": "\u2194 dev-UAE",
+      "title": "\u2194 stg-UAE",
       "type": "link",
-      "url": "/d/dev-uae/dev-uae?${__url_time_range}",
+      "url": "/d/stg-uae/stg-uae?${__url_time_range}",
       "icon": "external link",
-      "tooltip": "switch to dev-UAE"
+      "tooltip": "switch to stg-UAE"
     },
     {
       "title": "Jaeger UI",
@@ -100,7 +100,7 @@
     {
       "title": "Explore logs",
       "type": "link",
-      "url": "/explore?left={\"datasource\":\"loki\",\"queries\":[{\"expr\":\"{coolify_project=\\\"global-valura-dev\\\", host=\\\"dev-server-1\\\"}\"}],\"range\":{\"from\":\"now-1h\",\"to\":\"now\"}}",
+      "url": "/explore?left={\"datasource\":\"loki\",\"queries\":[{\"expr\":\"{coolify_project=\\\"global-valura-staging\\\", host=\\\"ind-stg\\\"}\"}],\"range\":{\"from\":\"now-1h\",\"to\":\"now\"}}",
       "icon": "external link",
       "targetBlank": true
     }
@@ -124,7 +124,7 @@
     {
       "id": 1,
       "type": "row",
-      "title": "IND  \u2022  summary",
+      "title": "IND staging  \u2022  summary",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -136,6 +136,20 @@
     },
     {
       "id": 2,
+      "type": "text",
+      "gridPos": {
+        "x": 0,
+        "y": 1,
+        "w": 24,
+        "h": 2
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "**Per-container metrics (CPU/memory/restarts below) are unavailable on this box.** cAdvisor can't see per-container cgroups on this host's Docker 29 + cgroup v2 setup (tried explicit docker.sock, `--cgroupns=host`, containerd socket, API pinning - all registered cleanly but returned zero containers). Host metrics, logs and traces below are unaffected."
+      }
+    },
+    {
+      "id": 3,
       "type": "stat",
       "title": "Running containers",
       "datasource": {
@@ -144,7 +158,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 1,
+        "y": 3,
         "w": 3,
         "h": 4
       },
@@ -191,13 +205,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "count(container_last_seen{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"})",
+          "expr": "count(container_last_seen{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\"})",
           "instant": true
         }
       ]
     },
     {
-      "id": 3,
+      "id": 4,
       "type": "stat",
       "title": "Restarts (1h)",
       "datasource": {
@@ -206,7 +220,7 @@
       },
       "gridPos": {
         "x": 3,
-        "y": 1,
+        "y": 3,
         "w": 3,
         "h": 4
       },
@@ -257,13 +271,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(changes(container_start_time_seconds{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"}[1h])) or vector(0)",
+          "expr": "sum(changes(container_start_time_seconds{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\"}[1h])) or vector(0)",
           "instant": true
         }
       ]
     },
     {
-      "id": 4,
+      "id": 5,
       "type": "stat",
       "title": "CPU cores",
       "datasource": {
@@ -272,7 +286,7 @@
       },
       "gridPos": {
         "x": 6,
-        "y": 1,
+        "y": 3,
         "w": 3,
         "h": 4
       },
@@ -316,13 +330,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"}[5m]))",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\"}[5m]))",
           "instant": true
         }
       ]
     },
     {
-      "id": 5,
+      "id": 6,
       "type": "stat",
       "title": "Memory",
       "datasource": {
@@ -331,7 +345,7 @@
       },
       "gridPos": {
         "x": 9,
-        "y": 1,
+        "y": 3,
         "w": 3,
         "h": 4
       },
@@ -374,13 +388,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(container_memory_working_set_bytes{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"})",
+          "expr": "sum(container_memory_working_set_bytes{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\"})",
           "instant": true
         }
       ]
     },
     {
-      "id": 6,
+      "id": 7,
       "type": "stat",
       "title": "Errors (5m)",
       "datasource": {
@@ -389,7 +403,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 1,
+        "y": 3,
         "w": 3,
         "h": 4
       },
@@ -440,13 +454,13 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({coolify_project=\"global-valura-dev\", host=\"dev-server-1\", level=~\"error|fatal\"} [5m]))",
+          "expr": "sum(count_over_time({coolify_project=\"global-valura-staging\", host=\"ind-stg\", level=~\"error|fatal\"} [5m]))",
           "queryType": "instant"
         }
       ]
     },
     {
-      "id": 7,
+      "id": 8,
       "type": "stat",
       "title": "Warnings (5m)",
       "datasource": {
@@ -455,7 +469,7 @@
       },
       "gridPos": {
         "x": 15,
-        "y": 1,
+        "y": 3,
         "w": 3,
         "h": 4
       },
@@ -502,13 +516,13 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({coolify_project=\"global-valura-dev\", host=\"dev-server-1\", level=\"warn\"} [5m]))",
+          "expr": "sum(count_over_time({coolify_project=\"global-valura-staging\", host=\"ind-stg\", level=\"warn\"} [5m]))",
           "queryType": "instant"
         }
       ]
     },
     {
-      "id": 8,
+      "id": 9,
       "type": "stat",
       "title": "Log lines/min",
       "datasource": {
@@ -517,7 +531,7 @@
       },
       "gridPos": {
         "x": 18,
-        "y": 1,
+        "y": 3,
         "w": 3,
         "h": 4
       },
@@ -560,13 +574,13 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum(count_over_time({coolify_project=\"global-valura-dev\", host=\"dev-server-1\"} [1m]))",
+          "expr": "sum(count_over_time({coolify_project=\"global-valura-staging\", host=\"ind-stg\"} [1m]))",
           "queryType": "instant"
         }
       ]
     },
     {
-      "id": 9,
+      "id": 10,
       "type": "stat",
       "title": "Services reporting",
       "datasource": {
@@ -575,7 +589,7 @@
       },
       "gridPos": {
         "x": 21,
-        "y": 1,
+        "y": 3,
         "w": 3,
         "h": 4
       },
@@ -618,26 +632,26 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "count(count by (container_label_coolify_resourceName) (container_last_seen{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"}))",
+          "expr": "count(count by (container_label_coolify_resourceName) (container_last_seen{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\"}))",
           "instant": true
         }
       ]
     },
     {
-      "id": 10,
+      "id": 11,
       "type": "row",
-      "title": "IND  \u2022  restarts & health",
+      "title": "IND staging  \u2022  restarts & health",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 5,
+        "y": 7,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 11,
+      "id": 12,
       "type": "timeseries",
       "title": "Restarts by service (1h delta)",
       "datasource": {
@@ -646,7 +660,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 6,
+        "y": 8,
         "w": 14,
         "h": 8
       },
@@ -669,7 +683,7 @@
           "links": [
             {
               "title": "Focus this service",
-              "url": "/d/dev-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
+              "url": "/d/stg-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
             }
           ]
         },
@@ -697,13 +711,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (container_label_coolify_resourceName) (changes(container_start_time_seconds{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\", container_label_coolify_resourceName=~\"$resource\"}[1h]))",
+          "expr": "sum by (container_label_coolify_resourceName) (changes(container_start_time_seconds{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\", container_label_coolify_resourceName=~\"$resource\"}[1h]))",
           "legendFormat": "{{container_label_coolify_resourceName}}"
         }
       ]
     },
     {
-      "id": 12,
+      "id": 13,
       "type": "table",
       "title": "Uptime / last restart",
       "datasource": {
@@ -712,7 +726,7 @@
       },
       "gridPos": {
         "x": 14,
-        "y": 6,
+        "y": 8,
         "w": 10,
         "h": 8
       },
@@ -759,7 +773,7 @@
                 "value": [
                   {
                     "title": "Focus this service",
-                    "url": "/d/dev-ind?var-resource=${__data.fields.container_label_coolify_resourceName}&${__url_time_range}"
+                    "url": "/d/stg-ind?var-resource=${__data.fields.container_label_coolify_resourceName}&${__url_time_range}"
                   }
                 ]
               }
@@ -784,7 +798,7 @@
           },
           "format": "table",
           "instant": true,
-          "expr": "time() - (container_start_time_seconds{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"} > 0)"
+          "expr": "time() - (container_start_time_seconds{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\"} > 0)"
         }
       ],
       "transformations": [
@@ -811,20 +825,20 @@
       ]
     },
     {
-      "id": 13,
+      "id": 14,
       "type": "row",
-      "title": "IND  \u2022  CPU",
+      "title": "IND staging  \u2022  CPU",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 14,
+        "y": 16,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 14,
+      "id": 15,
       "type": "timeseries",
       "title": "CPU cores by service",
       "datasource": {
@@ -833,7 +847,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 15,
+        "y": 17,
         "w": 14,
         "h": 9
       },
@@ -857,7 +871,7 @@
           "links": [
             {
               "title": "Focus this service",
-              "url": "/d/dev-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
+              "url": "/d/stg-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
             }
           ]
         },
@@ -885,13 +899,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (container_label_coolify_resourceName) (rate(container_cpu_usage_seconds_total{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\", container_label_coolify_resourceName=~\"$resource\"}[$__rate_interval]))",
+          "expr": "sum by (container_label_coolify_resourceName) (rate(container_cpu_usage_seconds_total{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\", container_label_coolify_resourceName=~\"$resource\"}[$__rate_interval]))",
           "legendFormat": "{{container_label_coolify_resourceName}}"
         }
       ]
     },
     {
-      "id": 15,
+      "id": 16,
       "type": "table",
       "title": "Top talkers",
       "datasource": {
@@ -900,7 +914,7 @@
       },
       "gridPos": {
         "x": 14,
-        "y": 15,
+        "y": 17,
         "w": 10,
         "h": 9
       },
@@ -962,7 +976,7 @@
                 "value": [
                   {
                     "title": "Focus this service",
-                    "url": "/d/dev-ind?var-resource=${__data.fields.service}&${__url_time_range}"
+                    "url": "/d/stg-ind?var-resource=${__data.fields.service}&${__url_time_range}"
                   }
                 ]
               }
@@ -987,7 +1001,7 @@
           },
           "format": "table",
           "instant": true,
-          "expr": "topk(25, sum by (container_label_coolify_resourceName) (rate(container_cpu_usage_seconds_total{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"}[5m])))"
+          "expr": "topk(25, sum by (container_label_coolify_resourceName) (rate(container_cpu_usage_seconds_total{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\"}[5m])))"
         },
         {
           "refId": "mem",
@@ -997,7 +1011,7 @@
           },
           "format": "table",
           "instant": true,
-          "expr": "sum by (container_label_coolify_resourceName) (container_memory_working_set_bytes{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"})"
+          "expr": "sum by (container_label_coolify_resourceName) (container_memory_working_set_bytes{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\"})"
         },
         {
           "refId": "rst",
@@ -1007,7 +1021,7 @@
           },
           "format": "table",
           "instant": true,
-          "expr": "sum by (container_label_coolify_resourceName) (changes(container_start_time_seconds{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\"}[1h]))"
+          "expr": "sum by (container_label_coolify_resourceName) (changes(container_start_time_seconds{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\"}[1h]))"
         }
       ],
       "transformations": [
@@ -1032,20 +1046,20 @@
       ]
     },
     {
-      "id": 16,
+      "id": 17,
       "type": "row",
-      "title": "IND  \u2022  memory",
+      "title": "IND staging  \u2022  memory",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 24,
+        "y": 26,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 17,
+      "id": 18,
       "type": "timeseries",
       "title": "Memory (working set) by service",
       "datasource": {
@@ -1054,7 +1068,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 25,
+        "y": 27,
         "w": 12,
         "h": 8
       },
@@ -1077,7 +1091,7 @@
           "links": [
             {
               "title": "Focus this service",
-              "url": "/d/dev-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
+              "url": "/d/stg-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
             }
           ]
         },
@@ -1105,13 +1119,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (container_label_coolify_resourceName) (container_memory_working_set_bytes{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\", container_label_coolify_resourceName=~\"$resource\"})",
+          "expr": "sum by (container_label_coolify_resourceName) (container_memory_working_set_bytes{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\", container_label_coolify_resourceName=~\"$resource\"})",
           "legendFormat": "{{container_label_coolify_resourceName}}"
         }
       ]
     },
     {
-      "id": 18,
+      "id": 19,
       "type": "timeseries",
       "title": "Memory vs limit (%)",
       "datasource": {
@@ -1120,7 +1134,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 25,
+        "y": 27,
         "w": 12,
         "h": 8
       },
@@ -1143,7 +1157,7 @@
           "links": [
             {
               "title": "Focus this service",
-              "url": "/d/dev-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
+              "url": "/d/stg-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
             }
           ]
         },
@@ -1171,26 +1185,26 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "100 * sum by (container_label_coolify_resourceName) (container_memory_working_set_bytes{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\", container_label_coolify_resourceName=~\"$resource\"}) / (sum by (container_label_coolify_resourceName) (container_spec_memory_limit_bytes{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\", container_label_coolify_resourceName=~\"$resource\"}) > 0)",
+          "expr": "100 * sum by (container_label_coolify_resourceName) (container_memory_working_set_bytes{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\", container_label_coolify_resourceName=~\"$resource\"}) / (sum by (container_label_coolify_resourceName) (container_spec_memory_limit_bytes{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\", container_label_coolify_resourceName=~\"$resource\"}) > 0)",
           "legendFormat": "{{container_label_coolify_resourceName}}"
         }
       ]
     },
     {
-      "id": 19,
+      "id": 20,
       "type": "row",
-      "title": "IND  \u2022  logs   (filtered by the Service dropdown)",
+      "title": "IND staging  \u2022  logs   (filtered by the Service dropdown)",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 33,
+        "y": 35,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 20,
+      "id": 21,
       "type": "timeseries",
       "title": "Log volume by level",
       "datasource": {
@@ -1199,7 +1213,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 34,
+        "y": 36,
         "w": 12,
         "h": 7
       },
@@ -1297,14 +1311,14 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (level) (count_over_time({coolify_project=\"global-valura-dev\", host=\"dev-server-1\", coolify_resource=~\"$resource\"}[$__interval]))",
+          "expr": "sum by (level) (count_over_time({coolify_project=\"global-valura-staging\", host=\"ind-stg\", coolify_resource=~\"$resource\"}[$__interval]))",
           "legendFormat": "{{level}}",
           "queryType": "range"
         }
       ]
     },
     {
-      "id": 21,
+      "id": 22,
       "type": "timeseries",
       "title": "Error / warn rate by service",
       "datasource": {
@@ -1313,7 +1327,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 34,
+        "y": 36,
         "w": 12,
         "h": 7
       },
@@ -1350,14 +1364,14 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (coolify_resource) (count_over_time({coolify_project=\"global-valura-dev\", host=\"dev-server-1\", coolify_resource=~\"$resource\"} |~ \"(?i)(error|warn|fatal|exception|critical)\" [$__interval]))",
+          "expr": "sum by (coolify_resource) (count_over_time({coolify_project=\"global-valura-staging\", host=\"ind-stg\", coolify_resource=~\"$resource\"} |~ \"(?i)(error|warn|fatal|exception|critical)\" [$__interval]))",
           "legendFormat": "{{coolify_resource}}",
           "queryType": "range"
         }
       ]
     },
     {
-      "id": 22,
+      "id": 23,
       "type": "logs",
       "title": "Errors, warnings & exceptions  \u2014  $resource",
       "datasource": {
@@ -1366,7 +1380,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 41,
+        "y": 43,
         "w": 24,
         "h": 12
       },
@@ -1391,14 +1405,14 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{coolify_project=\"global-valura-dev\", host=\"dev-server-1\", coolify_resource=~\"$resource\"} |~ \"(?i)(error|warn|fatal|critical|exception|traceback|panic)\"",
+          "expr": "{coolify_project=\"global-valura-staging\", host=\"ind-stg\", coolify_resource=~\"$resource\"} |~ \"(?i)(error|warn|fatal|critical|exception|traceback|panic)\"",
           "maxLines": 500,
           "legendFormat": ""
         }
       ]
     },
     {
-      "id": 23,
+      "id": 24,
       "type": "logs",
       "title": "All logs  \u2014  $resource",
       "datasource": {
@@ -1407,7 +1421,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 53,
+        "y": 55,
         "w": 24,
         "h": 16
       },
@@ -1432,41 +1446,41 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{coolify_project=\"global-valura-dev\", host=\"dev-server-1\", coolify_resource=~\"$resource\"}",
+          "expr": "{coolify_project=\"global-valura-staging\", host=\"ind-stg\", coolify_resource=~\"$resource\"}",
           "maxLines": 500,
           "legendFormat": ""
         }
       ]
     },
     {
-      "id": 24,
+      "id": 25,
       "type": "row",
-      "title": "IND  \u2022  traces  (Jaeger + RED)",
+      "title": "IND staging  \u2022  traces  (Jaeger + RED)",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 69,
+        "y": 71,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 25,
+      "id": 26,
       "type": "text",
       "gridPos": {
         "x": 0,
-        "y": 70,
+        "y": 72,
         "w": 24,
         "h": 3
       },
       "options": {
         "mode": "markdown",
-        "content": "**Traces are wired but empty until the apps emit spans.** On each Coolify service set `OTEL_EXPORTER_OTLP_ENDPOINT=http://10.200.2.51:4318`, `OTEL_SERVICE_NAME=<name>`, `OTEL_TRACES_EXPORTER=otlp`. Flow: `app \u2192 Alloy(10.200.2.51) \u2192 OTel Collector(.52) \u2192 Jaeger`; RED metrics (`traces_spanmetrics_*`) are derived automatically. See [docs/dev-dashboards.md]."
+        "content": "**Traces are wired but empty until the apps emit spans.** On each Coolify service set `OTEL_EXPORTER_OTLP_ENDPOINT=http://10.200.2.57:4318`, `OTEL_SERVICE_NAME=<name>`, `OTEL_TRACES_EXPORTER=otlp`. Flow: `app \u2192 Alloy(10.200.2.57) \u2192 OTel Collector(.52) \u2192 Jaeger`; RED metrics (`traces_spanmetrics_*`) are derived automatically. See [docs/dev-dashboards.md]."
       }
     },
     {
-      "id": 26,
+      "id": 27,
       "type": "timeseries",
       "title": "Request rate by service",
       "datasource": {
@@ -1475,7 +1489,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 73,
+        "y": 75,
         "w": 8,
         "h": 8
       },
@@ -1526,7 +1540,7 @@
       ]
     },
     {
-      "id": 27,
+      "id": 28,
       "type": "timeseries",
       "title": "Error rate by service",
       "datasource": {
@@ -1535,7 +1549,7 @@
       },
       "gridPos": {
         "x": 8,
-        "y": 73,
+        "y": 75,
         "w": 8,
         "h": 8
       },
@@ -1586,7 +1600,7 @@
       ]
     },
     {
-      "id": 28,
+      "id": 29,
       "type": "timeseries",
       "title": "p95 latency by service",
       "datasource": {
@@ -1595,7 +1609,7 @@
       },
       "gridPos": {
         "x": 16,
-        "y": 73,
+        "y": 75,
         "w": 8,
         "h": 8
       },
@@ -1646,7 +1660,7 @@
       ]
     },
     {
-      "id": 29,
+      "id": 30,
       "type": "table",
       "title": "Recent traces  ($service)",
       "datasource": {
@@ -1655,7 +1669,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 81,
+        "y": 83,
         "w": 24,
         "h": 8
       },
@@ -1674,20 +1688,20 @@
       ]
     },
     {
-      "id": 30,
+      "id": 31,
       "type": "row",
-      "title": "IND  \u2022  network  (lower priority)",
+      "title": "IND staging  \u2022  network  (lower priority)",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 89,
+        "y": 91,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 31,
+      "id": 32,
       "type": "timeseries",
       "title": "Network RX by service",
       "datasource": {
@@ -1696,7 +1710,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 90,
+        "y": 92,
         "w": 12,
         "h": 7
       },
@@ -1719,7 +1733,7 @@
           "links": [
             {
               "title": "Focus this service",
-              "url": "/d/dev-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
+              "url": "/d/stg-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
             }
           ]
         },
@@ -1747,13 +1761,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (container_label_coolify_resourceName) (rate(container_network_receive_bytes_total{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\", container_label_coolify_resourceName=~\"$resource\"}[$__rate_interval]))",
+          "expr": "sum by (container_label_coolify_resourceName) (rate(container_network_receive_bytes_total{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\", container_label_coolify_resourceName=~\"$resource\"}[$__rate_interval]))",
           "legendFormat": "{{container_label_coolify_resourceName}}"
         }
       ]
     },
     {
-      "id": 32,
+      "id": 33,
       "type": "timeseries",
       "title": "Network TX by service",
       "datasource": {
@@ -1762,7 +1776,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 90,
+        "y": 92,
         "w": 12,
         "h": 7
       },
@@ -1785,7 +1799,7 @@
           "links": [
             {
               "title": "Focus this service",
-              "url": "/d/dev-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
+              "url": "/d/stg-ind?var-resource=${container_label_coolify_resourceName}&${__url_time_range}"
             }
           ]
         },
@@ -1813,26 +1827,26 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (container_label_coolify_resourceName) (rate(container_network_transmit_bytes_total{container_label_coolify_projectName=\"global-valura-dev\", box=\"valura-dev\", container_label_coolify_resourceName=~\"$resource\"}[$__rate_interval]))",
+          "expr": "sum by (container_label_coolify_resourceName) (rate(container_network_transmit_bytes_total{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\", container_label_coolify_resourceName=~\"$resource\"}[$__rate_interval]))",
           "legendFormat": "{{container_label_coolify_resourceName}}"
         }
       ]
     },
     {
-      "id": 33,
+      "id": 34,
       "type": "row",
-      "title": "dev host  \u2022  10.200.2.51  (shared by dev-UAE + dev-IND)",
+      "title": "staging host  \u2022  10.200.2.57 (IND)",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 97,
+        "y": 99,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 34,
+      "id": 35,
       "type": "stat",
       "title": "Host CPU busy",
       "datasource": {
@@ -1841,7 +1855,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 98,
+        "y": 100,
         "w": 4,
         "h": 4
       },
@@ -1892,13 +1906,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{job=\"node-fleet\", box=\"valura-dev\", mode=\"idle\"}[5m])))",
+          "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{job=\"node-fleet\", box=\"valura-ind-stg\", mode=\"idle\"}[5m])))",
           "instant": true
         }
       ]
     },
     {
-      "id": 35,
+      "id": 36,
       "type": "stat",
       "title": "Load (1m)",
       "datasource": {
@@ -1907,7 +1921,7 @@
       },
       "gridPos": {
         "x": 4,
-        "y": 98,
+        "y": 100,
         "w": 4,
         "h": 4
       },
@@ -1950,13 +1964,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "node_load1{job=\"node-fleet\", box=\"valura-dev\"}",
+          "expr": "node_load1{job=\"node-fleet\", box=\"valura-ind-stg\"}",
           "instant": true
         }
       ]
     },
     {
-      "id": 36,
+      "id": 37,
       "type": "stat",
       "title": "RAM used",
       "datasource": {
@@ -1965,7 +1979,7 @@
       },
       "gridPos": {
         "x": 8,
-        "y": 98,
+        "y": 100,
         "w": 4,
         "h": 4
       },
@@ -2016,13 +2030,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "100 * (1 - node_memory_MemAvailable_bytes{job=\"node-fleet\", box=\"valura-dev\"} / node_memory_MemTotal_bytes{job=\"node-fleet\", box=\"valura-dev\"})",
+          "expr": "100 * (1 - node_memory_MemAvailable_bytes{job=\"node-fleet\", box=\"valura-ind-stg\"} / node_memory_MemTotal_bytes{job=\"node-fleet\", box=\"valura-ind-stg\"})",
           "instant": true
         }
       ]
     },
     {
-      "id": 37,
+      "id": 38,
       "type": "stat",
       "title": "RAM total",
       "datasource": {
@@ -2031,7 +2045,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 98,
+        "y": 100,
         "w": 4,
         "h": 4
       },
@@ -2074,13 +2088,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "node_memory_MemTotal_bytes{job=\"node-fleet\", box=\"valura-dev\"}",
+          "expr": "node_memory_MemTotal_bytes{job=\"node-fleet\", box=\"valura-ind-stg\"}",
           "instant": true
         }
       ]
     },
     {
-      "id": 38,
+      "id": 39,
       "type": "stat",
       "title": "Root FS used",
       "datasource": {
@@ -2089,7 +2103,7 @@
       },
       "gridPos": {
         "x": 16,
-        "y": 98,
+        "y": 100,
         "w": 4,
         "h": 4
       },
@@ -2140,13 +2154,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "100 * (1 - node_filesystem_avail_bytes{job=\"node-fleet\", box=\"valura-dev\", mountpoint=\"/\"} / node_filesystem_size_bytes{job=\"node-fleet\", box=\"valura-dev\", mountpoint=\"/\"})",
+          "expr": "100 * (1 - node_filesystem_avail_bytes{job=\"node-fleet\", box=\"valura-ind-stg\", mountpoint=\"/\"} / node_filesystem_size_bytes{job=\"node-fleet\", box=\"valura-ind-stg\", mountpoint=\"/\"})",
           "instant": true
         }
       ]
     },
     {
-      "id": 39,
+      "id": 40,
       "type": "stat",
       "title": "Host uptime",
       "datasource": {
@@ -2155,7 +2169,7 @@
       },
       "gridPos": {
         "x": 20,
-        "y": 98,
+        "y": 100,
         "w": 4,
         "h": 4
       },
@@ -2198,13 +2212,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "time() - node_boot_time_seconds{job=\"node-fleet\", box=\"valura-dev\"}",
+          "expr": "time() - node_boot_time_seconds{job=\"node-fleet\", box=\"valura-ind-stg\"}",
           "instant": true
         }
       ]
     },
     {
-      "id": 40,
+      "id": 41,
       "type": "timeseries",
       "title": "Host CPU by mode",
       "datasource": {
@@ -2213,7 +2227,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 102,
+        "y": 104,
         "w": 12,
         "h": 7
       },
@@ -2259,13 +2273,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (mode) (rate(node_cpu_seconds_total{job=\"node-fleet\", box=\"valura-dev\", mode!=\"idle\"}[$__rate_interval]))",
+          "expr": "sum by (mode) (rate(node_cpu_seconds_total{job=\"node-fleet\", box=\"valura-ind-stg\", mode!=\"idle\"}[$__rate_interval]))",
           "legendFormat": "{{mode}}"
         }
       ]
     },
     {
-      "id": 41,
+      "id": 42,
       "type": "timeseries",
       "title": "Host network",
       "datasource": {
@@ -2274,7 +2288,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 102,
+        "y": 104,
         "w": 12,
         "h": 7
       },
@@ -2319,7 +2333,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "rate(node_network_receive_bytes_total{job=\"node-fleet\", box=\"valura-dev\", device!~\"lo|veth.*|docker.*|br-.*\"}[$__rate_interval])",
+          "expr": "rate(node_network_receive_bytes_total{job=\"node-fleet\", box=\"valura-ind-stg\", device!~\"lo|veth.*|docker.*|br-.*\"}[$__rate_interval])",
           "legendFormat": "rx {{device}}"
         },
         {
@@ -2328,13 +2342,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "- rate(node_network_transmit_bytes_total{job=\"node-fleet\", box=\"valura-dev\", device!~\"lo|veth.*|docker.*|br-.*\"}[$__rate_interval])",
+          "expr": "- rate(node_network_transmit_bytes_total{job=\"node-fleet\", box=\"valura-ind-stg\", device!~\"lo|veth.*|docker.*|br-.*\"}[$__rate_interval])",
           "legendFormat": "tx {{device}}"
         }
       ]
     },
     {
-      "id": 42,
+      "id": 43,
       "type": "timeseries",
       "title": "Host memory",
       "datasource": {
@@ -2343,7 +2357,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 109,
+        "y": 111,
         "w": 12,
         "h": 6
       },
@@ -2388,7 +2402,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "node_memory_MemTotal_bytes{job=\"node-fleet\", box=\"valura-dev\"}",
+          "expr": "node_memory_MemTotal_bytes{job=\"node-fleet\", box=\"valura-ind-stg\"}",
           "legendFormat": "total"
         },
         {
@@ -2397,13 +2411,13 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "node_memory_MemTotal_bytes{job=\"node-fleet\", box=\"valura-dev\"} - node_memory_MemAvailable_bytes{job=\"node-fleet\", box=\"valura-dev\"}",
+          "expr": "node_memory_MemTotal_bytes{job=\"node-fleet\", box=\"valura-ind-stg\"} - node_memory_MemAvailable_bytes{job=\"node-fleet\", box=\"valura-ind-stg\"}",
           "legendFormat": "used"
         }
       ]
     },
     {
-      "id": 43,
+      "id": 44,
       "type": "timeseries",
       "title": "Host disk I/O",
       "datasource": {
@@ -2412,7 +2426,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 109,
+        "y": 111,
         "w": 12,
         "h": 6
       },
@@ -2457,7 +2471,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "rate(node_disk_read_bytes_total{job=\"node-fleet\", box=\"valura-dev\"}[$__rate_interval])",
+          "expr": "rate(node_disk_read_bytes_total{job=\"node-fleet\", box=\"valura-ind-stg\"}[$__rate_interval])",
           "legendFormat": "read {{device}}"
         },
         {
@@ -2466,7 +2480,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "- rate(node_disk_written_bytes_total{job=\"node-fleet\", box=\"valura-dev\"}[$__rate_interval])",
+          "expr": "- rate(node_disk_written_bytes_total{job=\"node-fleet\", box=\"valura-ind-stg\"}[$__rate_interval])",
           "legendFormat": "write {{device}}"
         }
       ]

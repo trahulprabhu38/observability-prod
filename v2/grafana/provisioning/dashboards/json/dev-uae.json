@@ -1462,7 +1462,7 @@
       },
       "options": {
         "mode": "markdown",
-        "content": "**Traces are wired but empty until the apps emit spans.** On each Coolify service set `OTEL_EXPORTER_OTLP_ENDPOINT=http://10.200.2.51:4318`, `OTEL_SERVICE_NAME=<name>`, `OTEL_TRACES_EXPORTER=otlp`. Flow: `app \u2192 Alloy(.51) \u2192 OTel Collector(.52) \u2192 Jaeger`; RED metrics (`traces_spanmetrics_*`) are derived automatically. See [docs/dev-dashboards.md]."
+        "content": "**Traces are wired but empty until the apps emit spans.** On each Coolify service set `OTEL_EXPORTER_OTLP_ENDPOINT=http://10.200.2.51:4318`, `OTEL_SERVICE_NAME=<name>`, `OTEL_TRACES_EXPORTER=otlp`. Flow: `app \u2192 Alloy(10.200.2.51) \u2192 OTel Collector(.52) \u2192 Jaeger`; RED metrics (`traces_spanmetrics_*`) are derived automatically. See [docs/dev-dashboards.md]."
       }
     },
     {
@@ -1821,7 +1821,7 @@
     {
       "id": 33,
       "type": "row",
-      "title": "dev host  \u2022  10.200.2.51  (shared by UAE + IND)",
+      "title": "dev host  \u2022  10.200.2.51  (shared by dev-UAE + dev-IND)",
       "collapsed": false,
       "gridPos": {
         "x": 0,

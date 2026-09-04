@@ -3,3 +3,9 @@
 
 - targets: ["10.200.2.51:9100"]
   labels: { box: valura-dev, kind: host, env: dev }
+
+- targets: ["10.200.2.56:9100"]
+  labels: { box: uae-staging, kind: host, env: staging }
+
+- targets: ["10.200.2.57:9100"]
+  labels: { box: valura-ind-stg, kind: host, env: staging }

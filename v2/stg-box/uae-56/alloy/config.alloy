@@ -1,0 +1,126 @@
+// =============================================================================
+//  Alloy on the UAE staging box (10.200.2.56)  -  logs + trace forwarding
+//  LOGS  -> Loki 10.200.2.52:3100    TRACES -> OTel Collector 10.200.2.52:4317
+//  region label: coolify_project = valura-uae-staging  (UAE)
+// =============================================================================
+
+discovery.docker "c" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "c" {
+  targets = discovery.docker.c.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "service_name"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_log_stream"]
+    target_label  = "stream"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_coolify_projectName"]
+    target_label  = "coolify_project"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_coolify_resourceName"]
+    target_label  = "coolify_resource"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_coolify_environmentName"]
+    target_label  = "coolify_env"
+  }
+}
+
+loki.source.docker "c" {
+  host             = "unix:///var/run/docker.sock"
+  targets          = discovery.relabel.c.output
+  forward_to       = [loki.process.p.receiver]
+  relabel_rules    = discovery.relabel.c.rules
+  refresh_interval = "5s"
+}
+
+loki.process "p" {
+  stage.static_labels {
+    values = {
+      env  = "staging",
+      host = "uae-stg",
+    }
+  }
+
+  // JSON logs: pull the raw level into extracted["lvl_raw"].
+  stage.json {
+    expressions = {
+      lvl_raw = "level",
+      msg     = "msg",
+      message = "message",
+    }
+  }
+
+  // Non-JSON lines: best-effort level word from the raw text.
+  stage.regex {
+    expression = "(?i)(\"level\"|level=|lvl=)[\":= ]*(?P<lvl_txt>error|warn(?:ing)?|info|debug|trace|fatal|critical|panic|[1-6]0)"
+  }
+
+  stage.template {
+    source   = "level"
+    template = "{{ if .lvl_raw }}{{ .lvl_raw }}{{ else if .lvl_txt }}{{ .lvl_txt }}{{ else }}unknown{{ end }}"
+  }
+
+  stage.template {
+    source   = "level"
+    template = "{{ $l := ToLower .Value }}{{ if or (eq $l \"10\") (eq $l \"trace\") }}trace{{ else if or (eq $l \"20\") (eq $l \"debug\") }}debug{{ else if or (eq $l \"30\") (eq $l \"info\") }}info{{ else if or (eq $l \"40\") (eq $l \"warn\") (eq $l \"warning\") }}warn{{ else if or (eq $l \"50\") (eq $l \"error\") (eq $l \"err\") }}error{{ else if or (eq $l \"60\") (eq $l \"fatal\") (eq $l \"critical\") (eq $l \"panic\") }}fatal{{ else }}unknown{{ end }}"
+  }
+
+  stage.labels {
+    values = { level = "level" }
+  }
+
+  stage.label_keep {
+    values = ["container", "service_name", "stream", "env", "host", "level",
+              "coolify_project", "coolify_resource", "coolify_env"]
+  }
+
+  stage.drop {
+    expression          = ".*(GET|HEAD) /(health|healthz|ping|ready|live)[ \"].*"
+    drop_counter_reason = "healthcheck"
+  }
+
+  forward_to = [loki.write.w.receiver]
+}
+
+loki.write "w" {
+  endpoint {
+    url = "http://10.200.2.52:3100/loki/api/v1/push"
+  }
+}
+
+// ------------------------------------------------------------------- traces ---
+otelcol.receiver.otlp "in" {
+  grpc { endpoint = "0.0.0.0:4317" }
+  http { endpoint = "0.0.0.0:4318" }
+  output {
+    traces = [otelcol.processor.batch.default.input]
+  }
+}
+
+otelcol.processor.batch "default" {
+  timeout = "2s"
+  output {
+    traces = [otelcol.exporter.otlp.collector.input]
+  }
+}
+
+otelcol.exporter.otlp "collector" {
+  client {
+    endpoint = "10.200.2.52:4317"
+    tls { insecure = true }
+  }
+}
