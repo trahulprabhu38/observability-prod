@@ -1410,7 +1410,7 @@
             "uid": "loki"
           },
           "expr": "{coolify_project=\"valura-development\", host=\"dev-server-1\", container=~\"$container\"} |~ \"(?i)(error|warn|fatal|critical|exception|traceback|panic)\"",
-          "maxLines": 1000,
+          "maxLines": 500,
           "legendFormat": ""
         }
       ]
@@ -1451,7 +1451,7 @@
             "uid": "loki"
           },
           "expr": "{coolify_project=\"valura-development\", host=\"dev-server-1\", container=~\"$container\"}",
-          "maxLines": 1000,
+          "maxLines": 500,
           "legendFormat": ""
         }
       ]
