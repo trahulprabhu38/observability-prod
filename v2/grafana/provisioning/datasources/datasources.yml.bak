@@ -32,13 +32,15 @@ datasources:
     type: loki
     access: proxy
     url: http://loki:3100
-    # NOTE: do NOT add `derivedFields` here without testing the Logs panel
-    # afterwards. A derivedField with both `url` and `datasourceUid` set crashed
-    # EVERY logs panel in this Grafana (red triangle + "No data"); metric/
-    # timeseries Loki panels were unaffected, which made it look dashboard-
-    # specific. Trace<->log correlation can be re-added later, internal-link
-    # form only (datasourceUid, no url), once traces actually flow.
-    jsonData: {}
+    jsonData:
+      # pull a trace id out of a log line -> open it in Jaeger
+      derivedFields:
+        - name: trace_id
+          matcherType: regex
+          matcherRegex: '(?i)trace[_-]?id"?[:=]"?([a-f0-9]+)'
+          url: '$${__value.raw}'
+          datasourceUid: jaeger
+          urlDisplayLabel: "View trace in Jaeger"
 
   # ----------------------------------------------------------------- TRACES ---
   - name: Jaeger
