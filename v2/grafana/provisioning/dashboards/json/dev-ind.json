@@ -9,12 +9,17 @@
   ],
   "timezone": "browser",
   "editable": true,
-  "schemaVersion": 39,
+  "schemaVersion": 42,
+  "graphTooltip": 1,
+  "fiscalYearStartMonth": 0,
+  "weekStart": "",
+  "preload": false,
   "refresh": "30s",
   "time": {
     "from": "now-3h",
     "to": "now"
   },
+  "timepicker": {},
   "templating": {
     "list": [
       {
@@ -45,6 +50,31 @@
         "includeAll": true,
         "multi": true,
         "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "refresh": 2,
+        "sort": 1
+      },
+      {
+        "type": "query",
+        "name": "container",
+        "label": "Container",
+        "datasource": {
+          "type": "loki",
+          "uid": "loki"
+        },
+        "definition": "label_values({coolify_project=\"global-valura-dev\", host=\"dev-server-1\"}, container)",
+        "query": {
+          "label": "container",
+          "stream": "{coolify_project=\"global-valura-dev\", host=\"dev-server-1\"}",
+          "type": 1,
+          "refId": "LokiVariableQueryEditor-VariableQuery"
+        },
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".+",
         "current": {
           "text": "All",
           "value": "$__all"
@@ -1407,7 +1437,7 @@
         "w": 12,
         "h": 7
       },
-      "description": "Respects $resource, $level and $search.",
+      "description": "Respects $resource, $container, $level and $search.",
       "fieldConfig": {
         "defaults": {
           "unit": "short",
@@ -1440,7 +1470,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "sum by (coolify_resource) (count_over_time({coolify_project=\"global-valura-dev\", host=\"dev-server-1\", coolify_resource=~\"$resource\", level=~\"$level\"} |~ \"$search\" [$__auto]))",
+          "expr": "sum by (coolify_resource) (count_over_time({coolify_project=\"global-valura-dev\", host=\"dev-server-1\", coolify_resource=~\"$resource\", container=~\"$container\", level=~\"$level\"} |~ \"(?i)$search\" [$__auto]))",
           "legendFormat": "{{coolify_resource}}",
           "queryType": "range"
         }
@@ -1458,9 +1488,10 @@
         "x": 0,
         "y": 41,
         "w": 24,
-        "h": 10
+        "h": 11
       },
-      "description": "error / warn / fatal lines. $search is a regex line filter.",
+      "description": "error / warn / fatal lines from the selected services. $search is an optional regex line filter.",
+      "pluginVersion": "12.3.2",
       "options": {
         "showTime": true,
         "showLabels": true,
@@ -1470,7 +1501,8 @@
         "enableLogDetails": true,
         "dedupStrategy": "none",
         "sortOrder": "Descending",
-        "enableInfiniteScrolling": true
+        "enableInfiniteScrolling": false,
+        "showControls": false
       },
       "targets": [
         {
@@ -1479,7 +1511,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{coolify_project=\"global-valura-dev\", host=\"dev-server-1\", coolify_resource=~\"$resource\", level=~\"error|warn|fatal\"} |~ \"$search\"",
+          "expr": "{coolify_project=\"global-valura-dev\", host=\"dev-server-1\", coolify_resource=~\"$resource\", container=~\"$container\", level=~\"error|warn|fatal\"} |~ \"(?i)$search\"",
           "maxLines": 1000,
           "legendFormat": ""
         }
@@ -1488,18 +1520,19 @@
     {
       "id": 23,
       "type": "logs",
-      "title": "Live tail",
+      "title": "Live tail  \u2014  all logs",
       "datasource": {
         "type": "loki",
         "uid": "loki"
       },
       "gridPos": {
         "x": 0,
-        "y": 51,
+        "y": 52,
         "w": 24,
-        "h": 12
+        "h": 14
       },
-      "description": "Everything, filtered by $resource / $level / $search. Infinite scroll.",
+      "description": "Every line from the selected $resource / $container, filtered by $level and $search. Newest first.",
+      "pluginVersion": "12.3.2",
       "options": {
         "showTime": true,
         "showLabels": true,
@@ -1509,7 +1542,8 @@
         "enableLogDetails": true,
         "dedupStrategy": "none",
         "sortOrder": "Descending",
-        "enableInfiniteScrolling": true
+        "enableInfiniteScrolling": false,
+        "showControls": false
       },
       "targets": [
         {
@@ -1518,7 +1552,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "expr": "{coolify_project=\"global-valura-dev\", host=\"dev-server-1\", coolify_resource=~\"$resource\", level=~\"$level\"} |~ \"$search\"",
+          "expr": "{coolify_project=\"global-valura-dev\", host=\"dev-server-1\", coolify_resource=~\"$resource\", container=~\"$container\", level=~\"$level\"} |~ \"(?i)$search\"",
           "maxLines": 1000,
           "legendFormat": ""
         }
@@ -1531,7 +1565,7 @@
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 63,
+        "y": 66,
         "w": 24,
         "h": 1
       },
@@ -1542,7 +1576,7 @@
       "type": "text",
       "gridPos": {
         "x": 0,
-        "y": 64,
+        "y": 67,
         "w": 24,
         "h": 3
       },
@@ -1561,7 +1595,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 67,
+        "y": 70,
         "w": 8,
         "h": 8
       },
@@ -1621,7 +1655,7 @@
       },
       "gridPos": {
         "x": 8,
-        "y": 67,
+        "y": 70,
         "w": 8,
         "h": 8
       },
@@ -1681,7 +1715,7 @@
       },
       "gridPos": {
         "x": 16,
-        "y": 67,
+        "y": 70,
         "w": 8,
         "h": 8
       },
@@ -1741,7 +1775,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 75,
+        "y": 78,
         "w": 24,
         "h": 8
       },
@@ -1766,7 +1800,7 @@
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 83,
+        "y": 86,
         "w": 24,
         "h": 1
       },
@@ -1782,7 +1816,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 84,
+        "y": 87,
         "w": 12,
         "h": 7
       },
@@ -1848,7 +1882,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 84,
+        "y": 87,
         "w": 12,
         "h": 7
       },
@@ -1911,7 +1945,7 @@
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 91,
+        "y": 94,
         "w": 24,
         "h": 1
       },
@@ -1927,7 +1961,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 92,
+        "y": 95,
         "w": 4,
         "h": 4
       },
@@ -1993,7 +2027,7 @@
       },
       "gridPos": {
         "x": 4,
-        "y": 92,
+        "y": 95,
         "w": 4,
         "h": 4
       },
@@ -2051,7 +2085,7 @@
       },
       "gridPos": {
         "x": 8,
-        "y": 92,
+        "y": 95,
         "w": 4,
         "h": 4
       },
@@ -2117,7 +2151,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 92,
+        "y": 95,
         "w": 4,
         "h": 4
       },
@@ -2175,7 +2209,7 @@
       },
       "gridPos": {
         "x": 16,
-        "y": 92,
+        "y": 95,
         "w": 4,
         "h": 4
       },
@@ -2241,7 +2275,7 @@
       },
       "gridPos": {
         "x": 20,
-        "y": 92,
+        "y": 95,
         "w": 4,
         "h": 4
       },
@@ -2299,7 +2333,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 96,
+        "y": 99,
         "w": 12,
         "h": 7
       },
@@ -2360,7 +2394,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 96,
+        "y": 99,
         "w": 12,
         "h": 7
       },
@@ -2429,7 +2463,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 103,
+        "y": 106,
         "w": 12,
         "h": 6
       },
@@ -2498,7 +2532,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 103,
+        "y": 106,
         "w": 12,
         "h": 6
       },
