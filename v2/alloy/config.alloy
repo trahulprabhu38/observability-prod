@@ -62,6 +62,7 @@ loki.source.docker "containers" {
 
 // 4. Processing pipeline: static labels + best-effort level + trace_id extraction.
 loki.process "enrich" {
+  forward_to = [loki.write.default.receiver]
   // constant labels for everything from this box
   stage.static_labels {
     values = {

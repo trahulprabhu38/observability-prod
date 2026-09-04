@@ -1,0 +1,148 @@
+// =============================================================================
+//  Alloy on the dev box (10.200.2.51)  -  logs + trace forwarding
+//
+//  LOGS:   Docker stdout/stderr  ->  Loki on the infra box (10.200.2.52:3100)
+//  TRACES: OTLP in (:4317 grpc / :4318 http)  ->  OTel Collector on 10.200.2.52
+//
+//  Region attribution: the Coolify project label on each container is promoted
+//  to the `coolify_project` stream label so the dev-UAE / dev-IND dashboards
+//  can filter:   valura-development = UAE,  global-valura-dev = IND
+// =============================================================================
+
+// ---------------------------------------------------------------- discovery ---
+discovery.docker "containers" {
+  host             = "unix:///var/run/docker.sock"
+  refresh_interval = "5s"
+}
+
+discovery.relabel "containers" {
+  targets = discovery.docker.containers.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_image"]
+    target_label  = "image"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_com_docker_compose_service"]
+    target_label  = "compose_service"
+  }
+
+  // ---- Coolify metadata -> stream labels (region split lives here) ----
+  rule {
+    source_labels = ["__meta_docker_container_label_coolify_projectName"]
+    target_label  = "coolify_project"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_coolify_resourceName"]
+    target_label  = "coolify_resource"
+  }
+  rule {
+    source_labels = ["__meta_docker_container_label_coolify_environmentName"]
+    target_label  = "coolify_env"
+  }
+}
+
+// --------------------------------------------------------------------- logs ---
+loki.source.docker "containers" {
+  host          = "unix:///var/run/docker.sock"
+  targets       = discovery.relabel.containers.output
+  forward_to    = [loki.process.containers.receiver]
+  relabel_rules = discovery.relabel.containers.rules
+}
+
+loki.process "containers" {
+  stage.static_labels {
+    values = {
+      env  = "dev",
+      host = "dev-server-1",
+    }
+  }
+
+  stage.json {
+    expressions = {
+      level   = "level",
+      msg     = "msg",
+      message = "message",
+    }
+  }
+
+  stage.labels {
+    values = {
+      level = "level",
+    }
+  }
+
+  // keep a small, bounded label set (region labels included)
+  stage.label_keep {
+    values = ["container", "image", "env", "host", "level",
+              "compose_service", "coolify_project", "coolify_resource", "coolify_env"]
+  }
+
+  // best-effort level detection for non-JSON lines
+  stage.match {
+    selector = `{level=""}`
+    stage.regex {
+      expression = `(?i)(?P<level>error|warn|info|debug|fatal|critical)`
+    }
+    stage.labels {
+      values = { level = "level" }
+    }
+  }
+
+  stage.drop {
+    expression          = ".*GET /health.*"
+    drop_counter_reason = "healthcheck"
+  }
+  stage.drop {
+    expression          = ".*GET /ping.*"
+    drop_counter_reason = "ping"
+  }
+
+  forward_to = [loki.write.remote.receiver]
+}
+
+loki.write "remote" {
+  endpoint {
+    // direct over the VPN - no dependency on the public edge / TLS
+    url = "http://10.200.2.52:3100/loki/api/v1/push"
+  }
+  external_labels = {
+    job = "docker-containers",
+  }
+}
+
+// ------------------------------------------------------------------- traces ---
+// Apps on this box send OTLP here (OTEL_EXPORTER_OTLP_ENDPOINT=http://<dev-ip>:4318).
+// Alloy batches and forwards to the OTel Collector on the infra box, which fans
+// out to Jaeger + span-metrics. Correct-but-empty until apps are instrumented.
+otelcol.receiver.otlp "in" {
+  grpc { endpoint = "0.0.0.0:4317" }
+  http { endpoint = "0.0.0.0:4318" }
+  output {
+    traces = [otelcol.processor.batch.default.input]
+  }
+}
+
+otelcol.processor.batch "default" {
+  timeout = "2s"
+  output {
+    traces = [otelcol.exporter.otlp.collector.input]
+  }
+}
+
+otelcol.exporter.otlp "collector" {
+  client {
+    endpoint = "10.200.2.52:4317"
+    tls { insecure = true }
+  }
+}
+
+// --------------------------------------------------------------------- misc ---
+livedebugging {
+  enabled = true
+}

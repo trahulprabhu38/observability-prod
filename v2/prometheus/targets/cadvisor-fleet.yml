@@ -1,0 +1,14 @@
+# cadvisor-fleet job - one entry per Docker host running a cAdvisor container.
+# This box (.52) is covered by the static `cadvisor` job. Re-read live; no restart.
+
+- targets: ["10.200.2.51:8086"]
+  labels: { box: valura-dev, kind: docker-host, env: dev }
+
+- targets: ["10.200.2.56:8085"]
+  labels: { box: uae-staging, kind: docker-host, env: staging }
+
+- targets: ["10.200.2.57:8085"]
+  labels: { box: valura-ind-stg, kind: docker-host, env: staging }
+
+- targets: ["86.106.26.45:8085"]
+  labels: { box: dubai, kind: docker-host, env: prod }

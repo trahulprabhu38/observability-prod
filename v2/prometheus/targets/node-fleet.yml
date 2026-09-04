@@ -1,0 +1,5 @@
+# node-fleet job - one entry per host/LXC running node-exporter on :9100.
+# This box (.52) is covered by the static `node` job.
+
+- targets: ["10.200.2.51:9100"]
+  labels: { box: valura-dev, kind: host, env: dev }
