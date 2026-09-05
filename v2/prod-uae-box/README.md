@@ -9,7 +9,7 @@ restarted.
 | Agent | Port | Notes |
 |---|---|---|
 | node-exporter | :9100 | new; ufw rule added (`allow from 10.200.2.52`) |
-| cAdvisor v0.52.1 | :8085 | new. **No per-container metrics** - same cAdvisor/cgroup limitation as `stg-IND` (see `../stg-box/README.md`): registers its Docker factory cleanly but returns zero containers. Host-level cAdvisor/node-exporter metrics are unaffected. |
+| cAdvisor v0.52.1 | :8085 | new. Same cAdvisor/cgroup limitation as `stg-IND` (registers cleanly, zero per-container series) - **fixed the same way**: a cgroup-v2 textfile exporter feeds node-exporter instead. See `../docs/09-cgroup-metrics-fix.md`. |
 | Alloy (`valura-alloy-logs`) | :12345 / :4317 / :4318 | already existed and was already working (`env=production, host=uae-prod`, shipping to `.52:3100`) - redeployed via compose with the `coolify_project/resource/env` labels, level-normalisation pipeline, and an OTLP receiver forwarding to `.52:4317`. Original config backed up at `/root/alloy/config.alloy.orig.bak` on the box; rollback command is in the deploy history if ever needed. |
 
 ## Pre-existing anomaly - left alone

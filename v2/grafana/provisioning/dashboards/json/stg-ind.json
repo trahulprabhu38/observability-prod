@@ -136,20 +136,6 @@
     },
     {
       "id": 2,
-      "type": "text",
-      "gridPos": {
-        "x": 0,
-        "y": 1,
-        "w": 24,
-        "h": 2
-      },
-      "options": {
-        "mode": "markdown",
-        "content": "**Per-container metrics (CPU/memory/restarts below) are unavailable on this box.** cAdvisor can't see per-container cgroups on this host's Docker 29 + cgroup v2 setup (tried explicit docker.sock, `--cgroupns=host`, containerd socket, API pinning - all registered cleanly but returned zero containers). Host metrics, logs and traces below are unaffected."
-      }
-    },
-    {
-      "id": 3,
       "type": "stat",
       "title": "Running containers",
       "datasource": {
@@ -158,7 +144,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 3,
+        "y": 1,
         "w": 3,
         "h": 4
       },
@@ -211,7 +197,7 @@
       ]
     },
     {
-      "id": 4,
+      "id": 3,
       "type": "stat",
       "title": "Restarts (1h)",
       "datasource": {
@@ -220,7 +206,7 @@
       },
       "gridPos": {
         "x": 3,
-        "y": 3,
+        "y": 1,
         "w": 3,
         "h": 4
       },
@@ -277,7 +263,7 @@
       ]
     },
     {
-      "id": 5,
+      "id": 4,
       "type": "stat",
       "title": "CPU cores",
       "datasource": {
@@ -286,7 +272,7 @@
       },
       "gridPos": {
         "x": 6,
-        "y": 3,
+        "y": 1,
         "w": 3,
         "h": 4
       },
@@ -336,7 +322,7 @@
       ]
     },
     {
-      "id": 6,
+      "id": 5,
       "type": "stat",
       "title": "Memory",
       "datasource": {
@@ -345,7 +331,7 @@
       },
       "gridPos": {
         "x": 9,
-        "y": 3,
+        "y": 1,
         "w": 3,
         "h": 4
       },
@@ -394,7 +380,7 @@
       ]
     },
     {
-      "id": 7,
+      "id": 6,
       "type": "stat",
       "title": "Errors (5m)",
       "datasource": {
@@ -403,7 +389,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 3,
+        "y": 1,
         "w": 3,
         "h": 4
       },
@@ -460,7 +446,7 @@
       ]
     },
     {
-      "id": 8,
+      "id": 7,
       "type": "stat",
       "title": "Warnings (5m)",
       "datasource": {
@@ -469,7 +455,7 @@
       },
       "gridPos": {
         "x": 15,
-        "y": 3,
+        "y": 1,
         "w": 3,
         "h": 4
       },
@@ -522,7 +508,7 @@
       ]
     },
     {
-      "id": 9,
+      "id": 8,
       "type": "stat",
       "title": "Log lines/min",
       "datasource": {
@@ -531,7 +517,7 @@
       },
       "gridPos": {
         "x": 18,
-        "y": 3,
+        "y": 1,
         "w": 3,
         "h": 4
       },
@@ -580,7 +566,7 @@
       ]
     },
     {
-      "id": 10,
+      "id": 9,
       "type": "stat",
       "title": "Services reporting",
       "datasource": {
@@ -589,7 +575,7 @@
       },
       "gridPos": {
         "x": 21,
-        "y": 3,
+        "y": 1,
         "w": 3,
         "h": 4
       },
@@ -638,13 +624,92 @@
       ]
     },
     {
+      "id": 10,
+      "type": "stat",
+      "title": "Service status",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 24,
+        "h": 7
+      },
+      "description": "Green = cAdvisor has seen the container in the last 60s. Red = it hasn't (stopped/crashed). Ignores the Service filter above.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "DOWN",
+                  "index": 0
+                },
+                "1": {
+                  "text": "UP",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "noValue": "no data"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "name",
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "instant": true,
+          "expr": "max by (container_label_coolify_resourceName) ((time() - container_last_seen{container_label_coolify_projectName=\"global-valura-staging\", box=\"valura-ind-stg\"}) < 60)",
+          "legendFormat": "{{container_label_coolify_resourceName}}"
+        }
+      ]
+    },
+    {
       "id": 11,
       "type": "row",
       "title": "IND staging  \u2022  restarts & health",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 7,
+        "y": 12,
         "w": 24,
         "h": 1
       },
@@ -660,7 +725,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 8,
+        "y": 13,
         "w": 14,
         "h": 8
       },
@@ -726,7 +791,7 @@
       },
       "gridPos": {
         "x": 14,
-        "y": 8,
+        "y": 13,
         "w": 10,
         "h": 8
       },
@@ -789,7 +854,7 @@
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 16,
+        "y": 21,
         "w": 24,
         "h": 1
       },
@@ -805,7 +870,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 17,
+        "y": 22,
         "w": 24,
         "h": 9
       },
@@ -869,7 +934,7 @@
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 26,
+        "y": 31,
         "w": 24,
         "h": 1
       },
@@ -885,7 +950,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 27,
+        "y": 32,
         "w": 12,
         "h": 8
       },
@@ -951,7 +1016,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 27,
+        "y": 32,
         "w": 12,
         "h": 8
       },
@@ -1012,7 +1077,7 @@
       "type": "text",
       "gridPos": {
         "x": 0,
-        "y": 35,
+        "y": 40,
         "w": 24,
         "h": 3
       },
@@ -1029,7 +1094,7 @@
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 38,
+        "y": 43,
         "w": 24,
         "h": 1
       },
@@ -1045,7 +1110,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 39,
+        "y": 44,
         "w": 12,
         "h": 7
       },
@@ -1159,7 +1224,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 39,
+        "y": 44,
         "w": 12,
         "h": 7
       },
@@ -1212,7 +1277,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 46,
+        "y": 51,
         "w": 24,
         "h": 12
       },
@@ -1253,7 +1318,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 58,
+        "y": 63,
         "w": 24,
         "h": 16
       },
@@ -1289,7 +1354,7 @@
       "type": "text",
       "gridPos": {
         "x": 0,
-        "y": 74,
+        "y": 79,
         "w": 24,
         "h": 3
       },
@@ -1306,7 +1371,7 @@
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 77,
+        "y": 82,
         "w": 24,
         "h": 1
       },
@@ -1317,7 +1382,7 @@
       "type": "text",
       "gridPos": {
         "x": 0,
-        "y": 78,
+        "y": 83,
         "w": 24,
         "h": 3
       },
@@ -1336,7 +1401,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 81,
+        "y": 86,
         "w": 8,
         "h": 8
       },
@@ -1396,7 +1461,7 @@
       },
       "gridPos": {
         "x": 8,
-        "y": 81,
+        "y": 86,
         "w": 8,
         "h": 8
       },
@@ -1456,7 +1521,7 @@
       },
       "gridPos": {
         "x": 16,
-        "y": 81,
+        "y": 86,
         "w": 8,
         "h": 8
       },
@@ -1516,7 +1581,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 89,
+        "y": 94,
         "w": 24,
         "h": 8
       },
@@ -1539,7 +1604,7 @@
       "type": "text",
       "gridPos": {
         "x": 0,
-        "y": 97,
+        "y": 102,
         "w": 24,
         "h": 3
       },
@@ -1556,7 +1621,7 @@
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 100,
+        "y": 105,
         "w": 24,
         "h": 1
       },
@@ -1572,7 +1637,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 101,
+        "y": 106,
         "w": 12,
         "h": 7
       },
@@ -1638,7 +1703,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 101,
+        "y": 106,
         "w": 12,
         "h": 7
       },
@@ -1701,7 +1766,7 @@
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 108,
+        "y": 113,
         "w": 24,
         "h": 1
       },
@@ -1717,7 +1782,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 109,
+        "y": 114,
         "w": 4,
         "h": 4
       },
@@ -1783,7 +1848,7 @@
       },
       "gridPos": {
         "x": 4,
-        "y": 109,
+        "y": 114,
         "w": 4,
         "h": 4
       },
@@ -1841,7 +1906,7 @@
       },
       "gridPos": {
         "x": 8,
-        "y": 109,
+        "y": 114,
         "w": 4,
         "h": 4
       },
@@ -1907,7 +1972,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 109,
+        "y": 114,
         "w": 4,
         "h": 4
       },
@@ -1965,7 +2030,7 @@
       },
       "gridPos": {
         "x": 16,
-        "y": 109,
+        "y": 114,
         "w": 4,
         "h": 4
       },
@@ -2031,7 +2096,7 @@
       },
       "gridPos": {
         "x": 20,
-        "y": 109,
+        "y": 114,
         "w": 4,
         "h": 4
       },
@@ -2089,7 +2154,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 113,
+        "y": 118,
         "w": 12,
         "h": 7
       },
@@ -2150,7 +2215,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 113,
+        "y": 118,
         "w": 12,
         "h": 7
       },
@@ -2219,7 +2284,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 120,
+        "y": 125,
         "w": 12,
         "h": 6
       },
@@ -2288,7 +2353,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 120,
+        "y": 125,
         "w": 12,
         "h": 6
       },

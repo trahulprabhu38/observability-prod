@@ -42,14 +42,7 @@ REGIONS = {
     "stg-IND": {"project": "global-valura-staging", "tag": "IND staging", "uid": "stg-ind",
                "sibling": ("stg-UAE", "stg-uae"),
                "box": "valura-ind-stg", "host": "ind-stg", "hostip": "10.200.2.57",
-               "hostlabel": "staging host  •  10.200.2.57 (IND)",
-               "skip_service_status": True,
-               "note": "**Per-container metrics (CPU/memory/restarts below) are unavailable "
-                       "on this box.** cAdvisor can't see per-container cgroups on this host's "
-                       "Docker 29 + cgroup v2 setup (tried explicit docker.sock, "
-                       "`--cgroupns=host`, containerd socket, API pinning - all registered "
-                       "cleanly but returned zero containers). Host metrics, logs and traces "
-                       "below are unaffected."},
+               "hostlabel": "staging host  •  10.200.2.57 (IND)"},
     "partner-apps": {"project": "partner-apps", "tag": "Partner Apps", "uid": "partner-apps",
                "sibling": None,
                "box": "partner-apps", "host": "edge", "hostip": "10.200.1.2",
@@ -58,12 +51,8 @@ REGIONS = {
                "sibling": None,
                "box": "valura-prod", "host": "uae-prod", "hostip": "10.200.2.54",
                "hostlabel": "production host  •  10.200.2.54 (UAE)",
-               "skip_service_status": True,
-               "note": "**Per-container metrics (CPU/memory/restarts below) are unavailable "
-                       "on this box.** Same cAdvisor/cgroup limitation as stg-IND - registers "
-                       "cleanly but returns zero per-container series. Host metrics, logs and "
-                       "traces below are unaffected. **This is a production box** - treat "
-                       "restart-triggering changes here with extra care."},
+               "note": "**This is a production box** - treat restart-triggering changes "
+                       "here with extra care."},
 }
 
 _id = [0]
