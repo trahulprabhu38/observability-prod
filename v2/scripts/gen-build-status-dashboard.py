@@ -1,19 +1,13 @@
 #!/usr/bin/env python3
-"""deployment-builds dashboard - did the last (up to) 3 *builds* of each
-Coolify app succeed, independent of whether the app happens to be running
-right now.
-
-Complements deployments.json: that one shows current container health
-(coolify_app_up from coolify-deploy-status.py). This one shows build outcome
-(coolify_build_success from coolify-build-status.py, read straight out of
-Coolify's own deployment-history table - see that script's docstring for why
-the API can't give us this). The two are deliberately cross-referenced here:
-a build can fail while the app keeps running on its last-good container,
-which is exactly the silent-failure case this was built for.
+"""deployment-builds dashboard - pass/fail of each Coolify app's last 3
+builds, plus the full build log for the one you pick ($app + $rank -> a
+Loki Logs panel). Status from coolify_build_success, logs from the
+coolify_build_logs Loki stream - both produced by coolify-build-status.py.
 """
 import json, sys
 
 PROM = {"type": "prometheus", "uid": "prometheus"}
+LOKI = {"type": "loki", "uid": "loki"}
 
 # Same scoping as gen-deploy-dashboard.py - see that file's comment for why
 # this filters by Coolify PROJECT rather than "environment".
@@ -35,10 +29,6 @@ def row(title, y):
     return {"id": nid(), "type": "row", "title": title, "collapsed": False,
             "gridPos": g(0, y, 24, 1), "panels": []}
 
-def text_panel(gp, md):
-    return {"id": nid(), "type": "text", "gridPos": gp,
-            "options": {"mode": "markdown", "content": md}}
-
 def stat(title, gp, expr, unit="short", thresholds=None, decimals=None, graph="none", mappings=None):
     defaults = {"unit": unit, "color": {"mode": "thresholds"},
                 "thresholds": {"mode": "absolute", "steps": thresholds or [{"color": "text", "value": None}]}}
@@ -53,10 +43,19 @@ def stat(title, gp, expr, unit="short", thresholds=None, decimals=None, graph="n
         "targets": [{"refId": "A", "datasource": PROM, "expr": expr, "instant": True}],
     }
 
-def status_board(title, gp, expr, desc=""):
+# clicking a tile / row reloads THIS dashboard with that app+rank selected, so
+# the chained $deployment_uuid var re-resolves and the Build log panel updates.
+def _board_link(link_uid):
+    return [{"title": "Show build log",
+             "url": f"/d/{link_uid}?var-app=${{__field.labels.app}}&var-rank=${{__field.labels.rank}}&${{__url_time_range}}"}]
+
+def _row_link(link_uid):
+    return [{"title": "Show build log",
+             "url": f"/d/{link_uid}?var-app=${{__data.fields.app}}&var-rank=${{__data.fields.rank}}&${{__url_time_range}}"}]
+
+def status_board(gp, expr, link_uid):
     return {
-        "id": nid(), "type": "stat", "title": title, "datasource": PROM, "gridPos": gp,
-        "description": desc,
+        "id": nid(), "type": "stat", "title": "Latest build per app", "datasource": PROM, "gridPos": gp,
         "fieldConfig": {"defaults": {
             "color": {"mode": "thresholds"},
             "thresholds": {"mode": "absolute", "steps": [
@@ -64,41 +63,57 @@ def status_board(title, gp, expr, desc=""):
                 {"color": "green", "value": 1}]},
             "mappings": [{"type": "value", "options": {
                 "-1": {"text": "OTHER", "index": 0},
-                "0": {"text": "BUILD FAILED", "index": 1},
-                "1": {"text": "BUILD OK", "index": 2}}}],
+                "0": {"text": "FAILED", "index": 1},
+                "1": {"text": "OK", "index": 2}}}],
+            "links": _board_link(link_uid),
             "noValue": "no data"}, "overrides": []},
         "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": False},
                     "orientation": "auto", "textMode": "name", "colorMode": "background",
                     "graphMode": "none", "justifyMode": "center"},
         "targets": [{"refId": "A", "datasource": PROM, "instant": True, "expr": expr,
-                     "legendFormat": "{{project}} / {{environment}} / {{app}}"}],
+                     "legendFormat": "{{project}} / {{app}}"}],
     }
 
-def table(title, gp, expr, desc="", extra_overrides=None, extra_transform=None):
-    overrides = [{"matcher": {"id": "byName", "options": "Value"},
-                  "properties": [
-                      {"id": "displayName", "value": "Result"},
-                      {"id": "custom.cellOptions", "value": {"type": "color-background"}},
-                      {"id": "mappings", "value": [{"type": "value", "options": {
-                          "-1": {"text": "OTHER", "color": "gray"},
-                          "0": {"text": "FAILED", "color": "red"},
-                          "1": {"text": "OK", "color": "green"}}}]},
-                  ]}]
-    overrides += (extra_overrides or [])
+def table(title, gp, expr, link_uid):
+    overrides = [
+        {"matcher": {"id": "byName", "options": "Value"},
+         "properties": [
+             {"id": "displayName", "value": "Result"},
+             {"id": "custom.cellOptions", "value": {"type": "color-background"}},
+             {"id": "mappings", "value": [{"type": "value", "options": {
+                 "-1": {"text": "OTHER", "color": "gray"},
+                 "0": {"text": "FAILED", "color": "red"},
+                 "1": {"text": "OK", "color": "green"}}}]},
+         ]},
+        {"matcher": {"id": "byName", "options": "app"},
+         "properties": [{"id": "links", "value": _row_link(link_uid)}]},
+    ]
     trans = [{"id": "organize", "options": {
-        "excludeByName": {"Time": True, "__name__": True, "job": True, "instance": True},
+        "excludeByName": {"Time": True, "__name__": True, "job": True, "instance": True,
+                          "deployment_uuid": True, "uuid": True},
         "indexByName": {"project": 0, "environment": 1, "app": 2, "rank": 3, "commit": 4, "Value": 5},
         "renameByName": {}}}]
-    trans += (extra_transform or [])
     return {
         "id": nid(), "type": "table", "title": title, "datasource": PROM, "gridPos": gp,
-        "description": desc,
         "fieldConfig": {"defaults": {"custom": {"align": "auto", "filterable": True,
                         "cellOptions": {"type": "auto"}}}, "overrides": overrides},
         "options": {"showHeader": True, "cellHeight": "sm", "footer": {"show": False},
                     "sortBy": [{"displayName": "app"}]},
         "targets": [{"refId": "A", "datasource": PROM, "instant": True, "format": "table", "expr": expr}],
         "transformations": trans,
+    }
+
+def build_log_panel(gp, scope):
+    app_scope = f', project=~"{SCOPES[scope]["project_regex"]}"' if scope else ''
+    return {
+        "id": nid(), "type": "logs", "title": "Build log — $app  (build $rank)", "datasource": LOKI,
+        "gridPos": gp, "pluginVersion": "12.3.2",
+        "options": {"showTime": True, "showLabels": False, "showCommonLabels": False,
+                    "wrapLogMessage": True, "prettifyLogMessage": False, "enableLogDetails": True,
+                    "dedupStrategy": "none", "sortOrder": "Descending",
+                    "enableInfiniteScrolling": True},
+        "targets": [{"refId": "A", "datasource": LOKI, "maxLines": 5000,
+                     "expr": '{job="coolify_build_logs", app="$app"} | deployment_uuid=`$deployment_uuid`'}],
     }
 
 
@@ -108,35 +123,20 @@ def build(scope=None):
         sel = f'project=~"{SCOPES[scope]["project_regex"]}", project=~"$project"'
     else:
         sel = 'project=~"$project", environment=~"$environment"'
+    uid = f"deployment-builds-{scope}" if scope else "deployment-builds"
     P = []; y = 0
 
-    deploy_link = f"/d/deployments-{scope}" if scope else "/d/deployments/deployments"
-    title = "Deployment builds  •  last 3 builds per application" + (f"  ({scope})" if scope else "")
-    P.append(row(title, y)); y += 1
-    scope_note = (f"Scoped to **{scope}** only ({SCOPES[scope]['project_regex']}). "
-                  "See the Project dropdown to narrow further. " if scope else "")
-    P.append(text_panel(g(0, y, 24, 3),
-        scope_note +
-        f"This is **build outcome**, not current uptime - see the "
-        f"[deployments dashboard]({deploy_link}) for whether an app is "
-        "running right now. The two can disagree: a failed build often leaves the "
-        "*previous* container running, so the app looks fine while the build itself "
-        "broke. Data comes straight from Coolify's own deployment-history table "
-        "(`application_deployment_queues`) - its API doesn't expose this, so a cron "
-        "job reads the table directly every 5 minutes. `rank=1` is the most recent "
-        "build, `rank=2`/`3` the two before it."))
-    y += 3
-
+    P.append(row("summary", y)); y += 1
     P += [
-        stat("Latest build: OK", g(0, y, 4, 4), f'count(coolify_build_success{{{sel}, rank="1"}} == 1)',
+        stat("Latest build OK", g(0, y, 4, 4), f'count(coolify_build_success{{{sel}, rank="1"}} == 1)',
              unit="none", thresholds=[{"color": "green", "value": None}]),
-        stat("Latest build: FAILED", g(4, y, 4, 4), f'count(coolify_build_success{{{sel}, rank="1"}} == 0)',
+        stat("Latest build failed", g(4, y, 4, 4), f'count(coolify_build_success{{{sel}, rank="1"}} == 0)',
              unit="none", thresholds=[{"color": "green", "value": None}, {"color": "red", "value": 1}]),
-        stat("⚠ Failed build, still running", g(8, y, 6, 4),
+        stat("Failed but still running", g(8, y, 6, 4),
              f'count(coolify_build_success{{{sel}, rank="1"}} == 0 and on(uuid) coolify_app_up == 1)',
              unit="none", thresholds=[{"color": "green", "value": None}, {"color": "orange", "value": 1}],
              decimals=0),
-        stat("Builder poller", g(14, y, 4, 4), "coolify_build_poll_success", unit="none",
+        stat("Poller", g(14, y, 4, 4), "coolify_build_poll_success", unit="none",
              mappings=[{"type": "value", "options": {
                  "0": {"text": "FAILING", "index": 0}, "1": {"text": "OK", "index": 1}}}],
              thresholds=[{"color": "red", "value": None}, {"color": "green", "value": 1}]),
@@ -146,27 +146,21 @@ def build(scope=None):
     ]
     y += 4
 
-    P.append(row("⚠ Build failed but the app is still running  (the silent-failure case)", y)); y += 1
-    P.append(table("These builds failed - the container you're seeing is the old one",
-        g(0, y, 24, 8),
-        f'coolify_build_success{{{sel}, rank="1"}} == 0 and on(uuid) coolify_app_up == 1',
-        desc="Latest deploy for this app failed AND its container is currently up - "
-             "that's the previous successful build still serving traffic, not the one "
-             "you just shipped."))
+    P.append(row("failed but still running", y)); y += 1
+    P.append(table("", g(0, y, 24, 8),
+        f'coolify_build_success{{{sel}, rank="1"}} == 0 and on(uuid) coolify_app_up == 1', uid))
     y += 8
 
-    P.append(row("Latest build status by application", y)); y += 1
-    P.append(status_board("Most recent build per app  (rank = 1)",
-        g(0, y, 24, 16), f'coolify_build_success{{{sel}, rank="1"}}',
-        desc="Green = last build finished cleanly. Red = last build failed. "
-             "Gray = cancelled or another non-terminal outcome."))
+    P.append(row("latest build", y)); y += 1
+    P.append(status_board(g(0, y, 24, 16), f'coolify_build_success{{{sel}, rank="1"}}', uid))
     y += 16
 
-    P.append(row("Full build history  (last 3 per app)", y)); y += 1
-    P.append(table("All recent builds", g(0, y, 24, 14),
-        f'coolify_build_success{{{sel}}}',
-        desc="Every build Coolify has recorded for each app in the last 3 attempts, "
-             "newest first per app. Filter by column to find one quickly."))
+    P.append(row("build log", y)); y += 1
+    P.append(build_log_panel(g(0, y, 24, 18), scope))
+    y += 18
+
+    P.append(row("history", y)); y += 1
+    P.append(table("", g(0, y, 24, 14), f'coolify_build_success{{{sel}}}', uid))
     y += 14
 
     project_def = (f'label_values(coolify_build_success{{project=~"{SCOPES[scope]["project_regex"]}"}}, project)'

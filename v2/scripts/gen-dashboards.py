@@ -1,24 +1,9 @@
 #!/usr/bin/env python3
-"""dev-UAE / dev-IND Grafana dashboards for the v2 stack.
+"""Per-region service dashboards for the v2 stack, one per Coolify project.
 
-Region == Coolify project:  UAE -> valura-development,  IND -> global-valura-dev
-
-Panel order (most useful first, per user feedback):
-  1 summary (+ service status board)   2 restarts & health   3 CPU   4 memory
-  -- section gap --
-  5 logs
-  -- section gap --
-  6 traces   7 network   8 host (bottom)
-
-Interactivity:
-  - $resource (multi) drives every metrics/logs panel; $service picks the
-    trace service
-  - click a series -> reloads the dashboard scoped to that service
-  - dashboard links: sibling region dashboard, Jaeger UI, Loki Explore
-  - the "Service status" board in the summary always shows the whole fleet
-    (ignores $resource) - Grafana can't conditionally hide a panel by
-    variable value in this dashboard format, so the old "Top talkers" /
-    "Uptime" tables were removed outright rather than hidden per-service
+Four sections only: metrics, logs, traces, network. $resource (multi) filters
+every metrics/logs panel; $service picks the trace service. Clicking a series
+reloads the dashboard scoped to that service.
 """
 import json, sys
 
@@ -156,20 +141,6 @@ def row(title, y):
     return {"id": nid(), "type": "row", "title": title, "collapsed": False,
             "gridPos": g(0, y, 24, 1), "panels": []}
 
-def text_panel(gp, md):
-    return {"id": nid(), "type": "text", "gridPos": gp,
-            "options": {"mode": "markdown", "content": md}}
-
-def section_break(label, y, height=3):
-    # A visible divider between major sections (metrics / logs / traces /
-    # network) - a thin rule + label, not another bordered panel.
-    html = (f"<div style='text-align:center;opacity:0.6;letter-spacing:4px;"
-            f"font-size:18px;font-weight:700;border-top:1px solid currentColor;"
-            f"padding-top:16px;margin-top:10px'>{label}</div>")
-    return {"id": nid(), "type": "text", "gridPos": g(0, y, 24, height),
-            "transparent": True, "options": {"mode": "markdown", "content": html}}
-
-
 def build(name, cfg):
     proj = cfg["project"]; tag = cfg["tag"]; uid = cfg["uid"]
     box = cfg["box"]; host = cfg["host"]
@@ -179,14 +150,12 @@ def build(name, cfg):
     cadr = cad + f', {RES}=~"$resource"'
     node = f'job="node-fleet", box="{box}"'
     lbase = f'coolify_project="{proj}", host="{host}"'
-    lres  = lbase + ', coolify_resource=~"$resource"'
+    lsel  = lbase + ', coolify_resource=~"$resource"'
 
     P = []; y = 0
 
-    # ---------- 1. summary ----------
-    P.append(row(f"{tag}  •  summary", y)); y += 1
-    if cfg.get("note"):
-        P.append(text_panel(g(0, y, 24, 2), cfg["note"])); y += 2
+    # ================================ metrics ================================
+    P.append(row("metrics", y)); y += 1
     P += [
         stat("Running containers", g(0, y, 3, 4), f'count(container_last_seen{{{cad}}})',
              thresholds=[{"color": "red", "value": None}, {"color": "green", "value": 1}]),
@@ -213,20 +182,10 @@ def build(name, cfg):
     ]
     y += 4
 
-    # ---- service status board: one green/red tile per service, whole fleet ----
-    # Always the full project (ignores $resource) - this is the at-a-glance view.
-    # "up" = cAdvisor has seen the container in the last 60s. Grafana's stat panel
-    # auto-grids multiple series into tiles; it can't be pinned to an exact 8-per-
-    # row, but it packs tightly and wraps on its own.
-    # Skipped where cAdvisor has no per-container data (see cfg["note"] above) -
-    # zero series makes the stat panel paint one blank solid-red tile instead of
-    # a clean "no data" message, which isn't worth working around.
     if not cfg.get("skip_service_status"):
         P.append({
             "id": nid(), "type": "stat", "title": "Service status", "datasource": PROM,
             "gridPos": g(0, y, 24, 7),
-            "description": "Green = cAdvisor has seen the container in the last 60s. "
-                           "Red = it hasn't (stopped/crashed). Ignores the Service filter above.",
             "fieldConfig": {"defaults": {
                 "color": {"mode": "thresholds"},
                 "thresholds": {"mode": "absolute",
@@ -243,134 +202,33 @@ def build(name, cfg):
         })
         y += 7
 
-    # ---------- 2. restarts & health (moved up) ----------
-    P.append(row(f"{tag}  •  restarts & health", y)); y += 1
-    P.append(ts("Restarts by service (1h delta)", g(0, y, 14, 8),
+    P.append(ts("Restarts by service", g(0, y, 12, 8),
         [{"refId": "A", "datasource": PROM,
           "expr": f'sum by ({RES}) (changes(container_start_time_seconds{{{cadr}}}[1h]))',
-          "legendFormat": f"{{{{{RES}}}}}"}],
-        unit="none", fill=0, drilldash=uid,
-        desc="A rising line = the container is restarting. Click a series to focus it."))
-    P.append(ts("OOM events by service", g(14, y, 10, 8),
+          "legendFormat": f"{{{{{RES}}}}}"}], unit="none", fill=0, drilldash=uid))
+    P.append(ts("OOM events by service", g(12, y, 12, 8),
         [{"refId": "A", "datasource": PROM,
           "expr": f'sum by ({RES}) (increase(container_oom_events_total{{{cadr}}}[$__interval]))',
-          "legendFormat": f"{{{{{RES}}}}}"}],
-        unit="none", fill=0, drilldash=uid,
-        desc="The kernel OOM-killed a process in this container. Usually means its "
-             "memory limit is too tight."))
+          "legendFormat": f"{{{{{RES}}}}}"}], unit="none", fill=0, drilldash=uid))
     y += 8
 
-    # ---------- 3. CPU ----------
-    P.append(row(f"{tag}  •  CPU", y)); y += 1
     P.append(ts("CPU cores by service", g(0, y, 24, 9),
         [{"refId": "A", "datasource": PROM,
           "expr": f'sum by ({RES}) (rate(container_cpu_usage_seconds_total{{{cadr}}}[$__rate_interval]))',
-          "legendFormat": f"{{{{{RES}}}}}"}],
-        unit="none", stack=True, decimals=3, drilldash=uid,
-        desc="Per-second CPU cores by Coolify resource. Click a series to focus it."))
+          "legendFormat": f"{{{{{RES}}}}}"}], unit="none", stack=True, decimals=3, drilldash=uid))
     y += 9
 
-    # ---------- 4. memory ----------
-    P.append(row(f"{tag}  •  memory", y)); y += 1
     P.append(ts("Memory (working set) by service", g(0, y, 12, 8),
         [{"refId": "A", "datasource": PROM,
           "expr": f'sum by ({RES}) (container_memory_working_set_bytes{{{cadr}}})',
-          "legendFormat": f"{{{{{RES}}}}}"}],
-        unit="bytes", stack=True, drilldash=uid))
+          "legendFormat": f"{{{{{RES}}}}}"}], unit="bytes", stack=True, drilldash=uid))
     P.append(ts("Memory vs limit (%)", g(12, y, 12, 8),
         [{"refId": "A", "datasource": PROM,
           "expr": (f'100 * sum by ({RES}) (container_memory_working_set_bytes{{{cadr}}}) '
                    f'/ (sum by ({RES}) (container_spec_memory_limit_bytes{{{cadr}}}) > 0)'),
-          "legendFormat": f"{{{{{RES}}}}}"}],
-        unit="percent", fill=3, drilldash=uid,
-        desc="Only services that set a memory limit appear here."))
+          "legendFormat": f"{{{{{RES}}}}}"}], unit="percent", fill=3, drilldash=uid))
     y += 8
 
-    # ---- section break: metrics -> logs ----
-    P.append(section_break("LOGS", y)); y += 3
-
-    # ---------- 5. logs ----------
-    # Driven by the SAME "Service" dropdown ($resource) as the metric panels.
-    # $resource is a Prometheus label_values var (populates reliably); its
-    # values are Coolify resource names, which equal the Loki `coolify_resource`
-    # label. Every logs panel carries a concrete `|~ "(?i)(...)"` filter or none
-    # - never an empty `|~ ""`.
-    P.append(row(f"{tag}  •  logs   (filtered by the Service dropdown)", y)); y += 1
-    lsel = f'coolify_project="{proj}", host="{host}", coolify_resource=~"$resource"'
-    P.append(loki_ts("Log volume by level", g(0, y, 12, 7),
-        f'sum by (level) (count_over_time({{{lsel}}}[$__interval]))',
-        "{{level}}", stack=True, bars=True,
-        overrides=[
-          {"matcher": {"id": "byName", "options": "error"}, "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}]},
-          {"matcher": {"id": "byName", "options": "fatal"}, "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "dark-red"}}]},
-          {"matcher": {"id": "byName", "options": "warn"},  "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "orange"}}]},
-          {"matcher": {"id": "byName", "options": "info"},  "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "green"}}]},
-        ],
-        desc="Respects the Service dropdown."))
-    P.append(loki_ts("Error / warn rate by service", g(12, y, 12, 7),
-        f'sum by (coolify_resource) (count_over_time({{{lsel}}} |~ "(?i)(error|warn|fatal|exception|critical)" [$__interval]))',
-        "{{coolify_resource}}", stack=True, desc="Respects the Service dropdown."))
-    y += 7
-    P.append(logs_panel("Errors, warnings & exceptions  —  $resource", g(0, y, 24, 12),
-        f'{{{lsel}}} |~ "(?i)(error|warn|fatal|critical|exception|traceback|panic)"',
-        desc="error / warn / fatal / exception lines for the selected service(s)."))
-    y += 12
-    P.append(logs_panel("All logs  —  $resource", g(0, y, 24, 16),
-        f'{{{lsel}}}',
-        desc="Every line for the selected service(s), newest first. "
-             "Pick a Service in the top bar to narrow it; use Explore for text search."))
-    y += 16
-
-    # ---- section break: logs -> traces ----
-    P.append(section_break("TRACES", y)); y += 3
-
-    # ---------- 6. traces ----------
-    P.append(row(f"{tag}  •  traces  (Jaeger + RED)", y)); y += 1
-    P.append(text_panel(g(0, y, 24, 3),
-        "**Traces are wired but empty until the apps emit spans.** On each Coolify "
-        f"service set `OTEL_EXPORTER_OTLP_ENDPOINT=http://{cfg['hostip']}:4318`, "
-        "`OTEL_SERVICE_NAME=<name>`, `OTEL_TRACES_EXPORTER=otlp`. "
-        f"Flow: `app → Alloy({cfg['hostip']}) → OTel Collector(.52) → Jaeger`; RED metrics "
-        "(`traces_spanmetrics_*`) are derived automatically. See "
-        "[docs/dev-dashboards.md]."))
-    y += 3
-    P.append(ts("Request rate by service", g(0, y, 8, 8),
-        [{"refId": "A", "datasource": PROM,
-          "expr": 'sum by (service_name) (rate(traces_spanmetrics_calls_total[$__rate_interval]))',
-          "legendFormat": "{{service_name}}"}], unit="reqps"))
-    P.append(ts("Error rate by service", g(8, y, 8, 8),
-        [{"refId": "A", "datasource": PROM,
-          "expr": 'sum by (service_name) (rate(traces_spanmetrics_calls_total{status_code="STATUS_CODE_ERROR"}[$__rate_interval]))',
-          "legendFormat": "{{service_name}}"}], unit="reqps"))
-    P.append(ts("p95 latency by service", g(16, y, 8, 8),
-        [{"refId": "A", "datasource": PROM,
-          "expr": 'histogram_quantile(0.95, sum by (le, service_name) (rate(traces_spanmetrics_latency_bucket[$__rate_interval])))',
-          "legendFormat": "{{service_name}}"}], unit="ms"))
-    y += 8
-    P.append({"id": nid(), "type": "table", "title": "Recent traces  ($service)",
-        "datasource": JAEGER, "gridPos": g(0, y, 24, 8),
-        "description": "Jaeger search. Choose $service once spans arrive.",
-        "targets": [{"refId": "A", "datasource": JAEGER, "queryType": "search",
-                     "service": "$service", "limit": 20}]})
-    y += 8
-
-    # ---- section break: traces -> network ----
-    P.append(section_break("NETWORK", y)); y += 3
-
-    # ---------- 7. network (pushed down) ----------
-    P.append(row(f"{tag}  •  network  (lower priority)", y)); y += 1
-    P.append(ts("Network RX by service", g(0, y, 12, 7),
-        [{"refId": "A", "datasource": PROM,
-          "expr": f'sum by ({RES}) (rate(container_network_receive_bytes_total{{{cadr}}}[$__rate_interval]))',
-          "legendFormat": f"{{{{{RES}}}}}"}], unit="Bps", stack=True, fill=4, drilldash=uid))
-    P.append(ts("Network TX by service", g(12, y, 12, 7),
-        [{"refId": "A", "datasource": PROM,
-          "expr": f'sum by ({RES}) (rate(container_network_transmit_bytes_total{{{cadr}}}[$__rate_interval]))',
-          "legendFormat": f"{{{{{RES}}}}}"}], unit="Bps", stack=True, fill=4, drilldash=uid))
-    y += 7
-
-    # ---------- 8. dev host (bottom) ----------
-    P.append(row(cfg["hostlabel"], y)); y += 1
     P += [
         stat("Host CPU busy", g(0, y, 4, 4),
              f'100 * (1 - avg(rate(node_cpu_seconds_total{{{node}, mode="idle"}}[5m])))',
@@ -393,7 +251,74 @@ def build(name, cfg):
         [{"refId": "A", "datasource": PROM,
           "expr": f'sum by (mode) (rate(node_cpu_seconds_total{{{node}, mode!="idle"}}[$__rate_interval]))',
           "legendFormat": "{{mode}}"}], stack=True, minv=0))
-    P.append(ts("Host network", g(12, y, 12, 7),
+    P.append(ts("Host memory", g(12, y, 12, 7),
+        [{"refId": "A", "datasource": PROM, "expr": f'node_memory_MemTotal_bytes{{{node}}}', "legendFormat": "total"},
+         {"refId": "B", "datasource": PROM,
+          "expr": f'node_memory_MemTotal_bytes{{{node}}} - node_memory_MemAvailable_bytes{{{node}}}', "legendFormat": "used"}],
+        unit="bytes", fill=3))
+    y += 7
+    P.append(ts("Host disk I/O", g(0, y, 24, 6),
+        [{"refId": "A", "datasource": PROM,
+          "expr": f'rate(node_disk_read_bytes_total{{{node}}}[$__rate_interval])', "legendFormat": "read {{device}}"},
+         {"refId": "B", "datasource": PROM,
+          "expr": f'- rate(node_disk_written_bytes_total{{{node}}}[$__rate_interval])', "legendFormat": "write {{device}}"}],
+        unit="Bps", fill=3))
+    y += 6
+
+    # ================================= logs =================================
+    P.append(row("logs", y)); y += 1
+    P.append(loki_ts("Log volume by level", g(0, y, 12, 7),
+        f'sum by (level) (count_over_time({{{lsel}}}[$__interval]))',
+        "{{level}}", stack=True, bars=True,
+        overrides=[
+          {"matcher": {"id": "byName", "options": "error"}, "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "red"}}]},
+          {"matcher": {"id": "byName", "options": "fatal"}, "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "dark-red"}}]},
+          {"matcher": {"id": "byName", "options": "warn"},  "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "orange"}}]},
+          {"matcher": {"id": "byName", "options": "info"},  "properties": [{"id": "color", "value": {"mode": "fixed", "fixedColor": "green"}}]},
+        ]))
+    P.append(loki_ts("Error / warn rate by service", g(12, y, 12, 7),
+        f'sum by (coolify_resource) (count_over_time({{{lsel}}} |~ "(?i)(error|warn|fatal|exception|critical)" [$__interval]))',
+        "{{coolify_resource}}", stack=True))
+    y += 7
+    P.append(logs_panel("Errors, warnings & exceptions", g(0, y, 24, 12),
+        f'{{{lsel}}} |~ "(?i)(error|warn|fatal|critical|exception|traceback|panic)"'))
+    y += 12
+    P.append(logs_panel("All logs", g(0, y, 24, 16), f'{{{lsel}}}'))
+    y += 16
+
+    # ================================ traces ================================
+    P.append(row("traces", y)); y += 1
+    P.append(ts("Request rate by service", g(0, y, 8, 8),
+        [{"refId": "A", "datasource": PROM,
+          "expr": 'sum by (service_name) (rate(traces_spanmetrics_calls_total[$__rate_interval]))',
+          "legendFormat": "{{service_name}}"}], unit="reqps"))
+    P.append(ts("Error rate by service", g(8, y, 8, 8),
+        [{"refId": "A", "datasource": PROM,
+          "expr": 'sum by (service_name) (rate(traces_spanmetrics_calls_total{status_code="STATUS_CODE_ERROR"}[$__rate_interval]))',
+          "legendFormat": "{{service_name}}"}], unit="reqps"))
+    P.append(ts("p95 latency by service", g(16, y, 8, 8),
+        [{"refId": "A", "datasource": PROM,
+          "expr": 'histogram_quantile(0.95, sum by (le, service_name) (rate(traces_spanmetrics_latency_bucket[$__rate_interval])))',
+          "legendFormat": "{{service_name}}"}], unit="ms"))
+    y += 8
+    P.append({"id": nid(), "type": "table", "title": "Recent traces",
+        "datasource": JAEGER, "gridPos": g(0, y, 24, 8),
+        "targets": [{"refId": "A", "datasource": JAEGER, "queryType": "search",
+                     "service": "$service", "limit": 20}]})
+    y += 8
+
+    # =============================== network ================================
+    P.append(row("network", y)); y += 1
+    P.append(ts("Network RX by service", g(0, y, 12, 7),
+        [{"refId": "A", "datasource": PROM,
+          "expr": f'sum by ({RES}) (rate(container_network_receive_bytes_total{{{cadr}}}[$__rate_interval]))',
+          "legendFormat": f"{{{{{RES}}}}}"}], unit="Bps", stack=True, fill=4, drilldash=uid))
+    P.append(ts("Network TX by service", g(12, y, 12, 7),
+        [{"refId": "A", "datasource": PROM,
+          "expr": f'sum by ({RES}) (rate(container_network_transmit_bytes_total{{{cadr}}}[$__rate_interval]))',
+          "legendFormat": f"{{{{{RES}}}}}"}], unit="Bps", stack=True, fill=4, drilldash=uid))
+    y += 7
+    P.append(ts("Host network", g(0, y, 24, 7),
         [{"refId": "A", "datasource": PROM,
           "expr": f'rate(node_network_receive_bytes_total{{{node}, device!~"lo|veth.*|docker.*|br-.*"}}[$__rate_interval])',
           "legendFormat": "rx {{device}}"},
@@ -401,18 +326,6 @@ def build(name, cfg):
           "expr": f'- rate(node_network_transmit_bytes_total{{{node}, device!~"lo|veth.*|docker.*|br-.*"}}[$__rate_interval])',
           "legendFormat": "tx {{device}}"}], unit="Bps", fill=3))
     y += 7
-    P.append(ts("Host memory", g(0, y, 12, 6),
-        [{"refId": "A", "datasource": PROM, "expr": f'node_memory_MemTotal_bytes{{{node}}}', "legendFormat": "total"},
-         {"refId": "B", "datasource": PROM,
-          "expr": f'node_memory_MemTotal_bytes{{{node}}} - node_memory_MemAvailable_bytes{{{node}}}', "legendFormat": "used"}],
-        unit="bytes", fill=3))
-    P.append(ts("Host disk I/O", g(12, y, 12, 6),
-        [{"refId": "A", "datasource": PROM,
-          "expr": f'rate(node_disk_read_bytes_total{{{node}}}[$__rate_interval])', "legendFormat": "read {{device}}"},
-         {"refId": "B", "datasource": PROM,
-          "expr": f'- rate(node_disk_written_bytes_total{{{node}}}[$__rate_interval])', "legendFormat": "write {{device}}"}],
-        unit="Bps", fill=3))
-    y += 6
 
     # ---------------------------------------------------------------- vars ---
     templating = {"list": [
