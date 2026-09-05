@@ -28,27 +28,27 @@ JAEGER = {"type": "jaeger", "uid": "jaeger"}
 
 REGIONS = {
     "dev-UAE": {"project": "valura-development", "tag": "UAE", "uid": "dev-uae",
-               "sibling": ("dev-IND", "dev-ind"),
+               "sibling": ("dev-IND", "dev-ind"), "folder": "dev",
                "box": "valura-dev", "host": "dev-server-1", "hostip": "10.200.2.51",
                "hostlabel": "dev host  •  10.200.2.51  (shared by dev-UAE + dev-IND)"},
     "dev-IND": {"project": "global-valura-dev", "tag": "IND", "uid": "dev-ind",
-               "sibling": ("dev-UAE", "dev-uae"),
+               "sibling": ("dev-UAE", "dev-uae"), "folder": "dev",
                "box": "valura-dev", "host": "dev-server-1", "hostip": "10.200.2.51",
                "hostlabel": "dev host  •  10.200.2.51  (shared by dev-UAE + dev-IND)"},
     "stg-UAE": {"project": "valura-uae-staging", "tag": "UAE staging", "uid": "stg-uae",
-               "sibling": ("stg-IND", "stg-ind"),
+               "sibling": ("stg-IND", "stg-ind"), "folder": "staging",
                "box": "uae-staging", "host": "uae-stg", "hostip": "10.200.2.56",
                "hostlabel": "staging host  •  10.200.2.56 (UAE)"},
     "stg-IND": {"project": "global-valura-staging", "tag": "IND staging", "uid": "stg-ind",
-               "sibling": ("stg-UAE", "stg-uae"),
+               "sibling": ("stg-UAE", "stg-uae"), "folder": "staging",
                "box": "valura-ind-stg", "host": "ind-stg", "hostip": "10.200.2.57",
                "hostlabel": "staging host  •  10.200.2.57 (IND)"},
     "partner-apps": {"project": "partner-apps", "tag": "Partner Apps", "uid": "partner-apps",
-               "sibling": None,
+               "sibling": None, "folder": "non-prod",
                "box": "partner-apps", "host": "edge", "hostip": "10.200.1.2",
                "hostlabel": "partner-apps host  •  10.200.1.2"},
     "prod-UAE": {"project": "valura-prod", "tag": "UAE prod", "uid": "prod-uae",
-               "sibling": None,
+               "sibling": None, "folder": "prod",
                "box": "valura-prod", "host": "uae-prod", "hostip": "10.200.2.54",
                "hostlabel": "production host  •  10.200.2.54 (UAE)",
                "note": "**This is a production box** - treat restart-triggering changes "
@@ -462,10 +462,13 @@ def build(name, cfg):
 
 
 if __name__ == "__main__":
+    import os
     out = sys.argv[1] if len(sys.argv) > 1 else "."
     for name, cfg in REGIONS.items():
         d = build(name, cfg)
-        p = f"{out}/{cfg['uid']}.json"
+        folder_dir = f"{out}/{cfg['folder']}"
+        os.makedirs(folder_dir, exist_ok=True)
+        p = f"{folder_dir}/{cfg['uid']}.json"
         json.dump(d, open(p, "w"), indent=2)
         open(p, "a").write("\n")
         print(f"wrote {p}  ({len(d['panels'])} panels)")

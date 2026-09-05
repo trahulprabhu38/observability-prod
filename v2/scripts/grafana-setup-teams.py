@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # One-time setup: creates the 5 RBAC teams (UAE/IND/Partner-Apps project
 # teams + Prod-View/General-View access teams) and grants their folder
-# permissions (non-prod <- General-View+Prod-View, production <- Prod-View).
+# permissions (non-prod/dev/staging <- General-View+Prod-View,
+# prod/deployments <- Prod-View only).
 # Idempotent - safe to re-run, looks up existing teams instead of erroring.
 # See docs/10-rbac-teams-access.md for the full RBAC model.
 import json, os, sys, urllib.request, base64
@@ -73,11 +74,18 @@ def set_perm(folder_title, team_name, permission):
 
 set_perm("non-prod", "General-View", 1)   # 1 = View
 set_perm("non-prod", "Prod-View", 1)
-set_perm("production", "Prod-View", 1)
-set_perm("infra", "General-View", 1)      # host-level dashboards, not prod-specific
-set_perm("infra", "Prod-View", 1)
-set_perm("deployments", "Prod-View", 1)   # shows live prod status across every client
-                                           # project (not just UAE/IND) - Prod-View only
+set_perm("dev", "General-View", 1)        # dev/staging: every developer sees these -
+set_perm("dev", "Prod-View", 1)           # matches "developers need this" directly
+set_perm("staging", "General-View", 1)
+set_perm("staging", "Prod-View", 1)
+set_perm("prod", "Prod-View", 1)          # prod-UAE + its infra/deploy dashboards -
+                                           # Prod-View only, same as the old "production"
+                                           # folder this replaced
+set_perm("deployments", "Prod-View", 1)   # the GLOBAL cross-client dashboards (all 181
+                                           # apps, every client project) - Prod-View only.
+                                           # The per-env deployments-{dev,staging,prod}
+                                           # dashboards live in dev/staging/prod above and
+                                           # inherit those folders' permissions instead.
 
 # 5. Safety sweep: dashboard-level permissions can carry direct, non-inherited
 # role-based grants (e.g. {"role":"Viewer","permission":1}) that bypass folder

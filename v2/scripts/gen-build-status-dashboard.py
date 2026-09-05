@@ -15,6 +15,14 @@ import json, sys
 
 PROM = {"type": "prometheus", "uid": "prometheus"}
 
+# Same scoping as gen-deploy-dashboard.py - see that file's comment for why
+# this filters by Coolify PROJECT rather than "environment".
+SCOPES = {
+    "dev":     {"folder": "dev",     "project_regex": "Valura-development|global-valura-dev"},
+    "staging": {"folder": "staging", "project_regex": "valura-UAE-staging|global-valura-staging"},
+    "prod":    {"folder": "prod",    "project_regex": "valura-prod"},
+}
+
 _id = [0]
 def nid():
     _id[0] += 1
@@ -94,15 +102,23 @@ def table(title, gp, expr, desc="", extra_overrides=None, extra_transform=None):
     }
 
 
-def build():
+def build(scope=None):
     _id[0] = 0
-    sel = 'project=~"$project", environment=~"$environment"'
+    if scope:
+        sel = f'project=~"{SCOPES[scope]["project_regex"]}", project=~"$project"'
+    else:
+        sel = 'project=~"$project", environment=~"$environment"'
     P = []; y = 0
 
-    P.append(row("Deployment builds  •  last 3 builds per application", y)); y += 1
+    deploy_link = f"/d/deployments-{scope}" if scope else "/d/deployments/deployments"
+    title = "Deployment builds  •  last 3 builds per application" + (f"  ({scope})" if scope else "")
+    P.append(row(title, y)); y += 1
+    scope_note = (f"Scoped to **{scope}** only ({SCOPES[scope]['project_regex']}). "
+                  "See the Project dropdown to narrow further. " if scope else "")
     P.append(text_panel(g(0, y, 24, 3),
-        "This is **build outcome**, not current uptime - see the "
-        "[deployments dashboard](/d/deployments/deployments) for whether an app is "
+        scope_note +
+        f"This is **build outcome**, not current uptime - see the "
+        f"[deployments dashboard]({deploy_link}) for whether an app is "
         "running right now. The two can disagree: a failed build often leaves the "
         "*previous* container running, so the app looks fine while the build itself "
         "broke. Data comes straight from Coolify's own deployment-history table "
@@ -153,30 +169,45 @@ def build():
              "newest first per app. Filter by column to find one quickly."))
     y += 14
 
-    templating = {"list": [
+    project_def = (f'label_values(coolify_build_success{{project=~"{SCOPES[scope]["project_regex"]}"}}, project)'
+                   if scope else 'label_values(coolify_build_success, project)')
+    templating_list = [
         {"type": "query", "name": "project", "label": "Project", "datasource": PROM,
-         "definition": 'label_values(coolify_build_success, project)',
-         "query": {"qryType": 1, "query": 'label_values(coolify_build_success, project)',
+         "definition": project_def,
+         "query": {"qryType": 1, "query": project_def,
                    "refId": "PrometheusVariableQueryEditor-VariableQuery"},
          "includeAll": True, "multi": True, "allValue": ".*",
          "current": {"text": "All", "value": "$__all"}, "refresh": 2, "sort": 1},
-        {"type": "query", "name": "environment", "label": "Environment", "datasource": PROM,
-         "definition": 'label_values(coolify_build_success, environment)',
-         "query": {"qryType": 1, "query": 'label_values(coolify_build_success, environment)',
-                   "refId": "PrometheusVariableQueryEditor-VariableQuery"},
-         "includeAll": True, "multi": True, "allValue": ".*",
-         "current": {"text": "All", "value": "$__all"}, "refresh": 2, "sort": 1},
-    ]}
+    ]
+    if not scope:
+        templating_list.append(
+            {"type": "query", "name": "environment", "label": "Environment", "datasource": PROM,
+             "definition": 'label_values(coolify_build_success, environment)',
+             "query": {"qryType": 1, "query": 'label_values(coolify_build_success, environment)',
+                       "refId": "PrometheusVariableQueryEditor-VariableQuery"},
+             "includeAll": True, "multi": True, "allValue": ".*",
+             "current": {"text": "All", "value": "$__all"}, "refresh": 2, "sort": 1})
+    templating = {"list": templating_list}
+
+    uid = f"deployment-builds-{scope}" if scope else "deployment-builds"
+    links = [{"title": "↔ deployments (live status)", "type": "link",
+              "url": deploy_link, "icon": "external link"}]
+    if scope == "prod":
+        links += [{"title": f"↔ deployment-builds-{s}", "type": "link",
+                   "url": f"/d/deployment-builds-{s}", "icon": "external link"} for s in ("dev", "staging")]
+    elif scope in ("dev", "staging"):
+        other = "staging" if scope == "dev" else "dev"
+        links.append({"title": f"↔ deployment-builds-{other}", "type": "link",
+                      "url": f"/d/deployment-builds-{other}", "icon": "external link"})
 
     dash = {
-        "uid": "deployment-builds", "title": "deployment-builds",
-        "tags": ["deployments", "coolify", "builds", "valura", "generated"],
+        "uid": uid, "title": uid,
+        "tags": ["deployments", "coolify", "builds", "valura", "generated"] + ([scope] if scope else []),
         "timezone": "browser", "editable": True, "schemaVersion": 42,
         "graphTooltip": 1, "fiscalYearStartMonth": 0, "weekStart": "", "preload": False,
         "refresh": "2m", "time": {"from": "now-24h", "to": "now"},
         "timepicker": {}, "templating": templating,
-        "links": [{"title": "↔ deployments (live status)", "type": "link",
-                   "url": "/d/deployments/deployments", "icon": "external link"}],
+        "links": links,
         "annotations": {"list": [{"builtIn": 1, "type": "dashboard",
                         "datasource": {"type": "grafana", "uid": "-- Grafana --"},
                         "enable": True, "hide": True, "name": "Annotations & Alerts"}]},
@@ -186,9 +217,20 @@ def build():
 
 
 if __name__ == "__main__":
+    import os
     out = sys.argv[1] if len(sys.argv) > 1 else "."
+
     d = build()
-    p = f"{out}/deployment-builds.json"
+    p = f"{out}/deployments/deployment-builds.json"
     json.dump(d, open(p, "w"), indent=2)
     open(p, "a").write("\n")
     print(f"wrote {p}  ({len(d['panels'])} panels)")
+
+    for scope, cfg in SCOPES.items():
+        d = build(scope)
+        folder_dir = f"{out}/{cfg['folder']}"
+        os.makedirs(folder_dir, exist_ok=True)
+        p = f"{folder_dir}/deployment-builds-{scope}.json"
+        json.dump(d, open(p, "w"), indent=2)
+        open(p, "a").write("\n")
+        print(f"wrote {p}  ({len(d['panels'])} panels)")

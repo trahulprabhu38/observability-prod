@@ -18,22 +18,22 @@ PROM = {"type": "prometheus", "uid": "prometheus"}
 
 HOSTS = {
     "infra-observability": {"box": "observability", "ip": "10.200.2.52", "job": "node",
-        "cjob": "cadvisor", "uid": "infra-observability",
+        "cjob": "cadvisor", "uid": "infra-observability", "folder": "non-prod",
         "label": "Observability stack host (Prometheus/Loki/Jaeger/Grafana)"},
     "infra-dev": {"box": "valura-dev", "ip": "10.200.2.51", "job": "node-fleet",
-        "cjob": "cadvisor-fleet", "uid": "infra-dev",
+        "cjob": "cadvisor-fleet", "uid": "infra-dev", "folder": "dev",
         "label": "Dev  •  shared by dev-UAE + dev-IND"},
     "infra-stg-uae": {"box": "uae-staging", "ip": "10.200.2.56", "job": "node-fleet",
-        "cjob": "cadvisor-fleet", "uid": "infra-stg-uae",
+        "cjob": "cadvisor-fleet", "uid": "infra-stg-uae", "folder": "staging",
         "label": "UAE staging"},
     "infra-stg-ind": {"box": "valura-ind-stg", "ip": "10.200.2.57", "job": "node-fleet",
-        "cjob": "cadvisor-fleet", "uid": "infra-stg-ind",
+        "cjob": "cadvisor-fleet", "uid": "infra-stg-ind", "folder": "staging",
         "label": "IND staging"},
     "infra-partner-apps": {"box": "partner-apps", "ip": "10.200.1.2", "job": "node-fleet",
-        "cjob": "cadvisor-fleet", "uid": "infra-partner-apps",
+        "cjob": "cadvisor-fleet", "uid": "infra-partner-apps", "folder": "non-prod",
         "label": "Partner-apps  •  also runs the Coolify control plane"},
     "infra-prod-uae": {"box": "valura-prod", "ip": "10.200.2.54", "job": "node-fleet",
-        "cjob": "cadvisor-fleet", "uid": "infra-prod-uae",
+        "cjob": "cadvisor-fleet", "uid": "infra-prod-uae", "folder": "prod",
         "label": "UAE production", "note": "**Production box** - view only."},
 }
 
@@ -252,9 +252,12 @@ def build(name, cfg):
 
 if __name__ == "__main__":
     out = sys.argv[1] if len(sys.argv) > 1 else "."
+    import os
     for name, cfg in HOSTS.items():
         d = build(name, cfg)
-        p = f"{out}/{cfg['uid']}.json"
+        folder_dir = f"{out}/{cfg['folder']}"
+        os.makedirs(folder_dir, exist_ok=True)
+        p = f"{folder_dir}/{cfg['uid']}.json"
         json.dump(d, open(p, "w"), indent=2)
         open(p, "a").write("\n")
         print(f"wrote {p}  ({len(d['panels'])} panels)")

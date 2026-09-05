@@ -12,6 +12,19 @@ import json, sys
 
 PROM = {"type": "prometheus", "uid": "prometheus"}
 
+# Coolify's own "environment" field is basically always "production" regardless
+# of which of these three an app belongs to (verified live) - it's an internal
+# Coolify concept, unrelated to our dev/staging/prod split. So the scoped
+# dashboards below filter by Coolify PROJECT name instead. Note the casing here
+# is the real Coolify project name (from the API/DB), which differs from the
+# lowercase `coolify.projectName` docker-label slug used elsewhere in this repo
+# for cAdvisor filtering - verified against live label values, not assumed.
+SCOPES = {
+    "dev":     {"folder": "dev",     "project_regex": "Valura-development|global-valura-dev"},
+    "staging": {"folder": "staging", "project_regex": "valura-UAE-staging|global-valura-staging"},
+    "prod":    {"folder": "prod",    "project_regex": "valura-prod"},
+}
+
 _id = [0]
 def nid():
     _id[0] += 1
@@ -78,13 +91,20 @@ def table(title, gp, expr, desc=""):
     }
 
 
-def build():
+def build(scope=None):
     _id[0] = 0
-    sel = 'project=~"$project", environment=~"$environment"'
+    if scope:
+        sel = f'project=~"{SCOPES[scope]["project_regex"]}", project=~"$project"'
+    else:
+        sel = 'project=~"$project", environment=~"$environment"'
     P = []; y = 0
 
-    P.append(row("Deployments  •  latest status per application", y)); y += 1
+    title = f"Deployments  •  latest status per application" + (f"  ({scope})" if scope else "")
+    P.append(row(title, y)); y += 1
+    scope_note = (f"Scoped to **{scope}** only ({SCOPES[scope]['project_regex']}). "
+                  "See the Project dropdown to narrow further. " if scope else "")
     P.append(text_panel(g(0, y, 24, 2),
+        scope_note +
         "Green/red reflects each app's **live container status** in Coolify right now "
         "(`running:healthy` vs `exited`/`unhealthy`/etc.), refreshed every 2 minutes by "
         "a cron poller. Coolify's API has no deploy-history endpoint that returns data, "
@@ -123,28 +143,44 @@ def build():
              "environment, app, uuid, status. Use the column filters to narrow down."))
     y += 10
 
-    templating = {"list": [
+    project_def = (f'label_values(coolify_app_up{{project=~"{SCOPES[scope]["project_regex"]}"}}, project)'
+                   if scope else 'label_values(coolify_app_up, project)')
+    templating_list = [
         {"type": "query", "name": "project", "label": "Project", "datasource": PROM,
-         "definition": 'label_values(coolify_app_up, project)',
-         "query": {"qryType": 1, "query": 'label_values(coolify_app_up, project)',
+         "definition": project_def,
+         "query": {"qryType": 1, "query": project_def,
                    "refId": "PrometheusVariableQueryEditor-VariableQuery"},
          "includeAll": True, "multi": True, "allValue": ".*",
          "current": {"text": "All", "value": "$__all"}, "refresh": 2, "sort": 1},
-        {"type": "query", "name": "environment", "label": "Environment", "datasource": PROM,
-         "definition": 'label_values(coolify_app_up, environment)',
-         "query": {"qryType": 1, "query": 'label_values(coolify_app_up, environment)',
-                   "refId": "PrometheusVariableQueryEditor-VariableQuery"},
-         "includeAll": True, "multi": True, "allValue": ".*",
-         "current": {"text": "All", "value": "$__all"}, "refresh": 2, "sort": 1},
-    ]}
+    ]
+    if not scope:
+        templating_list.append(
+            {"type": "query", "name": "environment", "label": "Environment", "datasource": PROM,
+             "definition": 'label_values(coolify_app_up, environment)',
+             "query": {"qryType": 1, "query": 'label_values(coolify_app_up, environment)',
+                       "refId": "PrometheusVariableQueryEditor-VariableQuery"},
+             "includeAll": True, "multi": True, "allValue": ".*",
+             "current": {"text": "All", "value": "$__all"}, "refresh": 2, "sort": 1})
+    templating = {"list": templating_list}
+
+    uid = f"deployments-{scope}" if scope else "deployments"
+    links = []
+    if scope == "prod":
+        # Prod-View sees everything, so cross-links to dev/staging are safe from here.
+        links = [{"title": f"↔ deployments-{s}", "type": "link", "url": f"/d/deployments-{s}",
+                  "icon": "external link"} for s in ("dev", "staging")]
+    elif scope in ("dev", "staging"):
+        other = "staging" if scope == "dev" else "dev"
+        links = [{"title": f"↔ deployments-{other}", "type": "link", "url": f"/d/deployments-{other}",
+                  "icon": "external link"}]
 
     dash = {
-        "uid": "deployments", "title": "deployments",
-        "tags": ["deployments", "coolify", "valura", "generated"],
+        "uid": uid, "title": uid,
+        "tags": ["deployments", "coolify", "valura", "generated"] + ([scope] if scope else []),
         "timezone": "browser", "editable": True, "schemaVersion": 42,
         "graphTooltip": 1, "fiscalYearStartMonth": 0, "weekStart": "", "preload": False,
         "refresh": "1m", "time": {"from": "now-6h", "to": "now"},
-        "timepicker": {}, "templating": templating, "links": [],
+        "timepicker": {}, "templating": templating, "links": links,
         "annotations": {"list": [{"builtIn": 1, "type": "dashboard",
                         "datasource": {"type": "grafana", "uid": "-- Grafana --"},
                         "enable": True, "hide": True, "name": "Annotations & Alerts"}]},
@@ -154,9 +190,20 @@ def build():
 
 
 if __name__ == "__main__":
+    import os
     out = sys.argv[1] if len(sys.argv) > 1 else "."
+
     d = build()
-    p = f"{out}/deployments.json"
+    p = f"{out}/deployments/deployments.json"
     json.dump(d, open(p, "w"), indent=2)
     open(p, "a").write("\n")
     print(f"wrote {p}  ({len(d['panels'])} panels)")
+
+    for scope, cfg in SCOPES.items():
+        d = build(scope)
+        folder_dir = f"{out}/{cfg['folder']}"
+        os.makedirs(folder_dir, exist_ok=True)
+        p = f"{folder_dir}/deployments-{scope}.json"
+        json.dump(d, open(p, "w"), indent=2)
+        open(p, "a").write("\n")
+        print(f"wrote {p}  ({len(d['panels'])} panels)")
