@@ -16,16 +16,22 @@ pushes cross-network to .52 (Pushgateway :9091 and Loki :3100, both
 confirmed reachable).
 
 Build logs: `application_deployment_queues.logs` is a JSON array of
-{output,timestamp,type,hidden,...} entries. Each build's log is pushed to
-Loki ONCE (tracked in a state file), as stream
+{output,timestamp,type,hidden,...} entries. ALL of them are shipped -
+Coolify marks the real build output (docker layers, command stdout, the
+actual error) as `hidden` and only leaves status lines visible, so filtering
+hidden out gave a near-empty log. Each build ships to Loki as stream
 `{job="coolify_build_logs", project, environment, app}` with per-line
-structured metadata `deployment_uuid` / `status` / `commit` / `stream`.
-Stream labels stay low-cardinality (~one per app); the dashboard filters to
-a single build by `| deployment_uuid="..."`. Loki keeps 14 days (its
-config), so old build logs age out on their own. This does mean build logs -
-which can contain whatever a build script printed - are now readable by
-anyone with access to the dashboard's folder; that's the point of the
-feature, but worth knowing.
+structured metadata `deployment_uuid` / `status` / `commit` / `stream`, and
+each line prefixed with its real timestamp. The Loki entry timestamp is
+clamped into Loki's accept window so an old build ships instead of being
+rejected wholesale; `loki.yml` gives this job a 90d `retention_stream`
+override (vs the 14d default) since these are tiny immutable per-deploy
+artifacts. A state file avoids re-shipping every run, but a re-ship is
+harmless - identical (ts, line) pairs dedupe. Stream labels stay
+low-cardinality (~one per app); the dashboard filters to one build by
+`| deployment_uuid="..."`. Build logs can contain whatever a build script
+printed and are now readable by anyone with the dashboard folder's access -
+that's the point, but worth knowing.
 
 Run every 5 minutes via cron on 10.200.1.2:
     */5 * * * * /usr/bin/python3 /path/coolify-build-status.py
@@ -36,8 +42,9 @@ PUSHGATEWAY = "http://10.200.2.52:9091"
 LOKI = "http://10.200.2.52:3100"
 SEP = "\x01"
 STATE_FILE = os.environ.get("COOLIFY_BUILD_LOG_STATE", "/root/.coolify_build_logs_pushed.json")
-STATE_TTL = 20 * 86400          # forget a pushed-uuid record after 20 days (Loki keeps 14)
-MAX_LINES_PER_BUILD = 5000      # truncate pathologically long build logs
+STATE_TTL = 30 * 86400          # forget a pushed-uuid record after 30d; a re-ship is
+                                # harmless - identical (ts, line) pairs are deduped by Loki
+MAX_LINES_PER_BUILD = 20000     # only truncate a genuinely pathological build log
 MAX_APPS_PER_RUN = 80           # ship up to this many apps' logs per run (x3 builds)
 
 STATUS_QUERY = f"""
@@ -96,24 +103,37 @@ def push_one_build_log(uuid, project, environment, app, status, commit, created_
     try:
         entries = json.loads(raw_logs) if raw_logs else []
     except (json.JSONDecodeError, TypeError):
-        return False
+        return "skip"
     if not isinstance(entries, list) or not entries:
-        return False
+        return "skip"
 
-    entries = [e for e in entries if isinstance(e, dict) and not e.get("hidden")]
-    entries.sort(key=lambda e: (e.get("batch", 0), e.get("order", 0)))
-    fallback = to_epoch(created_at) or time.time()
+    # Keep EVERY entry, including hidden ones - Coolify marks the actual build
+    # output (docker layers, command stdout, the real error) as hidden and only
+    # leaves the high-level status lines visible. "hidden" here == the UI's
+    # "Show Debug Logs", which is exactly what you want on a failed build.
+    entries = [e for e in entries if isinstance(e, dict)]
+    entries.sort(key=lambda e: (e.get("timestamp") or "", e.get("batch", 0), e.get("order", 0)))
+
+    # The Loki ENTRY timestamp is now-anchored (each line gets now - (N-i)*1ms):
+    # it only carries line order + drives retention. A build's real wall-clock
+    # time is prefixed onto every line instead. now-anchoring means ingest never
+    # rejects an old build, and a re-ship produces the same (ts, line) pairs
+    # only if run in the same ms - which is fine, dupes are rare and harmless.
+    n = min(len(entries), MAX_LINES_PER_BUILD)
+    base_ns = int(time.time() * 1_000_000_000) - n * 1_000_000
 
     values, last_ns = [], 0
-    for e in entries[:MAX_LINES_PER_BUILD]:
+    for i, e in enumerate(entries[:MAX_LINES_PER_BUILD]):
         text = str(e.get("output", "")).rstrip("\n")
         if not text:
             continue
-        ns = iso_to_ns(e.get("timestamp"), fallback)
-        if ns <= last_ns:                      # keep strictly increasing within the stream slice
+        ns = base_ns + i * 1_000_000
+        if ns <= last_ns:
             ns = last_ns + 1000
         last_ns = ns
-        values.append([str(ns), text, {
+        iso = e.get("timestamp") or ""
+        prefix = (iso.replace("T", " ").replace("Z", "").split(".")[0] + "  ") if iso else ""
+        values.append([str(ns), prefix + text, {
             "deployment_uuid": uuid, "status": status,
             "commit": (commit or "")[:12], "stream": e.get("type", "stdout"),
         }])
@@ -122,7 +142,7 @@ def push_one_build_log(uuid, project, environment, app, status, commit, created_
                        f"... build log truncated at {MAX_LINES_PER_BUILD} lines ...",
                        {"deployment_uuid": uuid, "status": status, "commit": (commit or "")[:12], "stream": "meta"}])
     if not values:
-        return False
+        return "skip"
 
     payload = json.dumps({"streams": [{
         "stream": {"job": "coolify_build_logs", "project": project,

@@ -45,7 +45,7 @@
           "text": "All",
           "value": "$__all"
         },
-        "refresh": 2,
+        "refresh": 1,
         "sort": 1
       },
       {
@@ -56,15 +56,15 @@
           "type": "prometheus",
           "uid": "prometheus"
         },
-        "definition": "label_values(coolify_build_success{project=~\"valura-prod\"}, app)",
+        "definition": "label_values(coolify_build_success{project=~\"valura-prod\", project=~\"$project\"}, app)",
         "query": {
           "qryType": 1,
-          "query": "label_values(coolify_build_success{project=~\"valura-prod\"}, app)",
+          "query": "label_values(coolify_build_success{project=~\"valura-prod\", project=~\"$project\"}, app)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "includeAll": false,
         "multi": false,
-        "refresh": 2,
+        "refresh": 1,
         "sort": 1
       },
       {
@@ -104,15 +104,15 @@
           "uid": "prometheus"
         },
         "hide": 2,
-        "definition": "label_values(coolify_build_success{app=\"$app\", rank=~\"$rank\"}, deployment_uuid)",
+        "definition": "label_values(coolify_build_success{project=~\"valura-prod\", project=~\"$project\", app=\"$app\", rank=~\"$rank\"}, deployment_uuid)",
         "query": {
           "qryType": 1,
-          "query": "label_values(coolify_build_success{app=\"$app\", rank=~\"$rank\"}, deployment_uuid)",
+          "query": "label_values(coolify_build_success{project=~\"valura-prod\", project=~\"$project\", app=\"$app\", rank=~\"$rank\"}, deployment_uuid)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "includeAll": false,
         "multi": false,
-        "refresh": 2
+        "refresh": 1
       }
     ]
   },
@@ -771,14 +771,14 @@
       },
       "pluginVersion": "12.3.2",
       "options": {
-        "showTime": true,
+        "showTime": false,
         "showLabels": false,
         "showCommonLabels": false,
         "wrapLogMessage": true,
         "prettifyLogMessage": false,
         "enableLogDetails": true,
         "dedupStrategy": "none",
-        "sortOrder": "Descending",
+        "sortOrder": "Ascending",
         "enableInfiniteScrolling": true
       },
       "targets": [
@@ -788,7 +788,7 @@
             "type": "loki",
             "uid": "loki"
           },
-          "maxLines": 5000,
+          "maxLines": 20000,
           "expr": "{job=\"coolify_build_logs\", app=\"$app\"} | deployment_uuid=~`$deployment_uuid`"
         }
       ]
