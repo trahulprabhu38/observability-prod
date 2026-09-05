@@ -38,7 +38,7 @@ SEP = "\x01"
 STATE_FILE = os.environ.get("COOLIFY_BUILD_LOG_STATE", "/root/.coolify_build_logs_pushed.json")
 STATE_TTL = 20 * 86400          # forget a pushed-uuid record after 20 days (Loki keeps 14)
 MAX_LINES_PER_BUILD = 5000      # truncate pathologically long build logs
-MAX_NEW_LOGS_PER_RUN = 60       # spread the first-run backfill over a few cron cycles
+MAX_APPS_PER_RUN = 80           # ship up to this many apps' logs per run (x3 builds)
 
 STATUS_QUERY = f"""
 WITH ranked AS (
@@ -153,11 +153,22 @@ def ship_build_logs(builds):
     now = time.time()
     state = {k: v for k, v in state.items() if now - v < STATE_TTL}
 
-    # Oldest first: several builds of one app share a Loki stream, and Loki
-    # rejects an entry older than what a stream has already accepted. Pushing
-    # rank 3 -> 2 -> 1 (ascending time) keeps every stream strictly forward.
-    todo = sorted((b for b in builds if b["uuid"] not in state),
-                  key=lambda b: b["created_at"] or "")[:MAX_NEW_LOGS_PER_RUN]
+    # Group unshipped builds by app. Prioritise apps by their most RECENT build
+    # (so a fresh failure ships this run, not after the whole backfill), but
+    # within an app push its builds OLDEST first - several builds of one app
+    # share a Loki stream and Loki rejects an entry older than what the stream
+    # has already taken.
+    groups = {}
+    for b in builds:
+        if b["uuid"] not in state:
+            groups.setdefault((b["project"], b["app"]), []).append(b)
+    apps_by_recency = sorted(groups.items(),
+                             key=lambda kv: max(x["created_at"] or "" for x in kv[1]),
+                             reverse=True)[:MAX_APPS_PER_RUN]
+    todo = []
+    for _, blds in apps_by_recency:
+        todo.extend(sorted(blds, key=lambda x: x["created_at"] or ""))
+
     shipped = 0
     if todo:
         uuid_list = ",".join("'" + b["uuid"].replace("'", "") + "'" for b in todo)
@@ -170,7 +181,10 @@ def ship_build_logs(builds):
             logs_by_uuid = {r["u"]: r["l"] for r in json.loads(blob)}
         except json.JSONDecodeError:
             logs_by_uuid = {}
+        skip_app = None
         for b in todo:
+            if (b["project"], b["app"]) == skip_app:
+                continue                       # a push failed earlier in this app's group
             raw = logs_by_uuid.get(b["uuid"])
             if raw is None:
                 continue
@@ -180,6 +194,10 @@ def ship_build_logs(builds):
                 state[b["uuid"]] = now
             if result == "ok":
                 shipped += 1
+            if result == "retry":
+                # leave this app's remaining (newer) builds for next run so the
+                # stream stays in order
+                skip_app = (b["project"], b["app"])
     try:
         json.dump(state, open(STATE_FILE, "w"))
     except OSError:
