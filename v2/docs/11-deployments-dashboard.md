@@ -13,6 +13,33 @@ often leaves the *previous* container running, so `deployments` stays green
 while `deployment-builds` shows red for the same app. `deployment-builds`
 cross-references both to surface exactly that case explicitly (see below).
 
+## Global vs. per-environment
+
+Both dashboards actually ship as four each: one global pair in the
+`deployments` folder (Prod-View only, all 181 apps across every client
+project on the Coolify instance), and three scoped pairs -
+`deployments-dev`/`deployment-builds-dev`,
+`deployments-staging`/`deployment-builds-staging`,
+`deployments-prod`/`deployment-builds-prod` - living in the `dev`/`staging`/
+`prod` folders and filtered to just that environment's own projects. The
+scoped ones exist so developers (General-View, no access to `prod` or the
+global `deployments` folder) still get deploy-status visibility for the
+environments they're actually allowed to see. See `docs/10-rbac-teams-access.md`
+for the folder/permission table.
+
+The scoping filters by Coolify **project** name, not "environment" -
+Coolify's own environment field is just `production` for nearly every app
+regardless of which of our three groups it's in (checked live), so it
+carries no signal for this split. `gen-deploy-dashboard.py` and
+`gen-build-status-dashboard.py` each have a `SCOPES` dict with the project
+regex per environment; note the casing there is the real Coolify
+project name from the API/DB (e.g. `Valura-development`,
+`valura-UAE-staging`), which differs from the lowercase
+`coolify.projectName` docker-label slug (`valura-development`) used
+elsewhere in this repo for cAdvisor filtering - verified against live label
+values, not assumed, after the first attempt at this used the wrong casing
+and matched zero apps.
+
 ## `deployments` - what it actually measures
 
 Coolify's REST API has **no working deployment-history endpoint** - both
@@ -120,8 +147,10 @@ Revisit if that scope turns out to be wrong.
 ## Redeploying a dashboard after a generator change
 
 ```bash
-python3 scripts/gen-deploy-dashboard.py grafana/provisioning/dashboards/json/deployments
-python3 scripts/gen-build-status-dashboard.py grafana/provisioning/dashboards/json/deployments
+# both take the top-level json/ dir - they each write their own global copy
+# into deployments/ plus three scoped copies into dev/, staging/, prod/
+python3 scripts/gen-deploy-dashboard.py grafana/provisioning/dashboards/json
+python3 scripts/gen-build-status-dashboard.py grafana/provisioning/dashboards/json
 ```
 
 `coolify-build-status.py` itself is deployed by hand to `/usr/local/bin/` on
