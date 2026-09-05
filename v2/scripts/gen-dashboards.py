@@ -54,6 +54,16 @@ REGIONS = {
                "sibling": None,
                "box": "partner-apps", "host": "edge", "hostip": "10.200.1.2",
                "hostlabel": "partner-apps host  •  10.200.1.2"},
+    "prod-UAE": {"project": "valura-prod", "tag": "UAE prod", "uid": "prod-uae",
+               "sibling": None,
+               "box": "valura-prod", "host": "uae-prod", "hostip": "10.200.2.54",
+               "hostlabel": "production host  •  10.200.2.54 (UAE)",
+               "skip_service_status": True,
+               "note": "**Per-container metrics (CPU/memory/restarts below) are unavailable "
+                       "on this box.** Same cAdvisor/cgroup limitation as stg-IND - registers "
+                       "cleanly but returns zero per-container series. Host metrics, logs and "
+                       "traces below are unaffected. **This is a production box** - treat "
+                       "restart-triggering changes here with extra care."},
 }
 
 _id = [0]
@@ -161,12 +171,12 @@ def text_panel(gp, md):
     return {"id": nid(), "type": "text", "gridPos": gp,
             "options": {"mode": "markdown", "content": md}}
 
-def section_break(label, y, height=2):
-    # A visible divider between major sections (metrics / logs / traces) -
-    # a thin rule + faint label, not another bordered panel.
-    html = (f"<div style='text-align:center;opacity:0.5;letter-spacing:4px;"
-            f"font-size:11px;font-weight:600;border-top:1px solid currentColor;"
-            f"padding-top:10px;margin-top:6px'>{label}</div>")
+def section_break(label, y, height=3):
+    # A visible divider between major sections (metrics / logs / traces /
+    # network) - a thin rule + label, not another bordered panel.
+    html = (f"<div style='text-align:center;opacity:0.6;letter-spacing:4px;"
+            f"font-size:18px;font-weight:700;border-top:1px solid currentColor;"
+            f"padding-top:16px;margin-top:10px'>{label}</div>")
     return {"id": nid(), "type": "text", "gridPos": g(0, y, 24, height),
             "transparent": True, "options": {"mode": "markdown", "content": html}}
 
@@ -288,7 +298,7 @@ def build(name, cfg):
     y += 8
 
     # ---- section break: metrics -> logs ----
-    P.append(section_break("LOGS", y)); y += 2
+    P.append(section_break("LOGS", y)); y += 3
 
     # ---------- 5. logs ----------
     # Driven by the SAME "Service" dropdown ($resource) as the metric panels.
@@ -323,7 +333,7 @@ def build(name, cfg):
     y += 16
 
     # ---- section break: logs -> traces ----
-    P.append(section_break("TRACES", y)); y += 2
+    P.append(section_break("TRACES", y)); y += 3
 
     # ---------- 6. traces ----------
     P.append(row(f"{tag}  •  traces  (Jaeger + RED)", y)); y += 1
@@ -354,6 +364,9 @@ def build(name, cfg):
         "targets": [{"refId": "A", "datasource": JAEGER, "queryType": "search",
                      "service": "$service", "limit": 20}]})
     y += 8
+
+    # ---- section break: traces -> network ----
+    P.append(section_break("NETWORK", y)); y += 3
 
     # ---------- 7. network (pushed down) ----------
     P.append(row(f"{tag}  •  network  (lower priority)", y)); y += 1

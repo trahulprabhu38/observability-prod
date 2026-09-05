@@ -1072,12 +1072,12 @@
         "x": 0,
         "y": 40,
         "w": 24,
-        "h": 2
+        "h": 3
       },
       "transparent": true,
       "options": {
         "mode": "markdown",
-        "content": "<div style='text-align:center;opacity:0.5;letter-spacing:4px;font-size:11px;font-weight:600;border-top:1px solid currentColor;padding-top:10px;margin-top:6px'>LOGS</div>"
+        "content": "<div style='text-align:center;opacity:0.6;letter-spacing:4px;font-size:18px;font-weight:700;border-top:1px solid currentColor;padding-top:16px;margin-top:10px'>LOGS</div>"
       }
     },
     {
@@ -1087,7 +1087,7 @@
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 42,
+        "y": 43,
         "w": 24,
         "h": 1
       },
@@ -1103,7 +1103,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 43,
+        "y": 44,
         "w": 12,
         "h": 7
       },
@@ -1217,7 +1217,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 43,
+        "y": 44,
         "w": 12,
         "h": 7
       },
@@ -1270,7 +1270,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 50,
+        "y": 51,
         "w": 24,
         "h": 12
       },
@@ -1311,7 +1311,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 62,
+        "y": 63,
         "w": 24,
         "h": 16
       },
@@ -1347,14 +1347,14 @@
       "type": "text",
       "gridPos": {
         "x": 0,
-        "y": 78,
+        "y": 79,
         "w": 24,
-        "h": 2
+        "h": 3
       },
       "transparent": true,
       "options": {
         "mode": "markdown",
-        "content": "<div style='text-align:center;opacity:0.5;letter-spacing:4px;font-size:11px;font-weight:600;border-top:1px solid currentColor;padding-top:10px;margin-top:6px'>TRACES</div>"
+        "content": "<div style='text-align:center;opacity:0.6;letter-spacing:4px;font-size:18px;font-weight:700;border-top:1px solid currentColor;padding-top:16px;margin-top:10px'>TRACES</div>"
       }
     },
     {
@@ -1364,7 +1364,7 @@
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 80,
+        "y": 82,
         "w": 24,
         "h": 1
       },
@@ -1375,7 +1375,7 @@
       "type": "text",
       "gridPos": {
         "x": 0,
-        "y": 81,
+        "y": 83,
         "w": 24,
         "h": 3
       },
@@ -1394,7 +1394,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 84,
+        "y": 86,
         "w": 8,
         "h": 8
       },
@@ -1454,7 +1454,7 @@
       },
       "gridPos": {
         "x": 8,
-        "y": 84,
+        "y": 86,
         "w": 8,
         "h": 8
       },
@@ -1514,7 +1514,7 @@
       },
       "gridPos": {
         "x": 16,
-        "y": 84,
+        "y": 86,
         "w": 8,
         "h": 8
       },
@@ -1574,7 +1574,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 92,
+        "y": 94,
         "w": 24,
         "h": 8
       },
@@ -1594,19 +1594,34 @@
     },
     {
       "id": 32,
+      "type": "text",
+      "gridPos": {
+        "x": 0,
+        "y": 102,
+        "w": 24,
+        "h": 3
+      },
+      "transparent": true,
+      "options": {
+        "mode": "markdown",
+        "content": "<div style='text-align:center;opacity:0.6;letter-spacing:4px;font-size:18px;font-weight:700;border-top:1px solid currentColor;padding-top:16px;margin-top:10px'>NETWORK</div>"
+      }
+    },
+    {
+      "id": 33,
       "type": "row",
       "title": "Partner Apps  \u2022  network  (lower priority)",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 100,
+        "y": 105,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 33,
+      "id": 34,
       "type": "timeseries",
       "title": "Network RX by service",
       "datasource": {
@@ -1615,7 +1630,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 101,
+        "y": 106,
         "w": 12,
         "h": 7
       },
@@ -1672,7 +1687,7 @@
       ]
     },
     {
-      "id": 34,
+      "id": 35,
       "type": "timeseries",
       "title": "Network TX by service",
       "datasource": {
@@ -1681,7 +1696,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 101,
+        "y": 106,
         "w": 12,
         "h": 7
       },
@@ -1738,20 +1753,20 @@
       ]
     },
     {
-      "id": 35,
+      "id": 36,
       "type": "row",
       "title": "partner-apps host  \u2022  10.200.1.2",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 108,
+        "y": 113,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 36,
+      "id": 37,
       "type": "stat",
       "title": "Host CPU busy",
       "datasource": {
@@ -1760,7 +1775,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 109,
+        "y": 114,
         "w": 4,
         "h": 4
       },
@@ -1817,7 +1832,7 @@
       ]
     },
     {
-      "id": 37,
+      "id": 38,
       "type": "stat",
       "title": "Load (1m)",
       "datasource": {
@@ -1826,7 +1841,7 @@
       },
       "gridPos": {
         "x": 4,
-        "y": 109,
+        "y": 114,
         "w": 4,
         "h": 4
       },
@@ -1875,7 +1890,7 @@
       ]
     },
     {
-      "id": 38,
+      "id": 39,
       "type": "stat",
       "title": "RAM used",
       "datasource": {
@@ -1884,7 +1899,7 @@
       },
       "gridPos": {
         "x": 8,
-        "y": 109,
+        "y": 114,
         "w": 4,
         "h": 4
       },
@@ -1941,7 +1956,7 @@
       ]
     },
     {
-      "id": 39,
+      "id": 40,
       "type": "stat",
       "title": "RAM total",
       "datasource": {
@@ -1950,7 +1965,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 109,
+        "y": 114,
         "w": 4,
         "h": 4
       },
@@ -1999,7 +2014,7 @@
       ]
     },
     {
-      "id": 40,
+      "id": 41,
       "type": "stat",
       "title": "Root FS used",
       "datasource": {
@@ -2008,7 +2023,7 @@
       },
       "gridPos": {
         "x": 16,
-        "y": 109,
+        "y": 114,
         "w": 4,
         "h": 4
       },
@@ -2065,7 +2080,7 @@
       ]
     },
     {
-      "id": 41,
+      "id": 42,
       "type": "stat",
       "title": "Host uptime",
       "datasource": {
@@ -2074,7 +2089,7 @@
       },
       "gridPos": {
         "x": 20,
-        "y": 109,
+        "y": 114,
         "w": 4,
         "h": 4
       },
@@ -2123,7 +2138,7 @@
       ]
     },
     {
-      "id": 42,
+      "id": 43,
       "type": "timeseries",
       "title": "Host CPU by mode",
       "datasource": {
@@ -2132,7 +2147,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 113,
+        "y": 118,
         "w": 12,
         "h": 7
       },
@@ -2184,7 +2199,7 @@
       ]
     },
     {
-      "id": 43,
+      "id": 44,
       "type": "timeseries",
       "title": "Host network",
       "datasource": {
@@ -2193,7 +2208,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 113,
+        "y": 118,
         "w": 12,
         "h": 7
       },
@@ -2253,7 +2268,7 @@
       ]
     },
     {
-      "id": 44,
+      "id": 45,
       "type": "timeseries",
       "title": "Host memory",
       "datasource": {
@@ -2262,7 +2277,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 120,
+        "y": 125,
         "w": 12,
         "h": 6
       },
@@ -2322,7 +2337,7 @@
       ]
     },
     {
-      "id": 45,
+      "id": 46,
       "type": "timeseries",
       "title": "Host disk I/O",
       "datasource": {
@@ -2331,7 +2346,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 120,
+        "y": 125,
         "w": 12,
         "h": 6
       },

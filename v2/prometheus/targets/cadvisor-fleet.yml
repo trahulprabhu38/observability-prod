@@ -15,3 +15,6 @@
 
 - targets: ["10.200.1.2:8085"]
   labels: { box: partner-apps, kind: docker-host, env: production }
+
+- targets: ["10.200.2.54:8085"]
+  labels: { box: valura-prod, kind: docker-host, env: prod }

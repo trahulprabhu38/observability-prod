@@ -12,3 +12,6 @@
 
 - targets: ["10.200.1.2:9100"]
   labels: { box: partner-apps, kind: host, env: production }
+
+- targets: ["10.200.2.54:9100"]
+  labels: { box: valura-prod, kind: host, env: prod }
