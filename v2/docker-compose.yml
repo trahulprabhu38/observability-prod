@@ -90,22 +90,6 @@ services:
     networks: [monitoring]
 
   # batch / cron / short-lived jobs PUSH their metrics here; Prometheus scrapes it
-  # probes latency (icmp) + request speed (http) between the fleet's own boxes
-  # - see the "network-icmp"/"network-http" jobs in prometheus.yml
-  blackbox-exporter:
-    image: prom/blackbox-exporter:v0.25.0
-    container_name: blackbox-exporter
-    restart: unless-stopped
-    cap_add:
-      - NET_RAW
-    volumes:
-      - ./blackbox/blackbox.yml:/etc/blackbox_exporter/config.yml:ro
-    command:
-      - "--config.file=/etc/blackbox_exporter/config.yml"
-    ports:
-      - "9115:9115"
-    networks: [monitoring]
-
   pushgateway:
     image: prom/pushgateway:v1.10.0
     container_name: pushgateway

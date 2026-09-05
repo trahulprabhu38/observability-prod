@@ -4,8 +4,11 @@
 Region == Coolify project:  UAE -> valura-development,  IND -> global-valura-dev
 
 Panel order (most useful first, per user feedback):
-  1 summary (+ service status board)   2 restarts & health   3 CPU
-  4 memory   4b disk & network   5 logs   6 traces   7 network   8 host (bottom)
+  1 summary (+ service status board)   2 restarts & health   3 CPU   4 memory
+  -- section gap --
+  5 logs
+  -- section gap --
+  6 traces   7 network   8 host (bottom)
 
 Interactivity:
   - $resource (multi) drives every metrics/logs panel; $service picks the
@@ -158,6 +161,15 @@ def text_panel(gp, md):
     return {"id": nid(), "type": "text", "gridPos": gp,
             "options": {"mode": "markdown", "content": md}}
 
+def section_break(label, y, height=2):
+    # A visible divider between major sections (metrics / logs / traces) -
+    # a thin rule + faint label, not another bordered panel.
+    html = (f"<div style='text-align:center;opacity:0.5;letter-spacing:4px;"
+            f"font-size:11px;font-weight:600;border-top:1px solid currentColor;"
+            f"padding-top:10px;margin-top:6px'>{label}</div>")
+    return {"id": nid(), "type": "text", "gridPos": g(0, y, 24, height),
+            "transparent": True, "options": {"mode": "markdown", "content": html}}
+
 
 def build(name, cfg):
     proj = cfg["project"]; tag = cfg["tag"]; uid = cfg["uid"]
@@ -275,34 +287,8 @@ def build(name, cfg):
         desc="Only services that set a memory limit appear here."))
     y += 8
 
-    # ---------- 4b. disk & network (added metrics) ----------
-    P.append(row(f"{tag}  •  disk & network", y)); y += 1
-    P.append(ts("Disk I/O by service", g(0, y, 8, 8),
-        [{"refId": "A", "datasource": PROM,
-          "expr": f'sum by ({RES}) (rate(container_fs_reads_bytes_total{{{cadr}}}[$__rate_interval]))',
-          "legendFormat": f"read {{{{{RES}}}}}"},
-         {"refId": "B", "datasource": PROM,
-          "expr": f'- sum by ({RES}) (rate(container_fs_writes_bytes_total{{{cadr}}}[$__rate_interval]))',
-          "legendFormat": f"write {{{{{RES}}}}}"}],
-        unit="Bps", fill=3, drilldash=uid,
-        desc="Positive = reads, negative = writes."))
-    P.append(ts("Container filesystem usage", g(8, y, 8, 8),
-        [{"refId": "A", "datasource": PROM,
-          "expr": f'sum by ({RES}) (container_fs_usage_bytes{{{cadr}}})',
-          "legendFormat": f"{{{{{RES}}}}}"}],
-        unit="bytes", fill=3, drilldash=uid,
-        desc="Writable layer disk usage per container (not host disk)."))
-    P.append(ts("Network errors & drops by service", g(16, y, 8, 8),
-        [{"refId": "A", "datasource": PROM,
-          "expr": (f'sum by ({RES}) (rate(container_network_receive_errors_total{{{cadr}}}[$__rate_interval]) '
-                   f'+ rate(container_network_transmit_errors_total{{{cadr}}}[$__rate_interval]))'),
-          "legendFormat": f"errors {{{{{RES}}}}}"},
-         {"refId": "B", "datasource": PROM,
-          "expr": (f'sum by ({RES}) (rate(container_network_receive_packets_dropped_total{{{cadr}}}[$__rate_interval]) '
-                   f'+ rate(container_network_transmit_packets_dropped_total{{{cadr}}}[$__rate_interval]))'),
-          "legendFormat": f"drops {{{{{RES}}}}}"}],
-        unit="ops", fill=0, drilldash=uid))
-    y += 8
+    # ---- section break: metrics -> logs ----
+    P.append(section_break("LOGS", y)); y += 2
 
     # ---------- 5. logs ----------
     # Driven by the SAME "Service" dropdown ($resource) as the metric panels.
@@ -335,6 +321,9 @@ def build(name, cfg):
         desc="Every line for the selected service(s), newest first. "
              "Pick a Service in the top bar to narrow it; use Explore for text search."))
     y += 16
+
+    # ---- section break: logs -> traces ----
+    P.append(section_break("TRACES", y)); y += 2
 
     # ---------- 6. traces ----------
     P.append(row(f"{tag}  •  traces  (Jaeger + RED)", y)); y += 1
@@ -422,45 +411,6 @@ def build(name, cfg):
           "expr": f'- rate(node_disk_written_bytes_total{{{node}}}[$__rate_interval])', "legendFormat": "write {{device}}"}],
         unit="Bps", fill=3))
     y += 6
-
-    # ---------- 9. corporate network (fleet-wide, same on every dashboard) ----------
-    # Latency + request speed between the fleet's own VPN-connected boxes, via
-    # blackbox_exporter on .52. Not scoped to this project/region - it's the
-    # same infra underlying every dashboard, so every dashboard shows all of it.
-    P.append(row("corporate network  •  latency between the fleet's boxes", y)); y += 1
-    P.append({
-        "id": nid(), "type": "stat", "title": "Reachability (ICMP)", "datasource": PROM,
-        "gridPos": g(0, y, 24, 4),
-        "description": "Green = the box answered the last ping. Red = it didn't.",
-        "fieldConfig": {"defaults": {
-            "color": {"mode": "thresholds"},
-            "thresholds": {"mode": "absolute",
-                           "steps": [{"color": "red", "value": None}, {"color": "green", "value": 1}]},
-            "mappings": [{"type": "value", "options": {
-                "0": {"text": "DOWN", "index": 0}, "1": {"text": "UP", "index": 1}}}]},
-            "overrides": []},
-        "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": False},
-                    "orientation": "auto", "textMode": "name", "colorMode": "background",
-                    "graphMode": "none", "justifyMode": "center"},
-        "targets": [{"refId": "A", "datasource": PROM, "instant": True,
-                     "expr": 'max by (box) (probe_success{job="network-icmp"})',
-                     "legendFormat": "{{box}}"}],
-    })
-    y += 4
-    P.append(ts("Ping latency (RTT)", g(0, y, 12, 8),
-        [{"refId": "A", "datasource": PROM,
-          "expr": 'max by (box) (probe_duration_seconds{job="network-icmp"})',
-          "legendFormat": "{{box}}"}],
-        unit="s", fill=2, decimals=1,
-        desc="Round-trip ping time between 10.200.2.52 (this stack) and every other box."))
-    P.append(ts("HTTP request speed", g(12, y, 12, 8),
-        [{"refId": "A", "datasource": PROM,
-          "expr": 'max by (box) (probe_duration_seconds{job="network-http"})',
-          "legendFormat": "{{box}}"}],
-        unit="s", fill=2, decimals=2,
-        desc="Time to fetch each box's node-exporter /metrics over the VPN - a stable, "
-             "always-on synthetic request (not the app itself)."))
-    y += 8
 
     # ---------------------------------------------------------------- vars ---
     templating = {"list": [
