@@ -76,6 +76,8 @@ set_perm("non-prod", "Prod-View", 1)
 set_perm("production", "Prod-View", 1)
 set_perm("infra", "General-View", 1)      # host-level dashboards, not prod-specific
 set_perm("infra", "Prod-View", 1)
+set_perm("deployments", "Prod-View", 1)   # shows live prod status across every client
+                                           # project (not just UAE/IND) - Prod-View only
 
 # 5. Safety sweep: dashboard-level permissions can carry direct, non-inherited
 # role-based grants (e.g. {"role":"Viewer","permission":1}) that bypass folder
