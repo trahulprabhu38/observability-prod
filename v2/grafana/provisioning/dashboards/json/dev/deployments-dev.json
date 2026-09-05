@@ -76,7 +76,7 @@
     {
       "id": 1,
       "type": "row",
-      "title": "Deployments  \u2022  latest status per application  (dev)",
+      "title": "status",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -88,20 +88,6 @@
     },
     {
       "id": 2,
-      "type": "text",
-      "gridPos": {
-        "x": 0,
-        "y": 1,
-        "w": 24,
-        "h": 2
-      },
-      "options": {
-        "mode": "markdown",
-        "content": "Scoped to **dev** only (Valura-development|global-valura-dev). See the Project dropdown to narrow further. Green/red reflects each app's **live container status** in Coolify right now (`running:healthy` vs `exited`/`unhealthy`/etc.), refreshed every 2 minutes by a cron poller. Coolify's API has no deploy-history endpoint that returns data, so this is the closest available signal to \"did the last deploy leave it healthy\" - not a deploy-event log. If a box goes red right after you deploy, that's your failed-deploy signal."
-      }
-    },
-    {
-      "id": 3,
       "type": "stat",
       "title": "Apps up",
       "datasource": {
@@ -110,7 +96,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 3,
+        "y": 1,
         "w": 4,
         "h": 4
       },
@@ -159,7 +145,7 @@
       ]
     },
     {
-      "id": 4,
+      "id": 3,
       "type": "stat",
       "title": "Apps down",
       "datasource": {
@@ -168,7 +154,7 @@
       },
       "gridPos": {
         "x": 4,
-        "y": 3,
+        "y": 1,
         "w": 4,
         "h": 4
       },
@@ -221,7 +207,7 @@
       ]
     },
     {
-      "id": 5,
+      "id": 4,
       "type": "stat",
       "title": "Total apps",
       "datasource": {
@@ -230,7 +216,7 @@
       },
       "gridPos": {
         "x": 8,
-        "y": 3,
+        "y": 1,
         "w": 4,
         "h": 4
       },
@@ -279,7 +265,7 @@
       ]
     },
     {
-      "id": 6,
+      "id": 5,
       "type": "stat",
       "title": "Poller",
       "datasource": {
@@ -288,7 +274,7 @@
       },
       "gridPos": {
         "x": 12,
-        "y": 3,
+        "y": 1,
         "w": 4,
         "h": 4
       },
@@ -356,7 +342,7 @@
       ]
     },
     {
-      "id": 7,
+      "id": 6,
       "type": "stat",
       "title": "Last poll",
       "datasource": {
@@ -365,7 +351,7 @@
       },
       "gridPos": {
         "x": 16,
-        "y": 3,
+        "y": 1,
         "w": 4,
         "h": 4
       },
@@ -422,7 +408,7 @@
       ]
     },
     {
-      "id": 8,
+      "id": 7,
       "type": "stat",
       "title": "Apps seen by poller",
       "datasource": {
@@ -431,7 +417,7 @@
       },
       "gridPos": {
         "x": 20,
-        "y": 3,
+        "y": 1,
         "w": 4,
         "h": 4
       },
@@ -480,20 +466,20 @@
       ]
     },
     {
-      "id": 9,
+      "id": 8,
       "type": "stat",
-      "title": "Status by application  (filtered by Project / Environment above)",
+      "title": "Status by application",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
         "x": 0,
-        "y": 7,
+        "y": 5,
         "w": 24,
         "h": 16
       },
-      "description": "Green = running. Red = stopped/crashed/exited. One box per app.",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -559,20 +545,20 @@
       ]
     },
     {
-      "id": 10,
+      "id": 9,
       "type": "row",
-      "title": "Down right now",
+      "title": "down",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 23,
+        "y": 21,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 11,
+      "id": 10,
       "type": "table",
       "title": "Apps not running",
       "datasource": {
@@ -581,11 +567,11 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 24,
+        "y": 22,
         "w": 24,
         "h": 10
       },
-      "description": "Every field is a label pulled straight off the metric - project, environment, app, uuid, status. Use the column filters to narrow down.",
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "custom": {

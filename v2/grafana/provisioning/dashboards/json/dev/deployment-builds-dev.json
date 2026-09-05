@@ -47,6 +47,72 @@
         },
         "refresh": 2,
         "sort": 1
+      },
+      {
+        "type": "query",
+        "name": "app",
+        "label": "Build log: app",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(coolify_build_success{project=~\"Valura-development|global-valura-dev\"}, app)",
+        "query": {
+          "qryType": 1,
+          "query": "label_values(coolify_build_success{project=~\"Valura-development|global-valura-dev\"}, app)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "includeAll": false,
+        "multi": false,
+        "refresh": 2,
+        "sort": 1
+      },
+      {
+        "type": "custom",
+        "name": "rank",
+        "label": "Build log: rank (1=latest)",
+        "query": "1,2,3",
+        "options": [
+          {
+            "text": "1",
+            "value": "1",
+            "selected": true
+          },
+          {
+            "text": "2",
+            "value": "2",
+            "selected": false
+          },
+          {
+            "text": "3",
+            "value": "3",
+            "selected": false
+          }
+        ],
+        "current": {
+          "text": "1",
+          "value": "1"
+        },
+        "includeAll": false,
+        "multi": false
+      },
+      {
+        "type": "query",
+        "name": "deployment_uuid",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "hide": 2,
+        "definition": "label_values(coolify_build_success{app=\"$app\", rank=~\"$rank\"}, deployment_uuid)",
+        "query": {
+          "qryType": 1,
+          "query": "label_values(coolify_build_success{app=\"$app\", rank=~\"$rank\"}, deployment_uuid)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "includeAll": false,
+        "multi": false,
+        "refresh": 2
       }
     ]
   },
@@ -83,7 +149,7 @@
     {
       "id": 1,
       "type": "row",
-      "title": "Deployment builds  \u2022  last 3 builds per application  (dev)",
+      "title": "summary",
       "collapsed": false,
       "gridPos": {
         "x": 0,
@@ -95,29 +161,15 @@
     },
     {
       "id": 2,
-      "type": "text",
-      "gridPos": {
-        "x": 0,
-        "y": 1,
-        "w": 24,
-        "h": 3
-      },
-      "options": {
-        "mode": "markdown",
-        "content": "Scoped to **dev** only (Valura-development|global-valura-dev). See the Project dropdown to narrow further. This is **build outcome**, not current uptime - see the [deployments dashboard](/d/deployments-dev) for whether an app is running right now. The two can disagree: a failed build often leaves the *previous* container running, so the app looks fine while the build itself broke. Data comes straight from Coolify's own deployment-history table (`application_deployment_queues`) - its API doesn't expose this, so a cron job reads the table directly every 5 minutes. `rank=1` is the most recent build, `rank=2`/`3` the two before it."
-      }
-    },
-    {
-      "id": 3,
       "type": "stat",
-      "title": "Latest build: OK",
+      "title": "Latest build OK",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
         "x": 0,
-        "y": 4,
+        "y": 1,
         "w": 4,
         "h": 4
       },
@@ -166,16 +218,16 @@
       ]
     },
     {
-      "id": 4,
+      "id": 3,
       "type": "stat",
-      "title": "Latest build: FAILED",
+      "title": "Latest build failed",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
         "x": 4,
-        "y": 4,
+        "y": 1,
         "w": 4,
         "h": 4
       },
@@ -228,16 +280,16 @@
       ]
     },
     {
-      "id": 5,
+      "id": 4,
       "type": "stat",
-      "title": "\u26a0 Failed build, still running",
+      "title": "Failed but still running",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
         "x": 8,
-        "y": 4,
+        "y": 1,
         "w": 6,
         "h": 4
       },
@@ -291,16 +343,16 @@
       ]
     },
     {
-      "id": 6,
+      "id": 5,
       "type": "stat",
-      "title": "Builder poller",
+      "title": "Poller",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
         "x": 14,
-        "y": 4,
+        "y": 1,
         "w": 4,
         "h": 4
       },
@@ -368,7 +420,7 @@
       ]
     },
     {
-      "id": 7,
+      "id": 6,
       "type": "stat",
       "title": "Last poll",
       "datasource": {
@@ -377,7 +429,7 @@
       },
       "gridPos": {
         "x": 18,
-        "y": 4,
+        "y": 1,
         "w": 6,
         "h": 4
       },
@@ -434,33 +486,32 @@
       ]
     },
     {
-      "id": 8,
+      "id": 7,
       "type": "row",
-      "title": "\u26a0 Build failed but the app is still running  (the silent-failure case)",
+      "title": "failed but still running",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 8,
+        "y": 5,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 9,
+      "id": 8,
       "type": "table",
-      "title": "These builds failed - the container you're seeing is the old one",
+      "title": "",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
         "x": 0,
-        "y": 9,
+        "y": 6,
         "w": 24,
         "h": 8
       },
-      "description": "Latest deploy for this app failed AND its container is currently up - that's the previous successful build still serving traffic, not the one you just shipped.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -507,6 +558,23 @@
                         "color": "green"
                       }
                     }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "app"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Show build log",
+                    "url": "/d/deployment-builds-dev?var-app=${__data.fields.app}&var-rank=${__data.fields.rank}&${__url_time_range}"
                   }
                 ]
               }
@@ -546,7 +614,9 @@
               "Time": true,
               "__name__": true,
               "job": true,
-              "instance": true
+              "instance": true,
+              "deployment_uuid": true,
+              "uuid": true
             },
             "indexByName": {
               "project": 0,
@@ -562,33 +632,32 @@
       ]
     },
     {
-      "id": 10,
+      "id": 9,
       "type": "row",
-      "title": "Latest build status by application",
+      "title": "latest build",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 17,
+        "y": 14,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 11,
+      "id": 10,
       "type": "stat",
-      "title": "Most recent build per app  (rank = 1)",
+      "title": "Latest build per app",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
         "x": 0,
-        "y": 18,
+        "y": 15,
         "w": 24,
         "h": 16
       },
-      "description": "Green = last build finished cleanly. Red = last build failed. Gray = cancelled or another non-terminal outcome.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -620,14 +689,20 @@
                   "index": 0
                 },
                 "0": {
-                  "text": "BUILD FAILED",
+                  "text": "FAILED",
                   "index": 1
                 },
                 "1": {
-                  "text": "BUILD OK",
+                  "text": "OK",
                   "index": 2
                 }
               }
+            }
+          ],
+          "links": [
+            {
+              "title": "Show build log",
+              "url": "/d/deployment-builds-dev?var-app=${__field.labels.app}&var-rank=${__field.labels.rank}&${__url_time_range}"
             }
           ],
           "noValue": "no data"
@@ -657,38 +732,88 @@
           },
           "instant": true,
           "expr": "coolify_build_success{project=~\"Valura-development|global-valura-dev\", project=~\"$project\", rank=\"1\"}",
-          "legendFormat": "{{project}} / {{environment}} / {{app}}"
+          "legendFormat": "{{project}} / {{app}}"
         }
       ]
     },
     {
-      "id": 12,
+      "id": 11,
       "type": "row",
-      "title": "Full build history  (last 3 per app)",
+      "title": "build log",
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 34,
+        "y": 31,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
+      "id": 12,
+      "type": "logs",
+      "title": "Build log \u2014 $app  (build $rank)",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 24,
+        "h": 18
+      },
+      "pluginVersion": "12.3.2",
+      "options": {
+        "showTime": true,
+        "showLabels": false,
+        "showCommonLabels": false,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": false,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending",
+        "enableInfiniteScrolling": true
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "maxLines": 5000,
+          "expr": "{job=\"coolify_build_logs\", app=\"$app\"} | deployment_uuid=~`$deployment_uuid`"
+        }
+      ]
+    },
+    {
       "id": 13,
+      "type": "row",
+      "title": "history",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 50,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 14,
       "type": "table",
-      "title": "All recent builds",
+      "title": "",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
         "x": 0,
-        "y": 35,
+        "y": 51,
         "w": 24,
         "h": 14
       },
-      "description": "Every build Coolify has recorded for each app in the last 3 attempts, newest first per app. Filter by column to find one quickly.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -739,6 +864,23 @@
                 ]
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "app"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Show build log",
+                    "url": "/d/deployment-builds-dev?var-app=${__data.fields.app}&var-rank=${__data.fields.rank}&${__url_time_range}"
+                  }
+                ]
+              }
+            ]
           }
         ]
       },
@@ -774,7 +916,9 @@
               "Time": true,
               "__name__": true,
               "job": true,
-              "instance": true
+              "instance": true,
+              "deployment_uuid": true,
+              "uuid": true
             },
             "indexByName": {
               "project": 0,

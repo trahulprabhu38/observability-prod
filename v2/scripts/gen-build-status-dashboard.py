@@ -113,7 +113,7 @@ def build_log_panel(gp, scope):
                     "dedupStrategy": "none", "sortOrder": "Descending",
                     "enableInfiniteScrolling": True},
         "targets": [{"refId": "A", "datasource": LOKI, "maxLines": 5000,
-                     "expr": '{job="coolify_build_logs", app="$app"} | deployment_uuid=`$deployment_uuid`'}],
+                     "expr": '{job="coolify_build_logs", app="$app"} | deployment_uuid=~`$deployment_uuid`'}],
     }
 
 
@@ -165,6 +165,10 @@ def build(scope=None):
 
     project_def = (f'label_values(coolify_build_success{{project=~"{SCOPES[scope]["project_regex"]}"}}, project)'
                    if scope else 'label_values(coolify_build_success, project)')
+    scope_filter = f'project=~"{SCOPES[scope]["project_regex"]}"' if scope else ""
+    app_def = f'label_values(coolify_build_success{{{scope_filter}}}, app)' if scope else \
+              'label_values(coolify_build_success, app)'
+    uuid_def = f'label_values(coolify_build_success{{app="$app", rank=~"$rank"}}, deployment_uuid)'
     templating_list = [
         {"type": "query", "name": "project", "label": "Project", "datasource": PROM,
          "definition": project_def,
@@ -172,9 +176,25 @@ def build(scope=None):
                    "refId": "PrometheusVariableQueryEditor-VariableQuery"},
          "includeAll": True, "multi": True, "allValue": ".*",
          "current": {"text": "All", "value": "$__all"}, "refresh": 2, "sort": 1},
+        {"type": "query", "name": "app", "label": "Build log: app", "datasource": PROM,
+         "definition": app_def,
+         "query": {"qryType": 1, "query": app_def,
+                   "refId": "PrometheusVariableQueryEditor-VariableQuery"},
+         "includeAll": False, "multi": False, "refresh": 2, "sort": 1},
+        {"type": "custom", "name": "rank", "label": "Build log: rank (1=latest)",
+         "query": "1,2,3", "options": [
+             {"text": "1", "value": "1", "selected": True},
+             {"text": "2", "value": "2", "selected": False},
+             {"text": "3", "value": "3", "selected": False}],
+         "current": {"text": "1", "value": "1"}, "includeAll": False, "multi": False},
+        {"type": "query", "name": "deployment_uuid", "datasource": PROM, "hide": 2,
+         "definition": uuid_def,
+         "query": {"qryType": 1, "query": uuid_def,
+                   "refId": "PrometheusVariableQueryEditor-VariableQuery"},
+         "includeAll": False, "multi": False, "refresh": 2},
     ]
     if not scope:
-        templating_list.append(
+        templating_list.insert(1,
             {"type": "query", "name": "environment", "label": "Environment", "datasource": PROM,
              "definition": 'label_values(coolify_build_success, environment)',
              "query": {"qryType": 1, "query": 'label_values(coolify_build_success, environment)',
@@ -183,7 +203,7 @@ def build(scope=None):
              "current": {"text": "All", "value": "$__all"}, "refresh": 2, "sort": 1})
     templating = {"list": templating_list}
 
-    uid = f"deployment-builds-{scope}" if scope else "deployment-builds"
+    deploy_link = f"/d/deployments-{scope}" if scope else "/d/deployments/deployments"
     links = [{"title": "↔ deployments (live status)", "type": "link",
               "url": deploy_link, "icon": "external link"}]
     if scope == "prod":
