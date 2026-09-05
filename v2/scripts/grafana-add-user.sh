@@ -18,7 +18,10 @@ set -euo pipefail
 EMAIL="$1"; NAME="$2"; PASS="$3"; TEAM="$4"; ROLE="$5"; ACCESS="$6"
 
 GRAFANA_URL="${GRAFANA_URL:-http://localhost:3000}"
-GRAFANA_AUTH="${GRAFANA_AUTH:-admin:admin123}"
+if [ -z "${GRAFANA_AUTH:-}" ]; then
+  echo "Set GRAFANA_AUTH=<admin-login>:<admin-password> first (never hardcode it here - this file is committed to git)." >&2
+  exit 1
+fi
 
 case "$ROLE" in
   lead) ORG_ROLE="Editor" ;;

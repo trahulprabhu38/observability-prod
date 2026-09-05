@@ -62,11 +62,14 @@ of org role.
 ```
 
 Creates the local account, sets the org role (Editor/Viewer), and adds them to
-their project team + access team. Run against the live stack:
-`GRAFANA_URL=https://grafana-infra.valura.co.in GRAFANA_AUTH=admin:<pw> ./scripts/grafana-add-user.sh ...`
-(defaults to `http://localhost:3000` / `admin:admin123` for running it directly
-on `.52`). Tested end-to-end (created, verified role + both team memberships,
-deleted) before this was committed.
+their project team + access team. `GRAFANA_AUTH` is required (the script
+refuses to run without it - no credential is hardcoded in a file that's
+committed to git):
+`GRAFANA_AUTH=<admin-login>:<admin-password> GRAFANA_URL=https://grafana-infra.valura.co.in ./scripts/grafana-add-user.sh ...`
+(omit `GRAFANA_URL` to default to `http://localhost:3000`, for running it
+directly on `.52`). Tested end-to-end (created, verified role + both team
+memberships, deleted) before this was committed. `grafana-setup-teams.py`
+takes the same two env vars.
 
 To change someone's access later: add/remove them from `Prod-View` /
 `General-View` via **Administration -> Teams** in the UI, or the same
@@ -80,12 +83,16 @@ member (a Grafana behaviour, not something we set). `admin` shows up as a
 member of all five teams for this reason - harmless, since `admin`'s access
 comes from being a Grafana **Admin**, not from team membership.
 
-## Rotate the admin password
+## Admin account
 
-Still `admin` / `admin123` (from `v2/.env`) - the only account in the system
-today. Worth changing once real accounts exist:
+Renamed from the `admin`/`admin123` default to a named account (login/password
+rotated via `PUT /api/users/:id` + `PUT /api/admin/users/:id/password`;
+credentials live only in `v2/.env` - gitignored, never in this repo). To
+rotate again later: same two calls, or
 `docker exec grafana grafana-cli admin reset-admin-password '<new password>'`
-then update `GRAFANA_ADMIN_PASSWORD` in `.env` to match.
+for the password alone - then update `GRAFANA_ADMIN_PASSWORD` in `.env` to
+match (that env var only seeds a *fresh* install; it does not reset an
+existing account on restart).
 
 ## Next: SSO
 

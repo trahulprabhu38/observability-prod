@@ -4,10 +4,13 @@
 # permissions (non-prod <- General-View+Prod-View, production <- Prod-View).
 # Idempotent - safe to re-run, looks up existing teams instead of erroring.
 # See docs/10-rbac-teams-access.md for the full RBAC model.
-import json, urllib.request, base64
+import json, os, sys, urllib.request, base64
 
-BASE = "http://localhost:3000"
-AUTH = "Basic " + base64.b64encode(b"admin:admin123").decode()
+BASE = os.environ.get("GRAFANA_URL", "http://localhost:3000")
+_creds = os.environ.get("GRAFANA_AUTH")
+if not _creds:
+    sys.exit("Set GRAFANA_AUTH=<admin-login>:<admin-password> first (never hardcode it here - this file is committed to git).")
+AUTH = "Basic " + base64.b64encode(_creds.encode()).decode()
 
 def call(method, path, body=None):
     data = json.dumps(body).encode() if body is not None else None
@@ -28,17 +31,17 @@ access_teams = ["Prod-View", "General-View"]
 team_ids = {}
 for name in project_teams + access_teams:
     r = call("POST", "/api/teams", {"name": name})
-    if "__error__" in r:
-        if "already exists" in r.get("__body__", ""):
-            # look it up
-            search = call("GET", f"/api/teams/search?name={name}")
-            team_ids[name] = search["teams"][0]["id"]
-            print(f"exists: {name} -> id {team_ids[name]}")
-        else:
-            print(f"ERROR creating {name}: {r}")
-    else:
-        team_ids[name] = r["teamId"]
-        print(f"created: {name} -> id {r['teamId']}")
+    # Idempotent regardless of Grafana's exact wording for "already exists"
+    # (seen both "already exists" and "Team name taken") - just look the
+    # team up by name either way instead of trying to parse the error text.
+    search = call("GET", f"/api/teams/search?name={name}")
+    matches = [t for t in search.get("teams", []) if t["name"] == name]
+    if not matches:
+        sys_exit_msg = f"Could not create or find team {name!r}: create={r} search={search}"
+        raise SystemExit(sys_exit_msg)
+    team_ids[name] = matches[0]["id"]
+    status = "created" if "__error__" not in r else "exists"
+    print(f"{status}: {name} -> id {team_ids[name]}")
 
 # 3. Folders
 folders = call("GET", "/api/folders")
