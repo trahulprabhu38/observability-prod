@@ -118,23 +118,45 @@ This is cheap: the query touches ~441 rows and takes ~0.14s locally, several
 orders of magnitude lighter than the ~1.9MB API call the other poller has to
 make - no API token involved at all for this one.
 
-**Never selects** `logs`, `configuration_snapshot`, or `configuration_diff` -
-`logs` is the full build output text, which can contain anything a build
-script printed (people echo secrets into build logs more often than they'd
-like to admit). Only `status`, `created_at`, `finished_at`, and the git
-commit SHA are pulled per build.
-
 Metrics: `coolify_build_success` (1=finished, 0=failed, -1=other e.g.
-cancelled-by-user) labelled with `rank` (1=latest, 2, 3),
-`coolify_build_timestamp_seconds`, `coolify_build_duration_seconds`,
+cancelled-by-user) labelled with `rank` (1=latest, 2, 3) and
+`deployment_uuid`, `coolify_build_timestamp_seconds`,
+`coolify_build_duration_seconds`,
 `coolify_build_poll_success`/`_duration_seconds`/`_rows_total`,
-`coolify_build_last_poll_timestamp_seconds`.
+`coolify_build_logs_shipped_total`, `coolify_build_last_poll_timestamp_seconds`.
 
 The dashboard's most useful panel cross-references the two data sources in
 one query: `coolify_build_success{rank="1"} == 0 and on(uuid) coolify_app_up
 == 1` - latest build failed, but the container is up anyway. That's the
 exact "silent failure" scenario this was built for; 4 apps were hitting it
 the day this shipped.
+
+## Build logs
+
+`application_deployment_queues.logs` (a JSON array of log entries) **is now
+read** - for each of the last 3 builds per app, the poller ships it to Loki
+as stream `{job="coolify_build_logs", project, environment, app}` with
+per-line structured metadata `deployment_uuid` / `status` / `commit` /
+`stream`. Build logs can contain whatever a build script echoed, so this
+makes them readable by anyone with access to the dashboard's folder - that's
+the deliberate trade for being able to read a failed build without opening
+Coolify.
+
+Each build's log is shipped exactly once (state file
+`/root/.coolify_build_logs_pushed.json` on 10.200.1.2), oldest-first so
+Loki's per-stream ordering accepts it, capped at 60 new logs per cron run
+(spreads the first-run backfill over ~30 min). Loki keeps **14 days**, so a
+build older than that can't be shipped - it's recorded as done so it isn't
+retried, and apps that haven't deployed in ~2 weeks show "no data" in the
+build-log panel. Active apps always have their logs; every new build ships
+fine.
+
+On the `deployment-builds` dashboard: pick `$app` + `$rank` (1=latest) in
+the top bar, or click a tile in the "latest build" board / an app name in
+either table - a hidden chained `$deployment_uuid` var
+(`label_values(coolify_build_success{app="$app", rank=~"$rank"},
+deployment_uuid)`) resolves it, and the "build log" Logs panel queries
+`{job="coolify_build_logs", app="$app"} | deployment_uuid=~$deployment_uuid`.
 
 ## Folder access
 
