@@ -37,10 +37,6 @@ def row(title, y):
     return {"id": nid(), "type": "row", "title": title, "collapsed": False,
             "gridPos": g(0, y, 24, 1), "panels": []}
 
-def text_panel(gp, md):
-    return {"id": nid(), "type": "text", "gridPos": gp,
-            "options": {"mode": "markdown", "content": md}}
-
 def stat(title, gp, expr, unit="short", thresholds=None, decimals=None, graph="none", mappings=None):
     defaults = {"unit": unit, "color": {"mode": "thresholds"},
                 "thresholds": {"mode": "absolute", "steps": thresholds or [{"color": "text", "value": None}]}}
@@ -99,20 +95,7 @@ def build(scope=None):
         sel = 'project=~"$project", environment=~"$environment"'
     P = []; y = 0
 
-    title = f"Deployments  •  latest status per application" + (f"  ({scope})" if scope else "")
-    P.append(row(title, y)); y += 1
-    scope_note = (f"Scoped to **{scope}** only ({SCOPES[scope]['project_regex']}). "
-                  "See the Project dropdown to narrow further. " if scope else "")
-    P.append(text_panel(g(0, y, 24, 2),
-        scope_note +
-        "Green/red reflects each app's **live container status** in Coolify right now "
-        "(`running:healthy` vs `exited`/`unhealthy`/etc.), refreshed every 2 minutes by "
-        "a cron poller. Coolify's API has no deploy-history endpoint that returns data, "
-        "so this is the closest available signal to \"did the last deploy leave it "
-        "healthy\" - not a deploy-event log. If a box goes red right after you deploy, "
-        "that's your failed-deploy signal."))
-    y += 2
-
+    P.append(row("status", y)); y += 1
     P += [
         stat("Apps up", g(0, y, 4, 4), f'count(coolify_app_up{{{sel}}} == 1)', unit="none",
              thresholds=[{"color": "green", "value": None}]),
@@ -131,16 +114,11 @@ def build(scope=None):
     ]
     y += 4
 
-    P.append(status_board("Status by application  (filtered by Project / Environment above)",
-        g(0, y, 24, 16), f'coolify_app_up{{{sel}}}',
-        desc="Green = running. Red = stopped/crashed/exited. One box per app."))
+    P.append(status_board("Status by application", g(0, y, 24, 16), f'coolify_app_up{{{sel}}}'))
     y += 16
 
-    P.append(row("Down right now", y)); y += 1
-    P.append(table("Apps not running", g(0, y, 24, 10),
-        f'coolify_app_up{{{sel}}} == 0',
-        desc="Every field is a label pulled straight off the metric - project, "
-             "environment, app, uuid, status. Use the column filters to narrow down."))
+    P.append(row("down", y)); y += 1
+    P.append(table("Apps not running", g(0, y, 24, 10), f'coolify_app_up{{{sel}}} == 0'))
     y += 10
 
     project_def = (f'label_values(coolify_app_up{{project=~"{SCOPES[scope]["project_regex"]}"}}, project)'

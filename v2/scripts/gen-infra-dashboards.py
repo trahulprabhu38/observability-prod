@@ -1,16 +1,7 @@
 #!/usr/bin/env python3
-"""infra/* dashboards - one per physical/virtual server we have access to.
-
-Unlike gen-dashboards.py (one dashboard per Coolify PROJECT, container-level),
-these are one dashboard per HOST: is it up, and what's its OS-level resource
-usage (CPU/RAM/disk/network/uptime) - plus, where cAdvisor/textfile data
-exists on that box, a rollup of total container load it's carrying.
-
-Servers covered = every box with a live node-exporter target in
-prometheus/targets/node-fleet.yml, plus .52 itself (job="node", static). The
-"dubai" cAdvisor-only target is excluded - it's been unreachable since the old
-stack (see docs/dev-dashboards.md) and has no node-exporter, so there's no
-host to build a usage dashboard for.
+"""infra-* dashboards - one per host we have a node-exporter on, filed into
+its environment folder (dev/staging/prod) or non-prod. Two sections: metrics
+(status, container rollup, CPU, memory, disk) and network.
 """
 import json, sys
 
@@ -48,10 +39,6 @@ def g(x, y, w, h):
 def row(title, y):
     return {"id": nid(), "type": "row", "title": title, "collapsed": False,
             "gridPos": g(0, y, 24, 1), "panels": []}
-
-def text_panel(gp, md, transparent=False):
-    return {"id": nid(), "type": "text", "gridPos": gp, "transparent": transparent,
-            "options": {"mode": "markdown", "content": md}}
 
 def stat(title, gp, expr, unit="short", thresholds=None, decimals=None, graph="area",
          mappings=None, color_mode="value", instant=True):
@@ -117,11 +104,9 @@ def build(name, cfg):
 
     P = []; y = 0
 
-    P.append(row(f"{cfg['label']}  •  {ip}", y)); y += 1
-    if cfg.get("note"):
-        P.append(text_panel(g(0, y, 24, 2), cfg["note"])); y += 2
+    # ================================ metrics ================================
+    P.append(row("metrics", y)); y += 1
 
-    # ---- status: up/down ----
     P.append(stat("Status", g(0, y, 4, 5), f'up{{{node}}}', unit="none", graph="none",
         mappings=[{"type": "value", "options": {
             "0": {"text": "DOWN", "index": 0}, "1": {"text": "UP", "index": 1}}}],
@@ -145,9 +130,6 @@ def build(name, cfg):
     ]
     y += 5
 
-    # ---- containers this host is carrying (rollup, not per-service - see the
-    # project dashboard for that) ----
-    P.append(row("Containers on this host", y)); y += 1
     P += [
         stat("Containers running", g(0, y, 6, 4),
              f'count(container_last_seen{{{cad}}})', unit="none"),
@@ -162,8 +144,6 @@ def build(name, cfg):
     ]
     y += 4
 
-    # ---- CPU ----
-    P.append(row("CPU", y)); y += 1
     P.append(ts("CPU by mode", g(0, y, 12, 8),
         [{"refId": "A", "datasource": PROM,
           "expr": f'sum by (mode) (rate(node_cpu_seconds_total{{{node}, mode!="idle"}}[$__rate_interval]))',
@@ -175,8 +155,6 @@ def build(name, cfg):
         unit="none", minv=0))
     y += 8
 
-    # ---- memory ----
-    P.append(row("Memory", y)); y += 1
     P.append(ts("Memory breakdown", g(0, y, 12, 8),
         [{"refId": "A", "datasource": PROM, "expr": f'node_memory_MemTotal_bytes{{{node}}}', "legendFormat": "total"},
          {"refId": "B", "datasource": PROM,
@@ -190,14 +168,11 @@ def build(name, cfg):
           "legendFormat": "swap used"}], unit="bytes", fill=6, minv=0))
     y += 8
 
-    # ---- disk ----
-    P.append(row("Disk", y)); y += 1
     P.append(table("Filesystem usage by mountpoint", g(0, y, 12, 8),
         [{"refId": "A", "datasource": PROM, "instant": True, "format": "table",
           "expr": (f'100 * (1 - node_filesystem_avail_bytes{{{node}, fstype=~"ext4|xfs|btrfs|zfs"}} '
                    f'/ node_filesystem_size_bytes{{{node}, fstype=~"ext4|xfs|btrfs|zfs"}})'),
           "legendFormat": "{{mountpoint}}"}],
-        desc="% used per real mountpoint (excludes tmpfs/overlay/squashfs loop devices).",
         unit="percent",
         hide_fields=["Time", "__name__", "box", "device", "env", "fstype", "instance", "job", "kind"]))
     P.append(ts("Disk I/O", g(12, y, 12, 8),
@@ -208,8 +183,8 @@ def build(name, cfg):
         unit="Bps", fill=3))
     y += 8
 
-    # ---- network ----
-    P.append(row("Network", y)); y += 1
+    # =============================== network ================================
+    P.append(row("network", y)); y += 1
     P.append(ts("Throughput", g(0, y, 12, 8),
         [{"refId": "A", "datasource": PROM,
           "expr": f'rate(node_network_receive_bytes_total{{{node}, device!~"lo|veth.*|docker.*|br-.*"}}[$__rate_interval])',
