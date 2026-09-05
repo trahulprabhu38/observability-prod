@@ -30,6 +30,18 @@ Always `make validate` before reloading Prometheus / Alertmanager / the
 collector - a broken config on reload keeps the **old** config running for
 Prometheus, but a broken collector/loki config **fails to start**.
 
+**Gotcha - editing a config with `sed -i` (or vim, or anything that writes via
+a temp file + rename) can silently break a single-file Docker bind mount.**
+Docker binds the *inode* the file had at container start; a rename-based edit
+swaps in a new inode at that path, so the container keeps serving the *old*
+content forever, no matter how many times you `reload`/`HUP`/curl `/-/reload`
+- there's nothing to detect because the mount isn't broken, it's just stale.
+Symptom: you edit `prometheus.yml`, reload, and the change never takes
+effect; `docker exec <container> cat <path>` still shows the old content.
+Fix: `docker compose restart <service>` - that remounts against the current
+inode. Prefer in-place edits (`>>` append, or a tool that truncates+rewrites
+rather than rename) when you can, so a live reload actually picks them up.
+
 ## Health check tour (run when something feels off)
 
 ```bash

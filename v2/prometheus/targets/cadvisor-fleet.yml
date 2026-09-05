@@ -12,3 +12,6 @@
 
 - targets: ["86.106.26.45:8085"]
   labels: { box: dubai, kind: docker-host, env: prod }
+
+- targets: ["10.200.1.2:8085"]
+  labels: { box: partner-apps, kind: docker-host, env: production }

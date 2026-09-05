@@ -47,6 +47,10 @@ REGIONS = {
                        "`--cgroupns=host`, containerd socket, API pinning - all registered "
                        "cleanly but returned zero containers). Host metrics, logs and traces "
                        "below are unaffected."},
+    "partner-apps": {"project": "partner-apps", "tag": "Partner Apps", "uid": "partner-apps",
+               "sibling": None,
+               "box": "partner-apps", "host": "edge", "hostip": "10.200.1.2",
+               "hostlabel": "partner-apps host  •  10.200.1.2"},
 }
 
 _id = [0]
@@ -419,6 +423,45 @@ def build(name, cfg):
         unit="Bps", fill=3))
     y += 6
 
+    # ---------- 9. corporate network (fleet-wide, same on every dashboard) ----------
+    # Latency + request speed between the fleet's own VPN-connected boxes, via
+    # blackbox_exporter on .52. Not scoped to this project/region - it's the
+    # same infra underlying every dashboard, so every dashboard shows all of it.
+    P.append(row("corporate network  •  latency between the fleet's boxes", y)); y += 1
+    P.append({
+        "id": nid(), "type": "stat", "title": "Reachability (ICMP)", "datasource": PROM,
+        "gridPos": g(0, y, 24, 4),
+        "description": "Green = the box answered the last ping. Red = it didn't.",
+        "fieldConfig": {"defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {"mode": "absolute",
+                           "steps": [{"color": "red", "value": None}, {"color": "green", "value": 1}]},
+            "mappings": [{"type": "value", "options": {
+                "0": {"text": "DOWN", "index": 0}, "1": {"text": "UP", "index": 1}}}]},
+            "overrides": []},
+        "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": False},
+                    "orientation": "auto", "textMode": "name", "colorMode": "background",
+                    "graphMode": "none", "justifyMode": "center"},
+        "targets": [{"refId": "A", "datasource": PROM, "instant": True,
+                     "expr": 'max by (box) (probe_success{job="network-icmp"})',
+                     "legendFormat": "{{box}}"}],
+    })
+    y += 4
+    P.append(ts("Ping latency (RTT)", g(0, y, 12, 8),
+        [{"refId": "A", "datasource": PROM,
+          "expr": 'max by (box) (probe_duration_seconds{job="network-icmp"})',
+          "legendFormat": "{{box}}"}],
+        unit="s", fill=2, decimals=1,
+        desc="Round-trip ping time between 10.200.2.52 (this stack) and every other box."))
+    P.append(ts("HTTP request speed", g(12, y, 12, 8),
+        [{"refId": "A", "datasource": PROM,
+          "expr": 'max by (box) (probe_duration_seconds{job="network-http"})',
+          "legendFormat": "{{box}}"}],
+        unit="s", fill=2, decimals=2,
+        desc="Time to fetch each box's node-exporter /metrics over the VPN - a stable, "
+             "always-on synthetic request (not the app itself)."))
+    y += 8
+
     # ---------------------------------------------------------------- vars ---
     templating = {"list": [
         {"type": "constant", "name": "project", "label": "Coolify project",
@@ -437,23 +480,27 @@ def build(name, cfg):
          "current": {"text": "", "value": ""}, "refresh": 2, "sort": 1},
     ]}
 
-    sib_name, sib_uid = cfg["sibling"]
+    links = []
+    if cfg.get("sibling"):
+        sib_name, sib_uid = cfg["sibling"]
+        links.append({"title": f"↔ {sib_name}", "type": "link",
+                      "url": f"/d/{sib_uid}/{sib_uid}?${{__url_time_range}}",
+                      "icon": "external link", "tooltip": f"switch to {sib_name}"})
+    links += [
+        {"title": "Jaeger UI", "type": "link", "url": "https://jaeger-infra.valura.co.in/",
+         "icon": "external link", "targetBlank": True},
+        {"title": "Explore logs", "type": "link",
+         "url": f'/explore?left={{"datasource":"loki","queries":[{{"expr":"{{coolify_project=\\"{proj}\\", host=\\"{host}\\"}}"}}],"range":{{"from":"now-1h","to":"now"}}}}',
+         "icon": "external link", "targetBlank": True},
+    ]
     dash = {
         "uid": uid, "title": name,
-        "tags": ["dev", tag.lower(), "valura", "generated"],
+        "tags": ["dev", tag.lower().replace(" ", "-"), "valura", "generated"],
         "timezone": "browser", "editable": True, "schemaVersion": 42,
         "graphTooltip": 1, "fiscalYearStartMonth": 0, "weekStart": "", "preload": False,
         "refresh": "30s", "time": {"from": "now-3h", "to": "now"},
         "timepicker": {}, "templating": templating,
-        "links": [
-            {"title": f"↔ {sib_name}", "type": "link", "url": f"/d/{sib_uid}/{sib_uid}?${{__url_time_range}}",
-             "icon": "external link", "tooltip": f"switch to {sib_name}"},
-            {"title": "Jaeger UI", "type": "link", "url": "https://jaeger-infra.valura.co.in/",
-             "icon": "external link", "targetBlank": True},
-            {"title": "Explore logs", "type": "link",
-             "url": f'/explore?left={{"datasource":"loki","queries":[{{"expr":"{{coolify_project=\\"{proj}\\", host=\\"{host}\\"}}"}}],"range":{{"from":"now-1h","to":"now"}}}}',
-             "icon": "external link", "targetBlank": True},
-        ],
+        "links": links,
         "annotations": {"list": [{"builtIn": 1, "type": "dashboard",
                         "datasource": {"type": "grafana", "uid": "-- Grafana --"},
                         "enable": True, "hide": True, "name": "Annotations & Alerts"}]},

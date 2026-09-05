@@ -118,3 +118,54 @@ scrape_configs:
   # Option C - ADOT collector sidecar in each task remote-writes to Prometheus.
   # Nothing to configure here; the sidecar pushes to
   # http://<this-host>:9090/api/v1/write   (see ecs/adot/).
+
+  # =========================================================================
+  #  CORPORATE NETWORK  -  latency + request speed between the fleet's own
+  #  boxes, via blackbox_exporter. "Corporate network" row on every dashboard
+  #  reads from these two jobs.
+  # =========================================================================
+  - job_name: network-icmp
+    metrics_path: /probe
+    params: { module: [icmp] }
+    static_configs:
+      - targets: ["10.200.2.51"]
+        labels: { box: valura-dev }
+      - targets: ["10.200.2.52"]
+        labels: { box: observability }
+      - targets: ["10.200.2.56"]
+        labels: { box: uae-staging }
+      - targets: ["10.200.2.57"]
+        labels: { box: valura-ind-stg }
+      - targets: ["10.200.1.2"]
+        labels: { box: partner-apps }
+      - targets: ["86.106.26.45"]
+        labels: { box: dubai }
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  - job_name: network-http
+    metrics_path: /probe
+    params: { module: [http_2xx] }
+    static_configs:
+      - targets: ["http://10.200.2.51:9100/metrics"]
+        labels: { box: valura-dev }
+      - targets: ["http://node-exporter:9100/metrics"]
+        labels: { box: observability }
+      - targets: ["http://10.200.2.56:9100/metrics"]
+        labels: { box: uae-staging }
+      - targets: ["http://10.200.2.57:9100/metrics"]
+        labels: { box: valura-ind-stg }
+      - targets: ["http://10.200.1.2:9100/metrics"]
+        labels: { box: partner-apps }
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
