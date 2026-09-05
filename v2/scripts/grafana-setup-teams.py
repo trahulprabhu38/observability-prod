@@ -74,6 +74,8 @@ def set_perm(folder_title, team_name, permission):
 set_perm("non-prod", "General-View", 1)   # 1 = View
 set_perm("non-prod", "Prod-View", 1)
 set_perm("production", "Prod-View", 1)
+set_perm("infra", "General-View", 1)      # host-level dashboards, not prod-specific
+set_perm("infra", "Prod-View", 1)
 
 # 5. Safety sweep: dashboard-level permissions can carry direct, non-inherited
 # role-based grants (e.g. {"role":"Viewer","permission":1}) that bypass folder
