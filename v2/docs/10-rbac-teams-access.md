@@ -83,6 +83,28 @@ member (a Grafana behaviour, not something we set). `admin` shows up as a
 member of all five teams for this reason - harmless, since `admin`'s access
 comes from being a Grafana **Admin**, not from team membership.
 
+## Verified: General-View can't see prod
+
+Tested end-to-end with a throwaway `test` account (Viewer, `General-View`
+only, no project team, deleted after): `/api/folders` correctly shows only
+`non-prod`, and fetching the `production` folder directly is `403`.
+
+This surfaced a real bug first: `prod-UAE` still showed up in `test`'s
+`/api/search` results and was fetchable directly by UID (`200`, full JSON)
+despite the folder being blocked. Cause: the dashboard carried its own
+**direct, non-inherited** permissions (`{"role":"Viewer","permission":1}`,
+`{"role":"Editor","permission":2}`) - a blanket grant to every org
+Viewer/Editor that bypasses folder ACLs entirely. Dashboard-level permissions
+in Grafana can override folder inheritance; only `prod-UAE` had this (audited
+all 16 dashboards to confirm it wasn't systemic). Fixed by clearing it via
+`POST /api/dashboards/id/:id/permissions` with `{"items": []}`.
+
+`grafana-setup-teams.py` now sweeps every dashboard for this on each run and
+strips any direct role-based grant it finds, so it can't silently recur - rerun
+it after adding new dashboards if you want the same guarantee re-checked.
+Re-verified after the fix: `test` saw exactly the 15 `non-prod` dashboards,
+`prod-UAE` absent from search, direct fetch `403`.
+
 ## Admin account
 
 Renamed from the `admin`/`admin123` default to a named account (login/password

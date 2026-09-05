@@ -75,5 +75,26 @@ set_perm("non-prod", "General-View", 1)   # 1 = View
 set_perm("non-prod", "Prod-View", 1)
 set_perm("production", "Prod-View", 1)
 
+# 5. Safety sweep: dashboard-level permissions can carry direct, non-inherited
+# role-based grants (e.g. {"role":"Viewer","permission":1}) that bypass folder
+# ACLs entirely - Grafana sometimes leaves these on a dashboard regardless of
+# provisioning. Found live on prod-UAE (let every org Viewer/Editor see it,
+# defeating Prod-View/General-View). Strip any such role-based grant from
+# every dashboard so visibility always comes from the folder, never the
+# dashboard itself.
+print("\n--- sweeping dashboards for stray direct role-based permissions ---")
+search = call("GET", "/api/search?type=dash-db")
+for d in search:
+    did = d["id"]
+    perms = call("GET", f"/api/dashboards/id/{did}/permissions")
+    if isinstance(perms, dict) and "__error__" in perms:
+        print(f"  [{d.get('title')}] could not read permissions: {perms}")
+        continue
+    direct_role_grants = [p for p in perms if p.get("role") and not p.get("inherited", False)]
+    if direct_role_grants:
+        print(f"  [{d.get('title')}] clearing direct role grants: {[(p['role'], p.get('permissionName')) for p in direct_role_grants]}")
+        res = call("POST", f"/api/dashboards/id/{did}/permissions", {"items": []})
+        print("    ->", res if "__error__" in res else "cleared")
+
 print("\n--- final team list ---")
 print(json.dumps(call("GET", "/api/teams/search"), indent=1))
