@@ -19,6 +19,8 @@ UI        Grafana  +  Alertmanager
 ```bash
 cd v2
 cp .env.example .env          # then edit GRAFANA_ADMIN_PASSWORD
+cp alertmanager/secrets/discord_webhook_url.example alertmanager/secrets/discord_webhook_url
+# edit that file: paste your Discord webhook URL (see docs/04-grafana-alerting.md)
 make up                       # or: docker compose up -d
 make ps
 ```

@@ -1,0 +1,11 @@
+{{/* Shared Discord message body. All three receivers in alertmanager.yml
+     (default/pager/low-priority) call this - they only differ in title/emoji,
+     so the body renders identically whichever channel/route an alert takes. */}}
+{{ define "discord.message" -}}
+{{ range .Alerts -}}
+**{{ .Labels.box }}**{{ if .Labels.service_name }} · `{{ .Labels.service_name }}`{{ end }}{{ if .Labels.env }} _{{ .Labels.env }}_{{ end }}
+{{ .Annotations.summary }}
+{{ if .Annotations.description }}{{ .Annotations.description }}
+{{ end }}
+{{ end -}}
+{{ end }}

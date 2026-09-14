@@ -78,7 +78,7 @@ A tree matched top-down on alert **labels**. First matching leaf wins (unless
 
 ```
 route (receiver: default, group_by [alertname, box, service_name])
-├─ severity="critical"      -> receiver: pager       (group_wait 10s, repeat 1h, continue)
+├─ severity="critical"      -> receiver: pager       (group_wait 10s, repeat 30m, continue)
 ├─ env=~"dev|staging"        -> receiver: low-priority (repeat 12h)
 └─ severity="warning"        -> receiver: default
 ```
@@ -109,30 +109,39 @@ Use during planned maintenance: silence `box="db01"` for 2h.
 
 ### 4. Receivers
 
-Where a notification actually goes. The file ships **webhook** receivers
-pointing at `host.docker.internal:9000` so the container starts cleanly - replace
-with real integrations:
+Where a notification actually goes. All three receivers (`default`, `pager`,
+`low-priority`) post to the **same Discord channel** - one webhook, one place
+to look - and only differ in `title`/`username` so a firing critical is still
+visually distinct from dev/staging noise in a shared channel:
 
 ```yaml
 receivers:
-  - name: default
-    slack_configs:
-      - api_url: 'https://hooks.slack.com/services/XXX/YYY/ZZZ'
-        channel: '#alerts'
-        send_resolved: true
-        title: '{{ .CommonLabels.alertname }} ({{ .CommonLabels.severity }})'
-        text: >-
-          {{ range .Alerts }}*{{ .Annotations.summary }}*
-          {{ .Annotations.description }}
-          <{{ .GeneratorURL }}|source> {{ end }}
   - name: pager
-    pagerduty_configs:
-      - routing_key: 'YOUR_PD_INTEGRATION_KEY'
-        severity: '{{ .CommonLabels.severity }}'
+    discord_configs:
+      - webhook_url_file: /etc/alertmanager/secrets/discord_webhook_url
+        title: '🚨 {{ .CommonLabels.alertname }} · CRITICAL'
+        message: '{{ template "discord.message" . }}'
+        send_resolved: true
 ```
 
-Other built-ins: `email_configs`, `opsgenie_configs`, `webhook_configs`,
-`telegram_configs`, `msteams_configs`, `discord_configs`.
+**The webhook URL is a secret, never inlined in `alertmanager.yml`.** This repo
+is public, so committing a real webhook URL would let anyone post into the
+channel. Instead `webhook_url_file` points at
+`alertmanager/secrets/discord_webhook_url` - copied from the tracked
+`.example` file, gitignored, mounted read-only into the container. When
+deploying to a server, copy that one file there out-of-band (`scp`/`rsync`) -
+it deliberately does not travel via `git push`.
+
+The shared message body lives once in
+`alertmanager/templates/discord.tmpl` (`{{ define "discord.message" }}`,
+loaded via the top-level `templates:` key in `alertmanager.yml`) so all three
+receivers render alerts identically and you only maintain the template in one
+place.
+
+Other built-ins if you ever split channels or swap providers: `slack_configs`,
+`pagerduty_configs`, `email_configs`, `opsgenie_configs`, `webhook_configs`,
+`telegram_configs`, `msteams_configs` - same shape, see the
+[Alertmanager config reference](https://prometheus.io/docs/alerting/latest/configuration/).
 
 ## Wiring one alert end to end (do this once to understand it)
 

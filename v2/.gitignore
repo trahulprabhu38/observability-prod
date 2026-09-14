@@ -2,3 +2,4 @@
 data/
 *.log
 .DS_Store
+alertmanager/secrets/discord_webhook_url

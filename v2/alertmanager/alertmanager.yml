@@ -8,6 +8,12 @@
 #             + inhibition (suppress noise when a bigger alert is already firing)
 #             + silences (manual mute, set in the UI :9093)
 #
+#  All severities post to the SAME Discord channel (one webhook) - the route
+#  tree below only changes *timing* per severity/env; each receiver gives the
+#  message a different title/emoji so one channel stays scannable. The webhook
+#  URL is a secret read from a file, never inlined here - see
+#  alertmanager/secrets/discord_webhook_url.example.
+#
 #  Validate:  make validate
 #  Test routing:  amtool config routes test --config.file=alertmanager.yml severity=critical
 #  Docs: ../docs/04-grafana-alerting.md
@@ -15,7 +21,9 @@
 
 global:
   resolve_timeout: 5m
-  # slack_api_url: 'https://hooks.slack.com/services/XXX/YYY/ZZZ'   # set for Slack
+
+templates:
+  - '/etc/alertmanager/templates/*.tmpl'
 
 route:
   receiver: default                 # fallback if nothing else matches
@@ -25,11 +33,11 @@ route:
   repeat_interval: 4h               # re-send an un-resolved alert every 4h
 
   routes:
-    # page for anything critical
+    # page for anything critical - fast first notify, nag every 30m
     - matchers: ['severity = "critical"']
       receiver: pager
       group_wait: 10s
-      repeat_interval: 1h
+      repeat_interval: 30m
       continue: true                # also fall through to the next matching route
 
     # dev/staging noise -> a muted channel, never pages
@@ -54,28 +62,29 @@ inhibit_rules:
 
 receivers:
   - name: default
-    # Replace with a real integration. Webhook shown so the container starts clean.
-    webhook_configs:
-      - url: 'http://host.docker.internal:9000/hook'
+    discord_configs:
+      - webhook_url_file: /etc/alertmanager/secrets/discord_webhook_url
+        username: 'Alertmanager'
+        title: '{{ if eq .Status "firing" }}⚠️{{ else }}✅{{ end }} {{ .CommonLabels.alertname }} · warning'
+        message: '{{ template "discord.message" . }}'
         send_resolved: true
-    # slack_configs:
-    #   - channel: '#alerts'
-    #     send_resolved: true
-    #     title: '{{ .CommonLabels.alertname }} ({{ .CommonLabels.severity }})'
-    #     text: >-
-    #       {{ range .Alerts }}*{{ .Annotations.summary }}*
-    #       {{ .Annotations.description }}
-    #       {{ end }}
 
   - name: pager
-    webhook_configs:
-      - url: 'http://host.docker.internal:9000/hook-critical'
+    discord_configs:
+      - webhook_url_file: /etc/alertmanager/secrets/discord_webhook_url
+        username: 'Alertmanager'
+        title: '{{ if eq .Status "firing" }}🚨{{ else }}✅{{ end }} {{ .CommonLabels.alertname }} · CRITICAL'
+        message: '{{ template "discord.message" . }}'
         send_resolved: true
-    # pagerduty_configs:
-    #   - routing_key: 'REPLACE_WITH_PD_INTEGRATION_KEY'
-    #     severity: critical
 
   - name: low-priority
-    webhook_configs:
-      - url: 'http://host.docker.internal:9000/hook-lowprio'
+    discord_configs:
+      - webhook_url_file: /etc/alertmanager/secrets/discord_webhook_url
+        username: 'Alertmanager'
+        title: '{{ if eq .Status "firing" }}🔕{{ else }}✅{{ end }} {{ .CommonLabels.alertname }} · {{ .CommonLabels.env }}'
+        message: '{{ template "discord.message" . }}'
         send_resolved: true
+
+  # --- other integrations, if you ever split channels or swap providers ---
+  # slack_configs / pagerduty_configs / opsgenie_configs / telegram_configs /
+  # msteams_configs take the same shape - see docs/04-grafana-alerting.md.
