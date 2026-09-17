@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": null,
+  "id": 81,
   "links": [],
   "panels": [
     {
@@ -31,7 +31,7 @@
       },
       "id": 100,
       "panels": [],
-      "title": "━━━━━  ALB  ▸  Overview  ━━━━━",
+      "title": "\u2501\u2501\u2501\u2501\u2501  ALB  \u25b8  Overview  \u2501\u2501\u2501\u2501\u2501",
       "type": "row"
     },
     {
@@ -60,8 +60,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
+        "h": 6,
+        "w": 24,
         "x": 0,
         "y": 1
       },
@@ -91,8 +91,8 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_request_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
-          "legendFormat": "RequestCount",
+          "expr": "aws_applicationelb_request_count_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=\"\", dimension_AvailabilityZone=\"\"}",
+          "legendFormat": "Total Requests",
           "range": true,
           "refId": "A"
         }
@@ -126,10 +126,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 4,
-        "y": 1
+        "h": 10,
+        "w": 6,
+        "x": 0,
+        "y": 7
       },
       "id": 2,
       "options": {
@@ -157,8 +157,8 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_active_connection_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
-          "legendFormat": "ActiveConnectionCount",
+          "expr": "aws_applicationelb_active_connection_count_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_AvailabilityZone=\"\"}",
+          "legendFormat": "Active Connections",
           "range": true,
           "refId": "A"
         }
@@ -200,10 +200,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 8,
-        "y": 1
+        "h": 10,
+        "w": 18,
+        "x": 6,
+        "y": 7
       },
       "id": 3,
       "options": {
@@ -231,8 +231,8 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_target_response_time_average{dimension_LoadBalancer=~\"$loadbalancer\"}",
-          "legendFormat": "TargetResponseTime",
+          "expr": "aws_applicationelb_target_response_time_average{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=\"\", dimension_AvailabilityZone=\"\"}",
+          "legendFormat": "Avg Response Time",
           "range": true,
           "refId": "A"
         }
@@ -266,10 +266,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 12,
-        "y": 1
+        "h": 12,
+        "w": 11,
+        "x": 0,
+        "y": 17
       },
       "id": 4,
       "options": {
@@ -297,8 +297,8 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_healthy_host_count_average{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=~\"$targetgroup\"}",
-          "legendFormat": "HealthyHostCount",
+          "expr": "label_replace(aws_applicationelb_healthy_host_count_average{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=~\"$targetgroup\", dimension_AvailabilityZone=\"\"}, \"service\", \"$1\", \"dimension_TargetGroup\", \"targetgroup/(?:valura-global-prod-cluster-|global-prod-)?([a-z0-9-]+?)(?:-tg)?/[0-9a-f]+$\")",
+          "legendFormat": "{{service}}",
           "range": true,
           "refId": "A"
         }
@@ -336,10 +336,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 4,
-        "x": 16,
-        "y": 1
+        "h": 12,
+        "w": 13,
+        "x": 11,
+        "y": 17
       },
       "id": 5,
       "options": {
@@ -367,8 +367,8 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_un_healthy_host_count_average{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=~\"$targetgroup\"}",
-          "legendFormat": "UnHealthyHostCount",
+          "expr": "label_replace(aws_applicationelb_un_healthy_host_count_average{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=~\"$targetgroup\", dimension_AvailabilityZone=\"\"}, \"service\", \"$1\", \"dimension_TargetGroup\", \"targetgroup/(?:valura-global-prod-cluster-|global-prod-)?([a-z0-9-]+?)(?:-tg)?/[0-9a-f]+$\")",
+          "legendFormat": "{{service}}",
           "range": true,
           "refId": "A"
         }
@@ -404,8 +404,8 @@
       "gridPos": {
         "h": 4,
         "w": 4,
-        "x": 20,
-        "y": 1
+        "x": 0,
+        "y": 29
       },
       "id": 6,
       "options": {
@@ -433,8 +433,8 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_httpcode_elb_5xx_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
-          "legendFormat": "HTTPCode_ELB_5XX_Count",
+          "expr": "aws_applicationelb_httpcode_elb_5xx_count_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=\"\", dimension_AvailabilityZone=\"\"}",
+          "legendFormat": "5XX Errors",
           "range": true,
           "refId": "A"
         }
@@ -448,11 +448,11 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 33
       },
       "id": 101,
       "panels": [],
-      "title": "━━━━━  ALB  ▸  Traffic & Requests  ━━━━━",
+      "title": "\u2501\u2501\u2501\u2501\u2501  ALB  \u25b8  Traffic & Requests  \u2501\u2501\u2501\u2501\u2501",
       "type": "row"
     },
     {
@@ -521,7 +521,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 6
+        "y": 34
       },
       "id": 10,
       "options": {
@@ -549,8 +549,8 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_request_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
-          "legendFormat": "Requests",
+          "expr": "label_replace(aws_applicationelb_request_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}, \"service\", \"$1\", \"dimension_TargetGroup\", \"targetgroup/(?:valura-global-prod-cluster-|global-prod-)?([a-z0-9-]+?)(?:-tg)?/[0-9a-f]+$\")",
+          "legendFormat": "{{service}}",
           "range": true,
           "refId": "A"
         }
@@ -624,7 +624,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 6
+        "y": 34
       },
       "id": 11,
       "options": {
@@ -652,7 +652,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_active_connection_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_active_connection_count_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "Active",
           "range": true,
           "refId": "A"
@@ -663,7 +663,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_new_connection_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_new_connection_count_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "New",
           "range": true,
           "refId": "B"
@@ -674,7 +674,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_rejected_connection_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_rejected_connection_count_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "Rejected",
           "range": true,
           "refId": "C"
@@ -689,11 +689,11 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 14
+        "y": 42
       },
       "id": 102,
       "panels": [],
-      "title": "━━━━━  ALB  ▸  Latency  ━━━━━",
+      "title": "\u2501\u2501\u2501\u2501\u2501  ALB  \u25b8  Latency  \u2501\u2501\u2501\u2501\u2501",
       "type": "row"
     },
     {
@@ -823,7 +823,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 15
+        "y": 43
       },
       "id": 20,
       "options": {
@@ -851,7 +851,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_target_response_time_average{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_target_response_time_average{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=\"\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "Average",
           "range": true,
           "refId": "A"
@@ -862,7 +862,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_target_response_time_p50{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_target_response_time_p50{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=\"\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "p50",
           "range": true,
           "refId": "B"
@@ -873,7 +873,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_target_response_time_p95{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_target_response_time_p95{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=\"\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "p95",
           "range": true,
           "refId": "C"
@@ -884,7 +884,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_target_response_time_p99{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_target_response_time_p99{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=\"\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "p99",
           "range": true,
           "refId": "D"
@@ -959,7 +959,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 15
+        "y": 43
       },
       "id": 21,
       "options": {
@@ -986,7 +986,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_target_connection_time_average{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_target_connection_time_average{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=\"\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "Connection Time",
           "range": true,
           "refId": "A"
@@ -997,7 +997,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_target_processing_time_average{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_target_processing_time_average{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=\"\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "Processing Time",
           "range": true,
           "refId": "B"
@@ -1012,11 +1012,11 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 51
       },
       "id": 103,
       "panels": [],
-      "title": "━━━━━  ALB  ▸  HTTP Status Codes  ━━━━━",
+      "title": "\u2501\u2501\u2501\u2501\u2501  ALB  \u25b8  HTTP Status Codes  \u2501\u2501\u2501\u2501\u2501",
       "type": "row"
     },
     {
@@ -1146,7 +1146,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 24
+        "y": 52
       },
       "id": 30,
       "options": {
@@ -1172,7 +1172,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_httpcode_target_2xx_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_httpcode_target_2xx_count_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=\"\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "2XX",
           "range": true,
           "refId": "A"
@@ -1183,7 +1183,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_httpcode_target_3xx_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_httpcode_target_3xx_count_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=\"\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "3XX",
           "range": true,
           "refId": "B"
@@ -1194,7 +1194,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_httpcode_target_4xx_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_httpcode_target_4xx_count_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=\"\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "4XX",
           "range": true,
           "refId": "C"
@@ -1205,7 +1205,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_httpcode_target_5xx_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_httpcode_target_5xx_count_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=\"\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "5XX",
           "range": true,
           "refId": "D"
@@ -1326,7 +1326,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 24
+        "y": 52
       },
       "id": 31,
       "options": {
@@ -1352,7 +1352,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_httpcode_elb_3xx_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_httpcode_elb_3xx_count_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "ELB 3XX",
           "range": true,
           "refId": "A"
@@ -1363,7 +1363,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_httpcode_elb_4xx_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_httpcode_elb_4xx_count_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "ELB 4XX",
           "range": true,
           "refId": "B"
@@ -1374,7 +1374,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_httpcode_elb_5xx_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_httpcode_elb_5xx_count_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "ELB 5XX",
           "range": true,
           "refId": "C"
@@ -1389,11 +1389,11 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 32
+        "y": 60
       },
       "id": 104,
       "panels": [],
-      "title": "━━━━━  ALB  ▸  Target Health & Errors  ━━━━━",
+      "title": "\u2501\u2501\u2501\u2501\u2501  ALB  \u25b8  Target Health & Errors  \u2501\u2501\u2501\u2501\u2501",
       "type": "row"
     },
     {
@@ -1493,7 +1493,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 33
+        "y": 61
       },
       "id": 40,
       "options": {
@@ -1521,8 +1521,8 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_healthy_host_count_average{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=~\"$targetgroup\"}",
-          "legendFormat": "Healthy",
+          "expr": "label_replace(aws_applicationelb_healthy_host_count_average{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=~\"$targetgroup\", dimension_AvailabilityZone=\"\"}, \"service\", \"$1\", \"dimension_TargetGroup\", \"targetgroup/(?:valura-global-prod-cluster-|global-prod-)?([a-z0-9-]+?)(?:-tg)?/[0-9a-f]+$\")",
+          "legendFormat": "{{service}} - Healthy",
           "range": true,
           "refId": "A"
         },
@@ -1532,8 +1532,8 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_un_healthy_host_count_average{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=~\"$targetgroup\"}",
-          "legendFormat": "Unhealthy",
+          "expr": "label_replace(aws_applicationelb_un_healthy_host_count_average{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=~\"$targetgroup\", dimension_AvailabilityZone=\"\"}, \"service\", \"$1\", \"dimension_TargetGroup\", \"targetgroup/(?:valura-global-prod-cluster-|global-prod-)?([a-z0-9-]+?)(?:-tg)?/[0-9a-f]+$\")",
+          "legendFormat": "{{service}} - Unhealthy",
           "range": true,
           "refId": "B"
         }
@@ -1607,7 +1607,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 33
+        "y": 61
       },
       "id": 41,
       "options": {
@@ -1634,7 +1634,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_target_connection_error_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_target_connection_error_count_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=\"\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "Target Connection Errors",
           "range": true,
           "refId": "A"
@@ -1645,7 +1645,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_target_tlsnegotiation_error_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_target_tlsnegotiation_error_count_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=\"\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "Target TLS Errors",
           "range": true,
           "refId": "B"
@@ -1656,7 +1656,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_client_tlsnegotiation_error_count_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_client_tlsnegotiation_error_count_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_TargetGroup=\"\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "Client TLS Errors",
           "range": true,
           "refId": "C"
@@ -1671,11 +1671,11 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 69
       },
       "id": 105,
       "panels": [],
-      "title": "━━━━━  ALB  ▸  Data Transfer & Cost  ━━━━━",
+      "title": "\u2501\u2501\u2501\u2501\u2501  ALB  \u25b8  Data Transfer & Cost  \u2501\u2501\u2501\u2501\u2501",
       "type": "row"
     },
     {
@@ -1744,7 +1744,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 42
+        "y": 70
       },
       "id": 50,
       "options": {
@@ -1771,7 +1771,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_processed_bytes_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_processed_bytes_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "Processed Bytes",
           "range": true,
           "refId": "A"
@@ -1846,7 +1846,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 42
+        "y": 70
       },
       "id": 51,
       "options": {
@@ -1873,7 +1873,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "aws_applicationelb_consumed_lcus_sum{dimension_LoadBalancer=~\"$loadbalancer\"}",
+          "expr": "aws_applicationelb_consumed_lcus_sum{dimension_LoadBalancer=~\"$loadbalancer\", dimension_AvailabilityZone=\"\"}",
           "legendFormat": "Consumed LCUs",
           "range": true,
           "refId": "A"
@@ -1895,7 +1895,6 @@
     "list": [
       {
         "current": {
-          "selected": false,
           "text": "",
           "value": ""
         },
@@ -1903,6 +1902,7 @@
           "type": "prometheus",
           "uid": "prometheus"
         },
+        "definition": "label_values(aws_applicationelb_request_count_sum, region)",
         "includeAll": false,
         "label": "Region",
         "name": "region",
@@ -1914,12 +1914,10 @@
         },
         "refresh": 2,
         "sort": 1,
-        "type": "query",
-        "definition": "label_values(aws_applicationelb_request_count_sum, region)"
+        "type": "query"
       },
       {
         "current": {
-          "selected": false,
           "text": "",
           "value": ""
         },
@@ -1927,6 +1925,7 @@
           "type": "prometheus",
           "uid": "prometheus"
         },
+        "definition": "label_values(aws_applicationelb_request_count_sum, dimension_LoadBalancer)",
         "includeAll": false,
         "label": "Load Balancer",
         "name": "loadbalancer",
@@ -1938,12 +1937,10 @@
         },
         "refresh": 2,
         "sort": 1,
-        "type": "query",
-        "definition": "label_values(aws_applicationelb_request_count_sum, dimension_LoadBalancer)"
+        "type": "query"
       },
       {
         "current": {
-          "selected": false,
           "text": "",
           "value": ""
         },
@@ -1951,6 +1948,7 @@
           "type": "prometheus",
           "uid": "prometheus"
         },
+        "definition": "label_values(aws_applicationelb_healthy_host_count_average{dimension_LoadBalancer=~\"$loadbalancer\"}, dimension_TargetGroup)",
         "includeAll": true,
         "label": "Target Group",
         "name": "targetgroup",
@@ -1962,8 +1960,7 @@
         },
         "refresh": 2,
         "sort": 1,
-        "type": "query",
-        "definition": "label_values(aws_applicationelb_healthy_host_count_average{dimension_LoadBalancer=~\"$loadbalancer\"}, dimension_TargetGroup)"
+        "type": "query"
       }
     ]
   },
@@ -1973,7 +1970,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "AWS ALB — Application Load Balancer",
+  "title": "AWS ALB \u2014 Application Load Balancer",
   "uid": "aws-alb-only",
-  "weekStart": ""
+  "version": 1
 }
