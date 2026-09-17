@@ -22,7 +22,7 @@
 # Trim anything you don't need - GetMetricData is billed per metric per request.
 #
 # Scoped deliberately to ONE cluster: every job below carries
-# `search_tags: Environment=global-prod`, which matches only
+# `searchTags: Environment=global-prod`, which matches only
 # valura-global-prod-cluster (+ its ALB) - not the empty valura-prod-temp-cluster
 # sitting in the same account. This bounds both the GetMetricData bill and the
 # blast radius of this integration to the cluster that's actually running.
@@ -50,7 +50,7 @@ discovery:
       regions: [ap-south-1]
       period: 300
       length: 600
-      search_tags:
+      searchTags:
         - { key: Environment, value: global-prod }
       metrics:
         - { name: CPUUtilization,    statistics: [Average, Maximum] }
@@ -65,7 +65,7 @@ discovery:
       regions: [ap-south-1]
       period: 300
       length: 600
-      search_tags:
+      searchTags:
         - { key: Environment, value: global-prod }
       metrics:
         - { name: RunningTaskCount,          statistics: [Average] }
@@ -96,7 +96,7 @@ discovery:
       regions: [ap-south-1]
       period: 300
       length: 600
-      search_tags:
+      searchTags:
         - { key: Environment, value: global-prod }
       metrics:
         - { name: RequestCount,                    statistics: [Sum] }
