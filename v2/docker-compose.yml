@@ -246,7 +246,7 @@ services:
   #  Full explanation + the other two ECS approaches: docs/05-ecs-metrics.md
   # ==========================================================================
   yace:
-    image: ghcr.io/nerdswords/yet-another-cloudwatch-exporter:v0.62.2
+    image: ghcr.io/nerdswords/yet-another-cloudwatch-exporter:v0.62.1
     container_name: yace
     restart: unless-stopped
     profiles: ["ecs"]
