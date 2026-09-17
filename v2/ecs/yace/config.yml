@@ -17,10 +17,22 @@
 # with `dimension_`, e.g. dimension_LoadBalancer, dimension_DBInstanceIdentifier.
 #
 # The metric lists below are sized to feed the imported Grafana dashboards:
-#   grafana/provisioning/dashboards/json/aws-alb.json
-#   grafana/provisioning/dashboards/json/aws-ecs-metrics.json
-#   grafana/provisioning/dashboards/json/aws-rds.json
+#   grafana/provisioning/dashboards/json/non-prod/aws-alb.json
+#   grafana/provisioning/dashboards/json/non-prod/aws-ecs-metrics.json
 # Trim anything you don't need - GetMetricData is billed per metric per request.
+#
+# Scoped deliberately to ONE cluster: every job below carries
+# `search_tags: Environment=global-prod`, which matches only
+# valura-global-prod-cluster (+ its ALB) - not the empty valura-prod-temp-cluster
+# sitting in the same account. This bounds both the GetMetricData bill and the
+# blast radius of this integration to the cluster that's actually running.
+# RDS was dropped entirely (out of scope for the ECS ask; add a job back here
+# if you need it later - see git history for the AWS/RDS block).
+#
+# Periods are 300s (5 min) everywhere, not CloudWatch's 60s minimum - ECS/ALB
+# metrics don't need sub-5-minute resolution for a dashboard, and this alone
+# is a 5x cut in GetMetricData request volume vs the 60s defaults YACE ships
+# with. CloudWatch data lands with its own 1-5 min delay regardless.
 
 apiVersion: v1alpha1
 
@@ -31,9 +43,6 @@ discovery:
     AWS/ECS:
       - Name
       - Environment
-    AWS/RDS:
-      - Name
-      - Environment
   jobs:
     # ================================================================= ECS ===
     # ---- Cluster + service level (AWS/ECS namespace) ----
@@ -41,6 +50,8 @@ discovery:
       regions: [ap-south-1]
       period: 300
       length: 600
+      search_tags:
+        - { key: Environment, value: global-prod }
       metrics:
         - { name: CPUUtilization,    statistics: [Average, Maximum] }
         - { name: MemoryUtilization, statistics: [Average, Maximum] }
@@ -49,10 +60,13 @@ discovery:
     # Requires Container Insights enabled on the cluster:
     #   aws ecs update-cluster-settings --cluster <c> \
     #       --settings name=containerInsights,value=enabled
+    # (already enabled on valura-global-prod-cluster)
     - type: ECS/ContainerInsights
       regions: [ap-south-1]
-      period: 60
-      length: 300
+      period: 300
+      length: 600
+      search_tags:
+        - { key: Environment, value: global-prod }
       metrics:
         - { name: RunningTaskCount,          statistics: [Average] }
         - { name: PendingTaskCount,          statistics: [Average] }
@@ -80,8 +94,10 @@ discovery:
     # ============================================================ ALB / ELB ===
     - type: AWS/ApplicationELB
       regions: [ap-south-1]
-      period: 60
-      length: 300
+      period: 300
+      length: 600
+      search_tags:
+        - { key: Environment, value: global-prod }
       metrics:
         - { name: RequestCount,                    statistics: [Sum] }
         - { name: ActiveConnectionCount,           statistics: [Sum] }
@@ -104,26 +120,3 @@ discovery:
         - { name: TargetConnectionErrorCount,      statistics: [Sum] }
         - { name: TargetTLSNegotiationErrorCount,  statistics: [Sum] }
         - { name: ClientTLSNegotiationErrorCount,  statistics: [Sum] }
-
-    # ================================================================= RDS ===
-    - type: AWS/RDS
-      regions: [ap-south-1]
-      period: 60
-      length: 300
-      metrics:
-        - { name: CPUUtilization,               statistics: [Average] }
-        - { name: CPUCreditBalance,             statistics: [Average] }
-        - { name: FreeableMemory,               statistics: [Average] }
-        - { name: SwapUsage,                    statistics: [Average] }
-        - { name: FreeStorageSpace,             statistics: [Average] }
-        - { name: DatabaseConnections,          statistics: [Average] }
-        - { name: ReadIOPS,                     statistics: [Average] }
-        - { name: WriteIOPS,                    statistics: [Average] }
-        - { name: ReadLatency,                  statistics: [Average] }
-        - { name: WriteLatency,                 statistics: [Average] }
-        - { name: ReadThroughput,               statistics: [Average] }
-        - { name: WriteThroughput,              statistics: [Average] }
-        - { name: NetworkReceiveThroughput,     statistics: [Average] }
-        - { name: NetworkTransmitThroughput,    statistics: [Average] }
-        - { name: DiskQueueDepth,               statistics: [Average] }
-        - { name: ReplicaLag,                   statistics: [Average] }

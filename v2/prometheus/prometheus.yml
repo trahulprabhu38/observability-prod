@@ -102,10 +102,11 @@ scrape_configs:
 
   # Option A - CloudWatch metrics via YACE  (start stack with:  make ecs-up)
   # Gives you ECS service/cluster CPU/Memory, Fargate, ALB, RunningTaskCount, etc.
-  # - job_name: ecs-cloudwatch
-  #   metrics_path: /metrics
-  #   static_configs:
-  #     - targets: ["yace:5000"]
+  # Scoped to valura-global-prod-cluster only - see ecs/yace/config.yml.
+  - job_name: ecs-cloudwatch
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["yace:5000"]
 
   # Option B - task-level app metrics via prometheus-ecs-discovery
   # A sidecar process writes discovered ECS tasks to this file; Prometheus scrapes

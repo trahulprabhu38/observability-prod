@@ -162,17 +162,22 @@ Not possible on Fargate (no host).
 The old prod Grafana had four CloudWatch-datasource dashboards (ALB, ECS
 metrics, ECS container logs, RDS). In v2 they land like this:
 
-| Dashboard (`json/…`) | How it works in v2 |
+| Dashboard (`json/non-prod/…`) | How it works in v2 |
 |---|---|
-| `aws-alb.json`, `aws-ecs-metrics.json`, `aws-rds.json` | **Rewritten to PromQL** against YACE metrics. No CloudWatch datasource needed - `make ecs-up` and the panels fill in. |
-| `aws-ecs-container-logs.json` | Still **CloudWatch Logs Insights** - there's no Prometheus/Loki equivalent for that query language. Enable the commented `CloudWatch` datasource in `grafana/provisioning/datasources/datasources.yml`. |
+| `aws-alb.json`, `aws-ecs-metrics.json` | **Rewritten to PromQL** against YACE metrics. No CloudWatch datasource needed - `make ecs-up` and the panels fill in. |
+| `aws-ecs-container-logs.json` | Still **CloudWatch Logs Insights** - there's no Prometheus/Loki equivalent for that query language. Uses the `CloudWatch` datasource in `grafana/provisioning/datasources/datasources.yml` (enabled). |
+| `aws-rds.json` | Left in place but **not fed** - the `AWS/RDS` YACE job was dropped (out of scope; RDS wasn't part of the ECS ask). Add the job back to `ecs/yace/config.yml` if you need it. |
 
-To feed the three rewritten dashboards, `ecs/yace/config.yml` was expanded from
-the starter metric list to the full set they query - all of `AWS/RDS`, the ALB
-status-code / latency-percentile / connection metrics, and the extra
-`ECS/ContainerInsights` series (`ServiceCount`, `DeploymentCount`, storage,
-ephemeral storage). `GetMetricData` is billed per metric per request, so trim
-anything you don't look at.
+**Live setup (2026-09-17):** scoped to `valura-global-prod-cluster` only -
+every YACE job carries `search_tags: Environment=global-prod`, which matches
+that cluster and its ALB but not the empty `valura-prod-temp-cluster` in the
+same account. Periods are 300s everywhere (not CloudWatch's 60s minimum) to
+keep `GetMetricData` cost down. Credentials are a dedicated read-only IAM user
+(`grafana-ecs-cloudwatch-ro`) - CloudWatch/ECS/ALB describe are account-wide
+(CloudWatch's API has no per-resource IAM scoping), but its CloudWatch Logs
+permissions are scoped by ARN to `/ecs/valura-global-prod-cluster*` log groups
+only. `GetMetricData` is billed per metric per request, so trim anything you
+don't look at before widening scope further.
 
 Gotchas are listed in
 [`grafana/provisioning/dashboards/README.md`](../grafana/provisioning/dashboards/README.md)
