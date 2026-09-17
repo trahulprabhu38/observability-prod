@@ -56,8 +56,8 @@ access" possible.
 |---|---|---|
 | `dev` | dev-UAE, dev-IND, infra-dev, deployments-dev, deployment-builds-dev | any logged-in user (Viewer role) |
 | `staging` | stg-UAE, stg-IND, infra-stg-uae, infra-stg-ind, deployments-staging, deployment-builds-staging | any logged-in user (Viewer role) |
-| `prod` | prod-UAE, infra-prod-uae, deployments-prod, deployment-builds-prod | Prod-View only |
-| `non-prod` | partner-apps, infra-partner-apps, infra-observability, stack-health, and the imported AWS/Cloudflare/general dashboards | any logged-in user (Viewer role) |
+| `prod` | prod-UAE, infra-prod-uae, deployments-prod, deployment-builds-prod, aws-ecs-metrics, aws-alb, aws-ecs-container-logs (ECS/CloudWatch, valura-global-prod-cluster) | Prod-View only |
+| `non-prod` | partner-apps, infra-partner-apps, infra-observability, stack-health, aws-rds (unfed), and the imported Cloudflare/general dashboards | any logged-in user (Viewer role) |
 | `deployments` | the GLOBAL deployments/deployment-builds pair - all 181 apps across every client project on the Coolify instance, not just ours | Prod-View only |
 
 `partner-apps` and `infra-observability` deliberately stay in `non-prod`

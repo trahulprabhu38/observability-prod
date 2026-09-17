@@ -162,11 +162,15 @@ Not possible on Fargate (no host).
 The old prod Grafana had four CloudWatch-datasource dashboards (ALB, ECS
 metrics, ECS container logs, RDS). In v2 they land like this:
 
-| Dashboard (`json/non-prod/…`) | How it works in v2 |
-|---|---|
-| `aws-alb.json`, `aws-ecs-metrics.json` | **Rewritten to PromQL** against YACE metrics. No CloudWatch datasource needed - `make ecs-up` and the panels fill in. |
-| `aws-ecs-container-logs.json` | Still **CloudWatch Logs Insights** - there's no Prometheus/Loki equivalent for that query language. Uses the `CloudWatch` datasource in `grafana/provisioning/datasources/datasources.yml` (enabled). |
-| `aws-rds.json` | Left in place but **not fed** - the `AWS/RDS` YACE job was dropped (out of scope; RDS wasn't part of the ECS ask). Add the job back to `ecs/yace/config.yml` if you need it. |
+| Dashboard | Folder | How it works in v2 |
+|---|---|---|
+| `aws-alb.json`, `aws-ecs-metrics.json` | `prod/` | **Rewritten to PromQL** against YACE metrics. No CloudWatch datasource needed - `make ecs-up` and the panels fill in. |
+| `aws-ecs-container-logs.json` | `prod/` | Still **CloudWatch Logs Insights** - there's no Prometheus/Loki equivalent for that query language. Uses the `CloudWatch` datasource in `grafana/provisioning/datasources/datasources.yml` (enabled). |
+| `aws-rds.json` | `non-prod/` | Left in place but **not fed** - the `AWS/RDS` YACE job was dropped (out of scope; RDS wasn't part of the ECS ask). Add the job back to `ecs/yace/config.yml` if you need it. |
+
+Moved into `prod/` (Prod-View team only, per `docs/10-rbac-teams-access.md`)
+since they now show real `valura-global-prod-cluster` data, not placeholder
+content - consistent with everything else prod-tier in this repo.
 
 **Live setup (2026-09-17):** scoped to `valura-global-prod-cluster` only -
 every YACE job carries `search_tags: Environment=global-prod`, which matches
