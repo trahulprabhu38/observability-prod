@@ -95,6 +95,20 @@ token by scripting against Coolify's own auth database was deliberately not
 done; that's a decision for whoever owns that instance, not something to
 automate around.
 
+**Quote the value.** Coolify API tokens are Sanctum-style, formatted
+`<id>|<secret>` - the `|` is a real character in every token, not just some
+of them. `coolify-deploy-status-cron.sh` loads `.env` with `set -a; source
+.env`, and bash treats an *unquoted* `|` as a pipe: `COOLIFY_TOKEN=22|abc...`
+sets the token to just `22` and tries to run `abc...` as a command (visible
+in the poller's log as a one-off `command not found` line), which then fails
+Coolify auth with a 401 on every poll from then on - silently, since nothing
+alerts on `coolify_poll_success`. This is exactly what caused a real ~11-day
+all-environments outage of `deployments`/`deployments-dev`/`deployments-staging`/
+`deployments-prod` (every panel showing "no data") on 2026-09-22, diagnosed
+and fixed by rotating the token and rewriting the line as
+`COOLIFY_TOKEN="<id>|<secret>"` with the value quoted. When rotating this
+token, always quote it in `.env`.
+
 ## `deployment-builds` - where the data actually lives
 
 The API gap above is real - Coolify's API genuinely cannot tell you about
