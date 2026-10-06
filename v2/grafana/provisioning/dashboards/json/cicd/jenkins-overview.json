@@ -1,0 +1,118 @@
+{
+  "uid": "jenkins-overview",
+  "title": "Jenkins - Overview",
+  "tags": ["jenkins", "cicd"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": { "from": "now-6h", "to": "now" },
+  "templating": {
+    "list": [
+      {
+        "name": "box",
+        "type": "query",
+        "datasource": { "type": "prometheus", "uid": "prometheus" },
+        "query": "label_values(container_last_seen{name=\"jenkins-agent\"}, box)",
+        "refresh": 2,
+        "includeAll": true,
+        "multi": true
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "text",
+      "title": "",
+      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
+      "options": {
+        "mode": "markdown",
+        "content": "**Jenkins controller (10.200.2.55, box=jenkins) + agents (observability-agent on .52, uae-staging-agent on .56, uat-env-agent on .48).**\n\nThe *Agent container CPU/Memory* row is live now for boxes already in `cadvisor-fleet.yml` (`.52`, `.56`). `.48` (uat-env) isn't in the fleet yet. The *Controller process* row needs the Jenkins `prometheus` plugin installed on the controller and a `jenkins` scrape job added to `prometheus.yml` - not wired yet, will read \"No data\" until then (next CI/CD step)."
+      }
+    },
+    {
+      "type": "row",
+      "title": "Controller process (pending: prometheus plugin + scrape job)",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 4 },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "stat",
+      "title": "Controller up",
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 5 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "up{job=\"jenkins\"}", "refId": "A" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "textMode": "auto", "colorMode": "background" },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } } }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Executors busy / total",
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 5 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "default_jenkins_executors_busy_value", "legendFormat": "busy", "refId": "A" },
+        { "expr": "default_jenkins_executors_available_value", "legendFormat": "total", "refId": "B" }
+      ],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "textMode": "auto" }
+    },
+    {
+      "type": "stat",
+      "title": "Queue size",
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 5 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "default_jenkins_queue_size_value", "refId": "A" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "textMode": "auto" }
+    },
+    {
+      "type": "timeseries",
+      "title": "Build results over time",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 10 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "rate(default_jenkins_runs_total[5m])", "legendFormat": "{{jenkins_job}}", "refId": "A" }]
+    },
+    {
+      "type": "row",
+      "title": "Agent container CPU / Memory (live via cadvisor-fleet)",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 18 },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "jenkins-agent container CPU usage",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 19 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "sum by (box) (rate(container_cpu_usage_seconds_total{name=\"jenkins-agent\", box=~\"$box\"}[5m]))",
+          "legendFormat": "{{box}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percentunit" } }
+    },
+    {
+      "type": "timeseries",
+      "title": "jenkins-agent container memory usage",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 19 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{name=\"jenkins-agent\", box=~\"$box\"}",
+          "legendFormat": "{{box}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes" } }
+    }
+  ]
+}
