@@ -4,16 +4,25 @@
   "tags": ["jenkins", "cicd"],
   "timezone": "browser",
   "schemaVersion": 39,
-  "version": 1,
+  "version": 2,
   "refresh": "30s",
   "time": { "from": "now-6h", "to": "now" },
   "templating": {
     "list": [
       {
-        "name": "box",
+        "name": "agent_box",
         "type": "query",
         "datasource": { "type": "prometheus", "uid": "prometheus" },
         "query": "label_values(container_last_seen{name=\"jenkins-agent\"}, box)",
+        "refresh": 2,
+        "includeAll": true,
+        "multi": true
+      },
+      {
+        "name": "jenkins_job",
+        "type": "query",
+        "datasource": { "type": "prometheus", "uid": "prometheus" },
+        "query": "label_values(default_jenkins_builds_health_score, jenkins_job)",
         "refresh": 2,
         "includeAll": true,
         "multi": true
@@ -22,97 +31,311 @@
   },
   "panels": [
     {
-      "type": "text",
-      "title": "",
-      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
-      "options": {
-        "mode": "markdown",
-        "content": "**Jenkins controller (10.200.2.55, box=jenkins) + agents (observability-agent on .52, uae-staging-agent on .56, uat-env-agent on .48).**\n\nThe *Agent container CPU/Memory* row is live now for boxes already in `cadvisor-fleet.yml` (`.52`, `.56`). `.48` (uat-env) isn't in the fleet yet. The *Controller process* row needs the Jenkins `prometheus` plugin installed on the controller and a `jenkins` scrape job added to `prometheus.yml` - not wired yet, will read \"No data\" until then (next CI/CD step)."
-      }
-    },
-    {
       "type": "row",
-      "title": "Controller process (pending: prometheus plugin + scrape job)",
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 4 },
+      "title": "Controller",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
       "collapsed": false,
       "panels": []
     },
     {
       "type": "stat",
       "title": "Controller up",
-      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 5 },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "targets": [{ "expr": "up{job=\"jenkins\"}", "refId": "A" }],
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "textMode": "auto", "colorMode": "background" },
+      "targets": [{ "expr": "default_jenkins_up", "refId": "A" }],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background" },
       "fieldConfig": {
         "defaults": {
-          "mappings": [
-            { "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } } }
-          ],
+          "mappings": [{ "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } } }],
           "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] }
         }
       }
     },
     {
       "type": "stat",
-      "title": "Executors busy / total",
-      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 5 },
+      "title": "Controller uptime",
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "default_jenkins_uptime", "refId": "A" }],
+      "fieldConfig": { "defaults": { "unit": "ms" } }
+    },
+    {
+      "type": "stat",
+      "title": "Nodes online / total",
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
-        { "expr": "default_jenkins_executors_busy_value", "legendFormat": "busy", "refId": "A" },
-        { "expr": "default_jenkins_executors_available_value", "legendFormat": "total", "refId": "B" }
-      ],
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "textMode": "auto" }
+        { "expr": "jenkins_node_online_value", "legendFormat": "online", "refId": "A" },
+        { "expr": "jenkins_node_count_value", "legendFormat": "total", "refId": "B" }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Total executors",
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "jenkins_executor_count_value", "refId": "A" }]
     },
     {
       "type": "stat",
       "title": "Queue size",
-      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 5 },
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "targets": [{ "expr": "default_jenkins_queue_size_value", "refId": "A" }],
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "textMode": "auto" }
+      "targets": [{ "expr": "jenkins_queue_size_value", "refId": "A" }],
+      "fieldConfig": { "defaults": { "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 1 }, { "color": "red", "value": 5 }] } } }
+    },
+    {
+      "type": "stat",
+      "title": "Plugins needing update",
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "expr": "jenkins_plugins_withUpdate", "refId": "A" }],
+      "fieldConfig": { "defaults": { "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 1 }] } } }
     },
     {
       "type": "timeseries",
-      "title": "Build results over time",
-      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 10 },
+      "title": "Queue breakdown",
+      "gridPos": { "h": 7, "w": 12, "x": 0, "y": 5 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "targets": [{ "expr": "rate(default_jenkins_runs_total[5m])", "legendFormat": "{{jenkins_job}}", "refId": "A" }]
+      "targets": [
+        { "expr": "jenkins_queue_size_value", "legendFormat": "size", "refId": "A" },
+        { "expr": "jenkins_queue_blocked_value", "legendFormat": "blocked", "refId": "B" },
+        { "expr": "jenkins_queue_buildable_value", "legendFormat": "buildable", "refId": "C" },
+        { "expr": "jenkins_queue_pending_value", "legendFormat": "pending", "refId": "D" },
+        { "expr": "jenkins_queue_stuck_value", "legendFormat": "stuck", "refId": "E" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Build result rate (5m)",
+      "gridPos": { "h": 7, "w": 12, "x": 12, "y": 5 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "rate(jenkins_runs_success_total[5m])", "legendFormat": "success", "refId": "A" },
+        { "expr": "rate(jenkins_runs_failure_total[5m])", "legendFormat": "failure", "refId": "B" },
+        { "expr": "rate(jenkins_runs_unstable_total[5m])", "legendFormat": "unstable", "refId": "C" },
+        { "expr": "rate(jenkins_runs_aborted_total[5m])", "legendFormat": "aborted", "refId": "D" },
+        { "expr": "rate(jenkins_runs_not_built_total[5m])", "legendFormat": "not_built", "refId": "E" }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          { "matcher": { "id": "byName", "options": "failure" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } }] },
+          { "matcher": { "id": "byName", "options": "success" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } }] }
+        ]
+      }
     },
     {
       "type": "row",
-      "title": "Agent container CPU / Memory (live via cadvisor-fleet)",
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 18 },
+      "title": "Jobs",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 12 },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "table",
+      "title": "Job health",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 13 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "default_jenkins_builds_health_score{jenkins_job=~\"$jenkins_job\"}", "format": "table", "instant": true, "refId": "A" },
+        { "expr": "default_jenkins_builds_last_build_result{jenkins_job=~\"$jenkins_job\"}", "format": "table", "instant": true, "refId": "B" },
+        { "expr": "default_jenkins_builds_last_build_duration_milliseconds{jenkins_job=~\"$jenkins_job\"}", "format": "table", "instant": true, "refId": "C" },
+        { "expr": "default_jenkins_builds_available_builds_count{jenkins_job=~\"$jenkins_job\"}", "format": "table", "instant": true, "refId": "D" }
+      ],
+      "transformations": [
+        { "id": "merge", "options": {} },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": { "Time": true, "repo": true, "buildable": true },
+            "renameByName": {
+              "jenkins_job": "job",
+              "Value #A": "health score",
+              "Value #B": "last result (1=success)",
+              "Value #C": "last build duration (ms)",
+              "Value #D": "builds retained"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "title": "Agents (observability-agent / uae-staging-agent / uat-env-agent)",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 21 },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "table",
+      "title": "Agent online status (Jenkins + infra scrape)",
+      "gridPos": { "h": 7, "w": 10, "x": 0, "y": 22 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "default_jenkins_nodes_online", "format": "table", "instant": true, "refId": "A" }
+      ],
+      "transformations": [
+        { "id": "organize", "options": { "excludeByName": { "Time": true }, "renameByName": { "node": "agent", "Value": "jenkins sees online" } } }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [{ "matcher": { "id": "byName", "options": "jenkins sees online" }, "properties": [
+          { "id": "custom.cellOptions", "value": { "type": "color-background" } },
+          { "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] } }
+        ] }]
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Executors busy / available per agent",
+      "gridPos": { "h": 7, "w": 14, "x": 10, "y": 22 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "default_jenkins_executors_busy{label=~\"observability-agent|uae-staging-agent|uat-env-agent\"}", "legendFormat": "{{label}} busy", "refId": "A" },
+        { "expr": "default_jenkins_executors_available{label=~\"observability-agent|uae-staging-agent|uat-env-agent\"}", "legendFormat": "{{label}} available", "refId": "B" }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Agent host reachability (node-exporter + cAdvisor scrape health)",
+      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 29 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "up{box=~\"observability|uae-staging|uat-env|jenkins-controller\"}", "format": "table", "instant": true, "refId": "A" }
+      ],
+      "transformations": [
+        { "id": "organize", "options": { "excludeByName": { "Time": true, "__name__": true, "env": true, "kind": true }, "renameByName": { "Value": "up", "box": "box", "job": "job", "instance": "instance" } } }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [{ "matcher": { "id": "byName", "options": "up" }, "properties": [
+          { "id": "custom.cellOptions", "value": { "type": "color-background" } },
+          { "id": "thresholds", "value": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] } }
+        ] }]
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Load average (1m) by agent / controller box",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 35 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "node_load1{box=~\"observability|uae-staging|uat-env|jenkins-controller\"}", "legendFormat": "{{box}}", "refId": "A" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "CPU busy % by agent / controller box",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 35 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "100 - (avg by (box) (rate(node_cpu_seconds_total{mode=\"idle\", box=~\"observability|uae-staging|uat-env|jenkins-controller\"}[5m])) * 100)", "legendFormat": "{{box}}", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percent", "max": 100 } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory used % by agent / controller box",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 43 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "(1 - (node_memory_MemAvailable_bytes{box=~\"observability|uae-staging|uat-env|jenkins-controller\"} / node_memory_MemTotal_bytes{box=~\"observability|uae-staging|uat-env|jenkins-controller\"})) * 100", "legendFormat": "{{box}}", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percent", "max": 100 } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Root disk used % by agent / controller box",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 43 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "(1 - (node_filesystem_avail_bytes{box=~\"observability|uae-staging|uat-env|jenkins-controller\", mountpoint=\"/\"} / node_filesystem_size_bytes{box=~\"observability|uae-staging|uat-env|jenkins-controller\", mountpoint=\"/\"})) * 100", "legendFormat": "{{box}}", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "percent", "max": 100 } }
+    },
+    {
+      "type": "row",
+      "title": "jenkins-agent container resource usage (cAdvisor)",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 51 },
       "collapsed": false,
       "panels": []
     },
     {
       "type": "timeseries",
       "title": "jenkins-agent container CPU usage",
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 19 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 52 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
-        {
-          "expr": "sum by (box) (rate(container_cpu_usage_seconds_total{name=\"jenkins-agent\", box=~\"$box\"}[5m]))",
-          "legendFormat": "{{box}}",
-          "refId": "A"
-        }
+        { "expr": "sum by (box) (rate(container_cpu_usage_seconds_total{name=\"jenkins-agent\", box=~\"$agent_box\"}[5m]))", "legendFormat": "{{box}}", "refId": "A" }
       ],
       "fieldConfig": { "defaults": { "unit": "percentunit" } }
     },
     {
       "type": "timeseries",
       "title": "jenkins-agent container memory usage",
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 19 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 52 },
       "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
-        {
-          "expr": "container_memory_usage_bytes{name=\"jenkins-agent\", box=~\"$box\"}",
-          "legendFormat": "{{box}}",
-          "refId": "A"
-        }
+        { "expr": "container_memory_usage_bytes{name=\"jenkins-agent\", box=~\"$agent_box\"}", "legendFormat": "{{box}}", "refId": "A" }
       ],
       "fieldConfig": { "defaults": { "unit": "bytes" } }
+    },
+    {
+      "type": "timeseries",
+      "title": "jenkins-agent container network I/O",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 60 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "sum by (box) (rate(container_network_receive_bytes_total{name=\"jenkins-agent\", box=~\"$agent_box\"}[5m]))", "legendFormat": "{{box}} rx", "refId": "A" },
+        { "expr": "sum by (box) (rate(container_network_transmit_bytes_total{name=\"jenkins-agent\", box=~\"$agent_box\"}[5m]))", "legendFormat": "{{box}} tx", "refId": "B" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "Bps" } }
+    },
+    {
+      "type": "row",
+      "title": "Controller JVM / process",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 68 },
+      "collapsed": false,
+      "panels": []
+    },
+    {
+      "type": "timeseries",
+      "title": "JVM heap used vs max",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 69 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "jvm_memory_bytes_used{area=\"heap\"}", "legendFormat": "used", "refId": "A" },
+        { "expr": "jvm_memory_bytes_committed{area=\"heap\"}", "legendFormat": "committed", "refId": "B" },
+        { "expr": "jvm_memory_bytes_max{area=\"heap\"}", "legendFormat": "max", "refId": "C" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "bytes" } }
+    },
+    {
+      "type": "timeseries",
+      "title": "JVM GC time (5m rate)",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 69 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "rate(jvm_gc_collection_seconds_sum[5m])", "legendFormat": "{{gc}}", "refId": "A" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" } }
+    },
+    {
+      "type": "timeseries",
+      "title": "JVM threads",
+      "gridPos": { "h": 7, "w": 24, "x": 0, "y": 77 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "expr": "jvm_threads_current", "legendFormat": "current", "refId": "A" },
+        { "expr": "jvm_threads_daemon", "legendFormat": "daemon", "refId": "B" },
+        { "expr": "jvm_threads_peak", "legendFormat": "peak", "refId": "C" },
+        { "expr": "jvm_threads_deadlocked", "legendFormat": "deadlocked", "refId": "D" }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [{ "matcher": { "id": "byName", "options": "deadlocked" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } }] }]
+      }
     }
   ]
 }
