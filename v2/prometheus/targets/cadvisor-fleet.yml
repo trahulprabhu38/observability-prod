@@ -18,3 +18,9 @@
 
 - targets: ["10.200.2.54:8085"]
   labels: { box: valura-prod, kind: docker-host, env: prod }
+
+- targets: ["10.200.2.48:8085"]
+  labels: { box: uat-env, kind: docker-host, env: staging }
+
+- targets: ["10.200.2.55:8085"]
+  labels: { box: jenkins-controller, kind: docker-host, env: infra }

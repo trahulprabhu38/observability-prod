@@ -82,6 +82,17 @@ scrape_configs:
       - files: ["/etc/prometheus/targets/cadvisor-*.yml"]
         refresh_interval: 30s
 
+  # ----- Jenkins (CI/CD) -----
+  # Controller's own Prometheus-plugin endpoint. Anonymous/unauthenticated by
+  # design (useAuthenticatedEndpoint is off) - that's how the plugin expects
+  # external scrapers to reach it. Reachable only via the published host port
+  # (8081->8080); Prometheus has no route into the jenkins_default docker network.
+  - job_name: jenkins
+    metrics_path: /prometheus/
+    static_configs:
+      - targets: ["10.200.2.55:8081"]
+        labels: { box: jenkins-controller, kind: cicd, env: infra }
+
   # ----- Proxmox VE cluster/VM/CT metrics (optional; see docs/06-lxc-proxmox.md) -----
   # - job_name: proxmox
   #   metrics_path: /pve
