@@ -24,28 +24,294 @@
   "templating": {
     "list": [
       {
-        "type": "query",
+        "type": "custom",
         "name": "resource",
         "label": "Service (pick one to inspect it individually)",
-        "datasource": {
-          "type": "prometheus",
-          "uid": "prometheus"
-        },
-        "definition": "label_values(container_last_seen{container_label_coolify_projectName=~\"partner-apps|dsp|dsp-new-server\"} or container_last_seen{container_label_coolify_resourceName=~\"valtax-integration.*\"}, container_label_coolify_resourceName)",
-        "query": {
-          "qryType": 1,
-          "query": "label_values(container_last_seen{container_label_coolify_projectName=~\"partner-apps|dsp|dsp-new-server\"} or container_last_seen{container_label_coolify_resourceName=~\"valtax-integration.*\"}, container_label_coolify_resourceName)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
+        "query": "aldar-site-landing,anandrathi-valura-webapp,assetplus-valura-webapp,banks-pitch,bob-capital-landing,bob-capital-webapp,bonanza-partner-portal,dhanavruksha-valura-webapp,dsp-admin-prod-global,dsp-distributor,featdhanaviruksh-webapp,featmira-valura,featnarnolia-valura,featrav-valura,federal-landing,federal-valura-webapp,icici-admin,isolate-kyc-admin,isolate-kyc-api,isolate-kyc-vt,isolate-kyc-web,jhaveri-valura-webapp,ledger-docs,monarch-api,monarch-monarch-microservice,monarch-viewtrade,monarch-web,motilal-valura-webapp,narnolia-partner-portal,neoma-valura-webapp,neovision-value-fund,nifm-api,nifm-web,payit-pitch,sales-arena,valtax-integration-api-global,valtax-integration-web-global,valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa,valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0,valura-aldar-landing,valura-anandrathi-landing,valura-assetplus-landing,valura-bonanza-landing,valura-cobrand-studio,valura-dhanavruksha-landing,valura-docs,valura-get-landing,valura-icici-prudential-landing,valura-jhaveri-landing,valura-neoma-landing,valura-partner-hub,vogue,vogue-app,vogue-partner-portal,wealthbullet-get-valura-webapp",
+        "options": [
+          {
+            "text": "aldar-site-landing",
+            "value": "aldar-site-landing",
+            "selected": false
+          },
+          {
+            "text": "anandrathi-valura-webapp",
+            "value": "anandrathi-valura-webapp",
+            "selected": false
+          },
+          {
+            "text": "assetplus-valura-webapp",
+            "value": "assetplus-valura-webapp",
+            "selected": false
+          },
+          {
+            "text": "banks-pitch",
+            "value": "banks-pitch",
+            "selected": false
+          },
+          {
+            "text": "bob-capital-landing",
+            "value": "bob-capital-landing",
+            "selected": false
+          },
+          {
+            "text": "bob-capital-webapp",
+            "value": "bob-capital-webapp",
+            "selected": false
+          },
+          {
+            "text": "bonanza-partner-portal",
+            "value": "bonanza-partner-portal",
+            "selected": false
+          },
+          {
+            "text": "dhanavruksha-valura-webapp",
+            "value": "dhanavruksha-valura-webapp",
+            "selected": false
+          },
+          {
+            "text": "dsp-admin-prod-global",
+            "value": "dsp-admin-prod-global",
+            "selected": false
+          },
+          {
+            "text": "dsp-distributor",
+            "value": "dsp-distributor",
+            "selected": false
+          },
+          {
+            "text": "featdhanaviruksh-webapp",
+            "value": "featdhanaviruksh-webapp",
+            "selected": false
+          },
+          {
+            "text": "featmira-valura",
+            "value": "featmira-valura",
+            "selected": false
+          },
+          {
+            "text": "featnarnolia-valura",
+            "value": "featnarnolia-valura",
+            "selected": false
+          },
+          {
+            "text": "featrav-valura",
+            "value": "featrav-valura",
+            "selected": false
+          },
+          {
+            "text": "federal-landing",
+            "value": "federal-landing",
+            "selected": false
+          },
+          {
+            "text": "federal-valura-webapp",
+            "value": "federal-valura-webapp",
+            "selected": false
+          },
+          {
+            "text": "icici-admin",
+            "value": "icici-admin",
+            "selected": false
+          },
+          {
+            "text": "isolate-kyc-admin",
+            "value": "isolate-kyc-admin",
+            "selected": false
+          },
+          {
+            "text": "isolate-kyc-api",
+            "value": "isolate-kyc-api",
+            "selected": false
+          },
+          {
+            "text": "isolate-kyc-vt",
+            "value": "isolate-kyc-vt",
+            "selected": false
+          },
+          {
+            "text": "isolate-kyc-web",
+            "value": "isolate-kyc-web",
+            "selected": false
+          },
+          {
+            "text": "jhaveri-valura-webapp",
+            "value": "jhaveri-valura-webapp",
+            "selected": false
+          },
+          {
+            "text": "ledger-docs",
+            "value": "ledger-docs",
+            "selected": false
+          },
+          {
+            "text": "monarch-api",
+            "value": "monarch-api",
+            "selected": false
+          },
+          {
+            "text": "monarch-monarch-microservice",
+            "value": "monarch-monarch-microservice",
+            "selected": false
+          },
+          {
+            "text": "monarch-viewtrade",
+            "value": "monarch-viewtrade",
+            "selected": false
+          },
+          {
+            "text": "monarch-web",
+            "value": "monarch-web",
+            "selected": false
+          },
+          {
+            "text": "motilal-valura-webapp",
+            "value": "motilal-valura-webapp",
+            "selected": false
+          },
+          {
+            "text": "narnolia-partner-portal",
+            "value": "narnolia-partner-portal",
+            "selected": false
+          },
+          {
+            "text": "neoma-valura-webapp",
+            "value": "neoma-valura-webapp",
+            "selected": false
+          },
+          {
+            "text": "neovision-value-fund",
+            "value": "neovision-value-fund",
+            "selected": false
+          },
+          {
+            "text": "nifm-api",
+            "value": "nifm-api",
+            "selected": false
+          },
+          {
+            "text": "nifm-web",
+            "value": "nifm-web",
+            "selected": false
+          },
+          {
+            "text": "payit-pitch",
+            "value": "payit-pitch",
+            "selected": false
+          },
+          {
+            "text": "sales-arena",
+            "value": "sales-arena",
+            "selected": false
+          },
+          {
+            "text": "valtax-integration-api-global",
+            "value": "valtax-integration-api-global",
+            "selected": false
+          },
+          {
+            "text": "valtax-integration-web-global",
+            "value": "valtax-integration-web-global",
+            "selected": false
+          },
+          {
+            "text": "valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa",
+            "value": "valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa",
+            "selected": false
+          },
+          {
+            "text": "valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0",
+            "value": "valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0",
+            "selected": false
+          },
+          {
+            "text": "valura-aldar-landing",
+            "value": "valura-aldar-landing",
+            "selected": false
+          },
+          {
+            "text": "valura-anandrathi-landing",
+            "value": "valura-anandrathi-landing",
+            "selected": false
+          },
+          {
+            "text": "valura-assetplus-landing",
+            "value": "valura-assetplus-landing",
+            "selected": false
+          },
+          {
+            "text": "valura-bonanza-landing",
+            "value": "valura-bonanza-landing",
+            "selected": false
+          },
+          {
+            "text": "valura-cobrand-studio",
+            "value": "valura-cobrand-studio",
+            "selected": false
+          },
+          {
+            "text": "valura-dhanavruksha-landing",
+            "value": "valura-dhanavruksha-landing",
+            "selected": false
+          },
+          {
+            "text": "valura-docs",
+            "value": "valura-docs",
+            "selected": false
+          },
+          {
+            "text": "valura-get-landing",
+            "value": "valura-get-landing",
+            "selected": false
+          },
+          {
+            "text": "valura-icici-prudential-landing",
+            "value": "valura-icici-prudential-landing",
+            "selected": false
+          },
+          {
+            "text": "valura-jhaveri-landing",
+            "value": "valura-jhaveri-landing",
+            "selected": false
+          },
+          {
+            "text": "valura-neoma-landing",
+            "value": "valura-neoma-landing",
+            "selected": false
+          },
+          {
+            "text": "valura-partner-hub",
+            "value": "valura-partner-hub",
+            "selected": false
+          },
+          {
+            "text": "vogue",
+            "value": "vogue",
+            "selected": false
+          },
+          {
+            "text": "vogue-app",
+            "value": "vogue-app",
+            "selected": false
+          },
+          {
+            "text": "vogue-partner-portal",
+            "value": "vogue-partner-portal",
+            "selected": false
+          },
+          {
+            "text": "wealthbullet-get-valura-webapp",
+            "value": "wealthbullet-get-valura-webapp",
+            "selected": false
+          }
+        ],
         "includeAll": true,
         "multi": true,
-        "allValue": "(featmira-valura|anandrathi-valura-webapp|assetplus-valura-webapp|banks-pitch|bob-capital-landing|bob-capital-webapp|dhanavruksha-valura-webapp|featdhanaviruksh-webapp|federal-landing|federal-valura-webapp|motilal-valura-webapp|neovision-value-fund|payit-pitch|valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0|valura-aldar-landing|valura-anandrathi-landing|valura-assetplus-landing|valura-dhanavruksha-landing|valura-icici-prudential-landing|valura-neoma-landing|vogue|valura-bonanza-landing|aldar-site-landing|valura-partner-hub|wealthbullet-get-valura-webapp|valura-get-landing|vogue-app|valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa|neoma-valura-webapp|featrav-valura|valura-docs|valura-cobrand-studio|jhaveri-valura-webapp|valura-jhaveri-landing|narnolia-partner-portal|vogue-partner-portal|bonanza-partner-portal|featnarnolia-valura|ledger-docs|monarch-web|monarch-viewtrade|monarch-monarch-microservice|monarch-api|isolate-kyc-web|isolate-kyc-api|isolate-kyc-vt|isolate-kyc-admin|dsp-distributor|nifm-web|icici-admin|nifm-api|sales-arena|dsp-admin-prod-global|valtax-integration-api-global|valtax-integration-web-global)",
+        "allValue": "(aldar-site-landing|anandrathi-valura-webapp|assetplus-valura-webapp|banks-pitch|bob-capital-landing|bob-capital-webapp|bonanza-partner-portal|dhanavruksha-valura-webapp|dsp-admin-prod-global|dsp-distributor|featdhanaviruksh-webapp|featmira-valura|featnarnolia-valura|featrav-valura|federal-landing|federal-valura-webapp|icici-admin|isolate-kyc-admin|isolate-kyc-api|isolate-kyc-vt|isolate-kyc-web|jhaveri-valura-webapp|ledger-docs|monarch-api|monarch-monarch-microservice|monarch-viewtrade|monarch-web|motilal-valura-webapp|narnolia-partner-portal|neoma-valura-webapp|neovision-value-fund|nifm-api|nifm-web|payit-pitch|sales-arena|valtax-integration-api-global|valtax-integration-web-global|valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa|valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0|valura-aldar-landing|valura-anandrathi-landing|valura-assetplus-landing|valura-bonanza-landing|valura-cobrand-studio|valura-dhanavruksha-landing|valura-docs|valura-get-landing|valura-icici-prudential-landing|valura-jhaveri-landing|valura-neoma-landing|valura-partner-hub|vogue|vogue-app|vogue-partner-portal|wealthbullet-get-valura-webapp)",
         "current": {
           "text": "All",
           "value": "$__all"
-        },
-        "refresh": 2,
-        "sort": 1
+        }
       }
     ]
   },

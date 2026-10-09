@@ -15,6 +15,14 @@ SCOPES = {
     "dev":     {"folder": "dev",     "project_regex": "Valura-development|global-valura-dev"},
     "staging": {"folder": "staging", "project_regex": "valura-UAE-staging|global-valura-staging"},
     "prod":    {"folder": "prod",    "project_regex": "valura-prod"},
+    # partner-apps/DSP/DSP-new-server/valura-dubai - verified live against
+    # coolify_build_success{project=...} (these are the real DB project names,
+    # not the lowercase coolify.projectName docker-label slug used elsewhere).
+    # DSP-new-server and valura-dubai currently have ZERO rows in
+    # application_deployment_queues (no deploy history recorded there at all,
+    # not just old) - included for when that changes, but expect "no data".
+    "partner-apps": {"folder": "partner-apps", "title": "Build Logs",
+                      "project_regex": "partner-apps|DSP|DSP-new-server|valura-dubai"},
 }
 
 _id = [0]
@@ -203,7 +211,10 @@ def build(scope=None):
              "current": {"text": "All", "value": "$__all"}, "refresh": 1, "sort": 1})
     templating = {"list": templating_list}
 
-    deploy_link = f"/d/deployments-{scope}" if scope else "/d/deployments/deployments"
+    # scopes without their own deployments-{scope} companion (no gen-deploy-dashboard.py
+    # SCOPES entry) link to the global live-status board instead of a 404.
+    has_live_companion = scope in ("dev", "staging", "prod")
+    deploy_link = f"/d/deployments-{scope}" if scope and has_live_companion else "/d/deployments/deployments"
     links = [{"title": "↔ deployments (live status)", "type": "link",
               "url": deploy_link, "icon": "external link"}]
     if scope == "prod":
@@ -215,7 +226,7 @@ def build(scope=None):
                       "url": f"/d/deployment-builds-{other}", "icon": "external link"})
 
     dash = {
-        "uid": uid, "title": uid,
+        "uid": uid, "title": SCOPES[scope].get("title", uid) if scope else uid,
         "tags": ["deployments", "coolify", "builds", "valura"] + ([scope] if scope else []),
         "timezone": "browser", "editable": True, "schemaVersion": 42,
         "graphTooltip": 1, "fiscalYearStartMonth": 0, "weekStart": "", "preload": False,

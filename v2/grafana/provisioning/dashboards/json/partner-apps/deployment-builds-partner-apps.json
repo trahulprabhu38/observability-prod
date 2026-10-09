@@ -1,0 +1,930 @@
+{
+  "uid": "deployment-builds-partner-apps",
+  "title": "Build Logs",
+  "tags": [
+    "deployments",
+    "coolify",
+    "builds",
+    "valura",
+    "partner-apps"
+  ],
+  "timezone": "browser",
+  "editable": true,
+  "schemaVersion": 42,
+  "graphTooltip": 1,
+  "fiscalYearStartMonth": 0,
+  "weekStart": "",
+  "preload": false,
+  "refresh": "2m",
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "templating": {
+    "list": [
+      {
+        "type": "query",
+        "name": "project",
+        "label": "Project",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai\"}, project)",
+        "query": {
+          "qryType": 1,
+          "query": "label_values(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai\"}, project)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "refresh": 1,
+        "sort": 1
+      },
+      {
+        "type": "query",
+        "name": "app",
+        "label": "Build log: app",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai\", project=~\"$project\"}, app)",
+        "query": {
+          "qryType": 1,
+          "query": "label_values(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai\", project=~\"$project\"}, app)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "includeAll": false,
+        "multi": false,
+        "refresh": 1,
+        "sort": 1
+      },
+      {
+        "type": "custom",
+        "name": "rank",
+        "label": "Build log: rank (1=latest)",
+        "query": "1,2,3",
+        "options": [
+          {
+            "text": "1",
+            "value": "1",
+            "selected": true
+          },
+          {
+            "text": "2",
+            "value": "2",
+            "selected": false
+          },
+          {
+            "text": "3",
+            "value": "3",
+            "selected": false
+          }
+        ],
+        "current": {
+          "text": "1",
+          "value": "1"
+        },
+        "includeAll": false,
+        "multi": false
+      },
+      {
+        "type": "query",
+        "name": "deployment_uuid",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "hide": 2,
+        "definition": "label_values(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai\", project=~\"$project\", app=\"$app\", rank=~\"$rank\"}, deployment_uuid)",
+        "query": {
+          "qryType": 1,
+          "query": "label_values(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai\", project=~\"$project\", app=\"$app\", rank=~\"$rank\"}, deployment_uuid)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "includeAll": false,
+        "multi": false,
+        "refresh": 1
+      }
+    ]
+  },
+  "links": [
+    {
+      "title": "\u2194 deployments (live status)",
+      "type": "link",
+      "url": "/d/deployments/deployments",
+      "icon": "external link"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "type": "dashboard",
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "name": "Annotations & Alerts"
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "row",
+      "title": "summary",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Latest build OK",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "count(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai\", project=~\"$project\", rank=\"1\"} == 1)",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Latest build failed",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 4,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "count(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai\", project=~\"$project\", rank=\"1\"} == 0)",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Failed but still running",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 1,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              }
+            ]
+          },
+          "decimals": 0
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "count(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai\", project=~\"$project\", rank=\"1\"} == 0 and on(uuid) coolify_app_up == 1)",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "Poller",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 14,
+        "y": 1,
+        "w": 4,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "FAILING",
+                  "index": 0
+                },
+                "1": {
+                  "text": "OK",
+                  "index": 1
+                }
+              }
+            }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "coolify_build_poll_success",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "Last poll",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 1,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 600
+              },
+              {
+                "color": "red",
+                "value": 1800
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "time() - coolify_build_last_poll_timestamp_seconds",
+          "instant": true
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "row",
+      "title": "failed but still running",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 8,
+      "type": "table",
+      "title": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 6,
+        "w": 24,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "filterable": true,
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Result"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "-1": {
+                        "text": "OTHER",
+                        "color": "gray"
+                      },
+                      "0": {
+                        "text": "FAILED",
+                        "color": "red"
+                      },
+                      "1": {
+                        "text": "OK",
+                        "color": "green"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "app"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Show build log",
+                    "url": "/d/deployment-builds-partner-apps?var-app=${__data.fields.app}&var-rank=${__data.fields.rank}&${__url_time_range}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "sortBy": [
+          {
+            "displayName": "app"
+          }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "instant": true,
+          "format": "table",
+          "expr": "coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai\", project=~\"$project\", rank=\"1\"} == 0 and on(uuid) coolify_app_up == 1"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "job": true,
+              "instance": true,
+              "deployment_uuid": true,
+              "uuid": true
+            },
+            "indexByName": {
+              "project": 0,
+              "environment": 1,
+              "app": 2,
+              "rank": 3,
+              "commit": 4,
+              "Value": 5
+            },
+            "renameByName": {}
+          }
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "type": "row",
+      "title": "latest build",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 14,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 10,
+      "type": "stat",
+      "title": "Latest build per app",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 15,
+        "w": 24,
+        "h": 16
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "gray",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "-1": {
+                  "text": "OTHER",
+                  "index": 0
+                },
+                "0": {
+                  "text": "FAILED",
+                  "index": 1
+                },
+                "1": {
+                  "text": "OK",
+                  "index": 2
+                }
+              }
+            }
+          ],
+          "links": [
+            {
+              "title": "Show build log",
+              "url": "/d/deployment-builds-partner-apps?var-app=${__field.labels.app}&var-rank=${__field.labels.rank}&${__url_time_range}"
+            }
+          ],
+          "noValue": "no data"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "name",
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "instant": true,
+          "expr": "coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai\", project=~\"$project\", rank=\"1\"}",
+          "legendFormat": "{{project}} / {{app}}"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "type": "row",
+      "title": "build log",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 31,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 12,
+      "type": "logs",
+      "title": "Build log \u2014 $app  (build $rank)",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 24,
+        "h": 18
+      },
+      "pluginVersion": "12.3.2",
+      "options": {
+        "showTime": false,
+        "showLabels": false,
+        "showCommonLabels": false,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": false,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Ascending",
+        "enableInfiniteScrolling": true
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "maxLines": 20000,
+          "expr": "{job=\"coolify_build_logs\", app=\"$app\"} | deployment_uuid=~`$deployment_uuid`"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "type": "row",
+      "title": "history",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 50,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 14,
+      "type": "table",
+      "title": "",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 51,
+        "w": 24,
+        "h": 14
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "filterable": true,
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Result"
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "-1": {
+                        "text": "OTHER",
+                        "color": "gray"
+                      },
+                      "0": {
+                        "text": "FAILED",
+                        "color": "red"
+                      },
+                      "1": {
+                        "text": "OK",
+                        "color": "green"
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "app"
+            },
+            "properties": [
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Show build log",
+                    "url": "/d/deployment-builds-partner-apps?var-app=${__data.fields.app}&var-rank=${__data.fields.rank}&${__url_time_range}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "sortBy": [
+          {
+            "displayName": "app"
+          }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "instant": true,
+          "format": "table",
+          "expr": "coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai\", project=~\"$project\"}"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "__name__": true,
+              "job": true,
+              "instance": true,
+              "deployment_uuid": true,
+              "uuid": true
+            },
+            "indexByName": {
+              "project": 0,
+              "environment": 1,
+              "app": 2,
+              "rank": 3,
+              "commit": 4,
+              "Value": 5
+            },
+            "renameByName": {}
+          }
+        }
+      ]
+    }
+  ]
+}
