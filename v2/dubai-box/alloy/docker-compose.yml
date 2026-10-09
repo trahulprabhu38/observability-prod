@@ -3,6 +3,7 @@ services:
     image: grafana/alloy:latest
     container_name: valura-alloy-logs
     restart: unless-stopped
+    env_file: [.env]   # LOKI_PUSH_PASSWORD - gitignored, created directly on this box
     volumes:
       - ./config.alloy:/etc/alloy/config.alloy:ro
       - /var/run/docker.sock:/var/run/docker.sock

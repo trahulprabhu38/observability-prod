@@ -97,9 +97,19 @@ loki.process "containers" {
   forward_to = [loki.write.remote.receiver]
 }
 
+// dubai has no route to 10.200.2.52 (private IP, not on the same network as
+// every other box - see ../README.md). Pushes over the public internet
+// through the Traefik-fronted loki-infra.valura.co.in instead, which is
+// otherwise unauthenticated, hence basic_auth. LOKI_PUSH_PASSWORD comes from
+// ./.env on this box (gitignored, never committed - same pattern as the main
+// stack's v2/.env) - set it before `docker compose up -d`.
 loki.write "remote" {
   endpoint {
-    url = "http://10.200.2.52:3100/loki/api/v1/push"
+    url = "https://loki-infra.valura.co.in/loki/api/v1/push"
+    basic_auth {
+      username = "dubai-alloy"
+      password = sys.env("LOKI_PUSH_PASSWORD")
+    }
   }
   external_labels = {
     job = "docker-containers",
