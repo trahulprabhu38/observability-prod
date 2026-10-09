@@ -22,7 +22,7 @@ SCOPES = {
     # application_deployment_queues (no deploy history recorded there at all,
     # not just old) - included for when that changes, but expect "no data".
     "partner-apps": {"folder": "partner-apps", "title": "Build Logs",
-                      "project_regex": "partner-apps|DSP|DSP-new-server|valura-dubai"},
+                      "project_regex": "partner-apps|DSP|DSP-new-server|valura-dubai|india-mf-dev"},
 }
 
 _id = [0]

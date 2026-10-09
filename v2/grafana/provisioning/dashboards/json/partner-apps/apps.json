@@ -1,7 +1,7 @@
 {
   "uid": "partner-apps-group",
   "title": "Partner Apps",
-  "description": "Everything in the partner-apps business line in one place: the 39 co-branded webapps (coolify_project=partner-apps), the DSP family - Monarch/Isolate-KYC/NIFM/dsp-distributor/sales-arena (coolify_project=dsp, all on valura-dev), dsp-admin-prod-global (coolify_project=dsp-new-server, on valura-prod), and Valtax (valtax-integration-api/web-global, pulled in from the global-valura-dev project by resource name). Known gap: dubai (86.106.26.45) is currently unreachable from Prometheus (scrape target down) - whatever DSP/Verifiedy prod-global tier actually lives there isn't represented here until it's back and its real container names are added to the $resource allValue regex below.",
+  "description": "Everything in the partner-apps business line: partner-apps (46 apps per Coolify's API, 39 visible to cAdvisor), DSP (26 apps per Coolify's API - Monarch/Isolate-KYC/NIFM/dsp-distributor/sales-arena/icici-admin all visible to cAdvisor on valura-dev, but DSP-API/WEB/ADMIN-prod-global, DSP-WEB-prod-UAE, UAE-DSP-API and the VERIFID stg stack are NOT - they're on infrastructure cAdvisor can't currently reach, so their CPU/memory/log panels below read 'no data' even though Service Status (Coolify API) correctly shows them as running), india-mf-dev (3 apps + a redis sidecar), dsp-admin-prod-global (on valura-prod), and Valtax (valtax-integration-api/web-global, from the unrelated global-valura-dev project, kept out of the Coolify-API Service Status panel since that's scoped to partner-apps/DSP/india-mf-dev specifically).",
   "tags": [
     "partner-apps",
     "dsp",
@@ -26,8 +26,8 @@
       {
         "type": "custom",
         "name": "resource",
-        "label": "Service (pick one to inspect it individually)",
-        "query": "aldar-site-landing,anandrathi-valura-webapp,assetplus-valura-webapp,banks-pitch,bob-capital-landing,bob-capital-webapp,bonanza-partner-portal,dhanavruksha-valura-webapp,dsp-admin-prod-global,dsp-distributor,featdhanaviruksh-webapp,featmira-valura,featnarnolia-valura,featrav-valura,federal-landing,federal-valura-webapp,icici-admin,isolate-kyc-admin,isolate-kyc-api,isolate-kyc-vt,isolate-kyc-web,jhaveri-valura-webapp,ledger-docs,monarch-api,monarch-monarch-microservice,monarch-viewtrade,monarch-web,motilal-valura-webapp,narnolia-partner-portal,neoma-valura-webapp,neovision-value-fund,nifm-api,nifm-web,payit-pitch,sales-arena,valtax-integration-api-global,valtax-integration-web-global,valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa,valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0,valura-aldar-landing,valura-anandrathi-landing,valura-assetplus-landing,valura-bonanza-landing,valura-cobrand-studio,valura-dhanavruksha-landing,valura-docs,valura-get-landing,valura-icici-prudential-landing,valura-jhaveri-landing,valura-neoma-landing,valura-partner-hub,vogue,vogue-app,vogue-partner-portal,wealthbullet-get-valura-webapp",
+        "label": "Service (pick one to inspect it individually - cAdvisor-visible only)",
+        "query": "aldar-site-landing,anandrathi-valura-webapp,assetplus-valura-webapp,banks-pitch,bob-capital-landing,bob-capital-webapp,bonanza-partner-portal,dhanavruksha-valura-webapp,dsp-admin-prod-global,dsp-distributor,featdhanaviruksh-webapp,featmira-valura,featnarnolia-valura,featrav-valura,federal-landing,federal-valura-webapp,icici-admin,india-mf-api,india-mf-fp,india-mf-redis,india-mf-web,isolate-kyc-admin,isolate-kyc-api,isolate-kyc-vt,isolate-kyc-web,jhaveri-valura-webapp,ledger-docs,monarch-api,monarch-monarch-microservice,monarch-viewtrade,monarch-web,motilal-valura-webapp,narnolia-partner-portal,neoma-valura-webapp,neovision-value-fund,nifm-api,nifm-web,payit-pitch,sales-arena,valtax-integration-api-global,valtax-integration-web-global,valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa,valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0,valura-aldar-landing,valura-anandrathi-landing,valura-assetplus-landing,valura-bonanza-landing,valura-cobrand-studio,valura-dhanavruksha-landing,valura-docs,valura-get-landing,valura-icici-prudential-landing,valura-jhaveri-landing,valura-neoma-landing,valura-partner-hub,vogue,vogue-app,vogue-partner-portal,wealthbullet-get-valura-webapp",
         "options": [
           {
             "text": "aldar-site-landing",
@@ -112,6 +112,26 @@
           {
             "text": "icici-admin",
             "value": "icici-admin",
+            "selected": false
+          },
+          {
+            "text": "india-mf-api",
+            "value": "india-mf-api",
+            "selected": false
+          },
+          {
+            "text": "india-mf-fp",
+            "value": "india-mf-fp",
+            "selected": false
+          },
+          {
+            "text": "india-mf-redis",
+            "value": "india-mf-redis",
+            "selected": false
+          },
+          {
+            "text": "india-mf-web",
+            "value": "india-mf-web",
             "selected": false
           },
           {
@@ -307,7 +327,7 @@
         ],
         "includeAll": true,
         "multi": true,
-        "allValue": "(aldar-site-landing|anandrathi-valura-webapp|assetplus-valura-webapp|banks-pitch|bob-capital-landing|bob-capital-webapp|bonanza-partner-portal|dhanavruksha-valura-webapp|dsp-admin-prod-global|dsp-distributor|featdhanaviruksh-webapp|featmira-valura|featnarnolia-valura|featrav-valura|federal-landing|federal-valura-webapp|icici-admin|isolate-kyc-admin|isolate-kyc-api|isolate-kyc-vt|isolate-kyc-web|jhaveri-valura-webapp|ledger-docs|monarch-api|monarch-monarch-microservice|monarch-viewtrade|monarch-web|motilal-valura-webapp|narnolia-partner-portal|neoma-valura-webapp|neovision-value-fund|nifm-api|nifm-web|payit-pitch|sales-arena|valtax-integration-api-global|valtax-integration-web-global|valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa|valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0|valura-aldar-landing|valura-anandrathi-landing|valura-assetplus-landing|valura-bonanza-landing|valura-cobrand-studio|valura-dhanavruksha-landing|valura-docs|valura-get-landing|valura-icici-prudential-landing|valura-jhaveri-landing|valura-neoma-landing|valura-partner-hub|vogue|vogue-app|vogue-partner-portal|wealthbullet-get-valura-webapp)",
+        "allValue": "(aldar-site-landing|anandrathi-valura-webapp|assetplus-valura-webapp|banks-pitch|bob-capital-landing|bob-capital-webapp|bonanza-partner-portal|dhanavruksha-valura-webapp|dsp-admin-prod-global|dsp-distributor|featdhanaviruksh-webapp|featmira-valura|featnarnolia-valura|featrav-valura|federal-landing|federal-valura-webapp|icici-admin|india-mf-api|india-mf-fp|india-mf-redis|india-mf-web|isolate-kyc-admin|isolate-kyc-api|isolate-kyc-vt|isolate-kyc-web|jhaveri-valura-webapp|ledger-docs|monarch-api|monarch-monarch-microservice|monarch-viewtrade|monarch-web|motilal-valura-webapp|narnolia-partner-portal|neoma-valura-webapp|neovision-value-fund|nifm-api|nifm-web|payit-pitch|sales-arena|valtax-integration-api-global|valtax-integration-web-global|valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa|valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0|valura-aldar-landing|valura-anandrathi-landing|valura-assetplus-landing|valura-bonanza-landing|valura-cobrand-studio|valura-dhanavruksha-landing|valura-docs|valura-get-landing|valura-icici-prudential-landing|valura-jhaveri-landing|valura-neoma-landing|valura-partner-hub|vogue|vogue-app|vogue-partner-portal|wealthbullet-get-valura-webapp)",
         "current": {
           "text": "All",
           "value": "$__all"
@@ -319,7 +339,7 @@
     {
       "title": "Explore logs",
       "type": "link",
-      "url": "/explore?left={\"datasource\":\"loki\",\"queries\":[{\"expr\":\"{coolify_resource=~\\\"(featmira-valura|anandrathi-valura-webapp|assetplus-valura-webapp|banks-pitch|bob-capital-landing|bob-capital-webapp|dhanavruksha-valura-webapp|featdhanaviruksh-webapp|federal-landing|federal-valura-webapp|motilal-valura-webapp|neovision-value-fund|payit-pitch|valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0|valura-aldar-landing|valura-anandrathi-landing|valura-assetplus-landing|valura-dhanavruksha-landing|valura-icici-prudential-landing|valura-neoma-landing|vogue|valura-bonanza-landing|aldar-site-landing|valura-partner-hub|wealthbullet-get-valura-webapp|valura-get-landing|vogue-app|valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa|neoma-valura-webapp|featrav-valura|valura-docs|valura-cobrand-studio|jhaveri-valura-webapp|valura-jhaveri-landing|narnolia-partner-portal|vogue-partner-portal|bonanza-partner-portal|featnarnolia-valura|ledger-docs|monarch-web|monarch-viewtrade|monarch-monarch-microservice|monarch-api|isolate-kyc-web|isolate-kyc-api|isolate-kyc-vt|isolate-kyc-admin|dsp-distributor|nifm-web|icici-admin|nifm-api|sales-arena|dsp-admin-prod-global|valtax-integration-api-global|valtax-integration-web-global)\\\"}\"}],\"range\":{\"from\":\"now-1h\",\"to\":\"now\"}}",
+      "url": "/explore?left={\"datasource\":\"loki\",\"queries\":[{\"expr\":\"{coolify_resource=~\\\"(aldar-site-landing|anandrathi-valura-webapp|assetplus-valura-webapp|banks-pitch|bob-capital-landing|bob-capital-webapp|bonanza-partner-portal|dhanavruksha-valura-webapp|dsp-admin-prod-global|dsp-distributor|featdhanaviruksh-webapp|featmira-valura|featnarnolia-valura|featrav-valura|federal-landing|federal-valura-webapp|icici-admin|india-mf-api|india-mf-fp|india-mf-redis|india-mf-web|isolate-kyc-admin|isolate-kyc-api|isolate-kyc-vt|isolate-kyc-web|jhaveri-valura-webapp|ledger-docs|monarch-api|monarch-monarch-microservice|monarch-viewtrade|monarch-web|motilal-valura-webapp|narnolia-partner-portal|neoma-valura-webapp|neovision-value-fund|nifm-api|nifm-web|payit-pitch|sales-arena|valtax-integration-api-global|valtax-integration-web-global|valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa|valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0|valura-aldar-landing|valura-anandrathi-landing|valura-assetplus-landing|valura-bonanza-landing|valura-cobrand-studio|valura-dhanavruksha-landing|valura-docs|valura-get-landing|valura-icici-prudential-landing|valura-jhaveri-landing|valura-neoma-landing|valura-partner-hub|vogue|vogue-app|vogue-partner-portal|wealthbullet-get-valura-webapp)\\\"}\"}],\"range\":{\"from\":\"now-1h\",\"to\":\"now\"}}",
       "icon": "external link",
       "targetBlank": true
     }
@@ -842,6 +862,187 @@
       ]
     },
     {
+      "id": 200,
+      "type": "stat",
+      "title": "Apps up (Coolify API, all 75)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 4,
+        "h": 3
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "instant": true,
+          "expr": "count(coolify_app_up{project=~\"partner-apps|DSP|india-mf-dev\"} == 1)"
+        }
+      ]
+    },
+    {
+      "id": 201,
+      "type": "stat",
+      "title": "Apps down (Coolify API, all 75)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 4,
+        "y": 5,
+        "w": 4,
+        "h": 3
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "instant": true,
+          "expr": "count(coolify_app_up{project=~\"partner-apps|DSP|india-mf-dev\"} == 0)"
+        }
+      ]
+    },
+    {
+      "id": 202,
+      "type": "bargauge",
+      "title": "Apps by project (Coolify API - authoritative, auto-updates)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 8,
+        "y": 5,
+        "w": 16,
+        "h": 3
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true,
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "instant": true,
+          "expr": "count by (project) (coolify_app_up{project=~\"partner-apps|DSP|india-mf-dev\"})",
+          "legendFormat": "{{project}}"
+        }
+      ]
+    },
+    {
       "id": 10,
       "type": "bargauge",
       "title": "Containers by box",
@@ -852,7 +1053,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 5,
+        "y": 8,
         "w": 24,
         "h": 4
       },
@@ -906,23 +1107,102 @@
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 9,
+        "y": 12,
         "w": 24,
         "h": 1
       },
       "panels": []
     },
     {
-      "id": 12,
+      "id": 203,
       "type": "stat",
-      "title": "Service status",
+      "title": "Service status - Coolify API (all 75 apps, authoritative)",
+      "description": "Source: coolify_app_up, the live-status poller reading Coolify's own API directly - correct even for apps on boxes our cAdvisor/Alloy agents can't reach (e.g. DSP-API/WEB-prod-global).",
       "datasource": {
         "type": "prometheus",
         "uid": "prometheus"
       },
       "gridPos": {
         "x": 0,
-        "y": 10,
+        "y": 13,
+        "w": 24,
+        "h": 10
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "DOWN",
+                  "index": 0
+                },
+                "1": {
+                  "text": "UP",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "noValue": "no data"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "name",
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "instant": true,
+          "expr": "coolify_app_up{project=~\"partner-apps|DSP|india-mf-dev\"}",
+          "legendFormat": "{{project}} / {{app}}"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "type": "stat",
+      "title": "Service status - cAdvisor (only agent-reachable apps)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 23,
         "w": 24,
         "h": 7
       },
@@ -996,7 +1276,7 @@
       "title": "CPU cores by service",
       "gridPos": {
         "x": 0,
-        "y": 17,
+        "y": 30,
         "w": 12,
         "h": 8
       },
@@ -1051,7 +1331,7 @@
       "title": "Memory by service",
       "gridPos": {
         "x": 12,
-        "y": 17,
+        "y": 30,
         "w": 12,
         "h": 8
       },
@@ -1106,7 +1386,7 @@
       "title": "Restarts by service",
       "gridPos": {
         "x": 0,
-        "y": 25,
+        "y": 38,
         "w": 24,
         "h": 7
       },
@@ -1162,7 +1442,7 @@
       "collapsed": false,
       "gridPos": {
         "x": 0,
-        "y": 32,
+        "y": 45,
         "w": 24,
         "h": 1
       },
@@ -1174,7 +1454,7 @@
       "title": "Log volume by level",
       "gridPos": {
         "x": 0,
-        "y": 33,
+        "y": 46,
         "w": 12,
         "h": 7
       },
@@ -1291,7 +1571,7 @@
       "title": "Log volume by service",
       "gridPos": {
         "x": 12,
-        "y": 33,
+        "y": 46,
         "w": 12,
         "h": 7
       },
@@ -1347,7 +1627,7 @@
       "title": "Error / warn rate by service",
       "gridPos": {
         "x": 0,
-        "y": 40,
+        "y": 53,
         "w": 24,
         "h": 6
       },
@@ -1407,7 +1687,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 46,
+        "y": 59,
         "w": 24,
         "h": 10
       },
@@ -1447,7 +1727,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 56,
+        "y": 69,
         "w": 24,
         "h": 14
       },
