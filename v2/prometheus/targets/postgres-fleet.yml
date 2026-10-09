@@ -1,4 +1,0 @@
-# postgres-fleet job - one entry per host running postgres_exporter on :9187.
-
-- targets: ["10.200.2.41:9187"]
-  labels: { box: databases, kind: postgres, env: infra }

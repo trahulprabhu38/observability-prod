@@ -1,8 +1,13 @@
 {
   "uid": "partner-apps-group",
-  "title": "Partner Apps (all boxes)",
-  "description": "Coolify project `partner-apps` - 44 co-branded partner webapps/landing pages, spanning the `partner-apps` box (103.183.157.251 / 10.200.1.2) and a handful on `valura-dev` (10.200.2.51). Source: PARTNER_APPS_AND_UAT_INVENTORY.md.",
-  "tags": ["partner-apps", "valura", "production"],
+  "title": "Partner Apps",
+  "description": "Everything in the partner-apps business line in one place: the 39 co-branded webapps (coolify_project=partner-apps), the DSP family - Monarch/Isolate-KYC/NIFM/dsp-distributor/sales-arena (coolify_project=dsp, all on valura-dev), dsp-admin-prod-global (coolify_project=dsp-new-server, on valura-prod), and Valtax (valtax-integration-api/web-global, pulled in from the global-valura-dev project by resource name). Known gap: dubai (86.106.26.45) is currently unreachable from Prometheus (scrape target down) - whatever DSP/Verifiedy prod-global tier actually lives there isn't represented here until it's back and its real container names are added to the $resource allValue regex below.",
+  "tags": [
+    "partner-apps",
+    "dsp",
+    "valtax",
+    "valura"
+  ],
   "timezone": "browser",
   "editable": true,
   "schemaVersion": 42,
@@ -11,33 +16,34 @@
   "weekStart": "",
   "preload": false,
   "refresh": "30s",
-  "time": { "from": "now-3h", "to": "now" },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
   "timepicker": {},
   "templating": {
     "list": [
       {
-        "type": "constant",
-        "name": "project",
-        "label": "Coolify project",
-        "query": "partner-apps",
-        "current": { "text": "partner-apps", "value": "partner-apps" },
-        "hide": 2
-      },
-      {
         "type": "query",
         "name": "resource",
-        "label": "Service",
-        "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "definition": "label_values(container_last_seen{container_label_coolify_projectName=\"partner-apps\"}, container_label_coolify_resourceName)",
+        "label": "Service (pick one to inspect it individually)",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(container_last_seen{container_label_coolify_projectName=~\"partner-apps|dsp|dsp-new-server\"} or container_last_seen{container_label_coolify_resourceName=~\"valtax-integration.*\"}, container_label_coolify_resourceName)",
         "query": {
           "qryType": 1,
-          "query": "label_values(container_last_seen{container_label_coolify_projectName=\"partner-apps\"}, container_label_coolify_resourceName)",
+          "query": "label_values(container_last_seen{container_label_coolify_projectName=~\"partner-apps|dsp|dsp-new-server\"} or container_last_seen{container_label_coolify_resourceName=~\"valtax-integration.*\"}, container_label_coolify_resourceName)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "includeAll": true,
         "multi": true,
-        "allValue": ".*",
-        "current": { "text": "All", "value": "$__all" },
+        "allValue": "(featmira\\-valura|anandrathi\\-valura\\-webapp|assetplus\\-valura\\-webapp|banks\\-pitch|bob\\-capital\\-landing|bob\\-capital\\-webapp|dhanavruksha\\-valura\\-webapp|featdhanaviruksh\\-webapp|federal\\-landing|federal\\-valura\\-webapp|motilal\\-valura\\-webapp|neovision\\-value\\-fund|payit\\-pitch|valura\\-a\\-ifeatmotilal\\-valura\\-q11ojdt6zu5a0y9yh3zf67x0|valura\\-aldar\\-landing|valura\\-anandrathi\\-landing|valura\\-assetplus\\-landing|valura\\-dhanavruksha\\-landing|valura\\-icici\\-prudential\\-landing|valura\\-neoma\\-landing|vogue|valura\\-bonanza\\-landing|aldar\\-site\\-landing|valura\\-partner\\-hub|wealthbullet\\-get\\-valura\\-webapp|valura\\-get\\-landing|vogue\\-app|valura\\-a\\-ifeatbonanza\\-valura\\-o3s9r4coffs478vpm9grf2oa|neoma\\-valura\\-webapp|featrav\\-valura|valura\\-docs|valura\\-cobrand\\-studio|jhaveri\\-valura\\-webapp|valura\\-jhaveri\\-landing|narnolia\\-partner\\-portal|vogue\\-partner\\-portal|bonanza\\-partner\\-portal|featnarnolia\\-valura|ledger\\-docs|monarch\\-web|monarch\\-viewtrade|monarch\\-monarch\\-microservice|monarch\\-api|isolate\\-kyc\\-web|isolate\\-kyc\\-api|isolate\\-kyc\\-vt|isolate\\-kyc\\-admin|dsp\\-distributor|nifm\\-web|icici\\-admin|nifm\\-api|sales\\-arena|dsp\\-admin\\-prod\\-global|valtax\\-integration\\-api\\-global|valtax\\-integration\\-web\\-global)",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
         "refresh": 2,
         "sort": 1
       }
@@ -47,7 +53,7 @@
     {
       "title": "Explore logs",
       "type": "link",
-      "url": "/explore?left={\"datasource\":\"loki\",\"queries\":[{\"expr\":\"{coolify_project=\\\"partner-apps\\\"}\"}],\"range\":{\"from\":\"now-1h\",\"to\":\"now\"}}",
+      "url": "/explore?left={\"datasource\":\"loki\",\"queries\":[{\"expr\":\"{coolify_resource=~\\\"(featmira\\-valura|anandrathi\\-valura\\-webapp|assetplus\\-valura\\-webapp|banks\\-pitch|bob\\-capital\\-landing|bob\\-capital\\-webapp|dhanavruksha\\-valura\\-webapp|featdhanaviruksh\\-webapp|federal\\-landing|federal\\-valura\\-webapp|motilal\\-valura\\-webapp|neovision\\-value\\-fund|payit\\-pitch|valura\\-a\\-ifeatmotilal\\-valura\\-q11ojdt6zu5a0y9yh3zf67x0|valura\\-aldar\\-landing|valura\\-anandrathi\\-landing|valura\\-assetplus\\-landing|valura\\-dhanavruksha\\-landing|valura\\-icici\\-prudential\\-landing|valura\\-neoma\\-landing|vogue|valura\\-bonanza\\-landing|aldar\\-site\\-landing|valura\\-partner\\-hub|wealthbullet\\-get\\-valura\\-webapp|valura\\-get\\-landing|vogue\\-app|valura\\-a\\-ifeatbonanza\\-valura\\-o3s9r4coffs478vpm9grf2oa|neoma\\-valura\\-webapp|featrav\\-valura|valura\\-docs|valura\\-cobrand\\-studio|jhaveri\\-valura\\-webapp|valura\\-jhaveri\\-landing|narnolia\\-partner\\-portal|vogue\\-partner\\-portal|bonanza\\-partner\\-portal|featnarnolia\\-valura|ledger\\-docs|monarch\\-web|monarch\\-viewtrade|monarch\\-monarch\\-microservice|monarch\\-api|isolate\\-kyc\\-web|isolate\\-kyc\\-api|isolate\\-kyc\\-vt|isolate\\-kyc\\-admin|dsp\\-distributor|nifm\\-web|icici\\-admin|nifm\\-api|sales\\-arena|dsp\\-admin\\-prod\\-global|valtax\\-integration\\-api\\-global|valtax\\-integration\\-web\\-global)\\\"}\"}],\"range\":{\"from\":\"now-1h\",\"to\":\"now\"}}",
       "icon": "external link",
       "targetBlank": true
     }
@@ -57,7 +63,10 @@
       {
         "builtIn": 1,
         "type": "dashboard",
-        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
         "enable": true,
         "hide": true,
         "name": "Annotations & Alerts"
@@ -66,190 +75,1141 @@
   },
   "panels": [
     {
-      "id": 1, "type": "row", "title": "overview", "collapsed": false,
-      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 1 }, "panels": []
+      "id": 1,
+      "type": "row",
+      "title": "overview",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
     },
     {
-      "id": 2, "type": "stat", "title": "Running containers",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "x": 0, "y": 1, "w": 4, "h": 4 },
-      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "thresholds" },
-        "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] } }, "overrides": [] },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "area", "justifyMode": "auto" },
-      "targets": [{ "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "expr": "count(container_last_seen{container_label_coolify_projectName=\"partner-apps\"})", "instant": true }]
+      "id": 2,
+      "type": "stat",
+      "title": "Running containers",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 1,
+        "w": 3,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "count(container_last_seen{container_label_coolify_resourceName=~\"$resource\"})",
+          "instant": true
+        }
+      ]
     },
     {
-      "id": 3, "type": "stat", "title": "Containers by box",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "description": "This project spans more than one physical server - watch for one box silently dropping to zero.",
-      "gridPos": { "x": 4, "y": 1, "w": 6, "h": 4 },
-      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "thresholds" },
-        "thresholds": { "mode": "absolute", "steps": [{ "color": "text", "value": null }] } }, "overrides": [] },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "orientation": "auto", "textMode": "name", "colorMode": "background", "graphMode": "none", "justifyMode": "center" },
-      "targets": [{ "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "expr": "count by (box) (container_last_seen{container_label_coolify_projectName=\"partner-apps\"})",
-        "instant": true, "legendFormat": "{{box}}" }]
+      "id": 3,
+      "type": "stat",
+      "title": "Restarts (1h)",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 3,
+        "y": 1,
+        "w": 3,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(changes(container_start_time_seconds{container_label_coolify_resourceName=~\"$resource\"}[1h])) or vector(0)",
+          "instant": true
+        }
+      ]
     },
     {
-      "id": 4, "type": "stat", "title": "Restarts (1h)",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "x": 10, "y": 1, "w": 4, "h": 4 },
-      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "thresholds" },
-        "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 1 }, { "color": "red", "value": 5 }] } }, "overrides": [] },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "area", "justifyMode": "auto" },
-      "targets": [{ "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "expr": "sum(changes(container_start_time_seconds{container_label_coolify_projectName=\"partner-apps\"}[1h])) or vector(0)", "instant": true }]
+      "id": 4,
+      "type": "stat",
+      "title": "CPU cores",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 6,
+        "y": 1,
+        "w": 3,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_coolify_resourceName=~\"$resource\"}[5m]))",
+          "instant": true
+        }
+      ]
     },
     {
-      "id": 5, "type": "stat", "title": "CPU cores",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "x": 14, "y": 1, "w": 4, "h": 4 },
-      "fieldConfig": { "defaults": { "unit": "none", "decimals": 2, "color": { "mode": "thresholds" },
-        "thresholds": { "mode": "absolute", "steps": [{ "color": "text", "value": null }] } }, "overrides": [] },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "area", "justifyMode": "auto" },
-      "targets": [{ "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_coolify_projectName=\"partner-apps\"}[5m]))", "instant": true }]
+      "id": 5,
+      "type": "stat",
+      "title": "Memory",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 9,
+        "y": 1,
+        "w": 3,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum(container_memory_working_set_bytes{container_label_coolify_resourceName=~\"$resource\"})",
+          "instant": true
+        }
+      ]
     },
     {
-      "id": 6, "type": "stat", "title": "Memory",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "x": 18, "y": 1, "w": 6, "h": 4 },
-      "fieldConfig": { "defaults": { "unit": "bytes", "color": { "mode": "thresholds" },
-        "thresholds": { "mode": "absolute", "steps": [{ "color": "text", "value": null }] } }, "overrides": [] },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "area", "justifyMode": "auto" },
-      "targets": [{ "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "expr": "sum(container_memory_working_set_bytes{container_label_coolify_projectName=\"partner-apps\"})", "instant": true }]
+      "id": 6,
+      "type": "stat",
+      "title": "Errors (5m)",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 12,
+        "y": 1,
+        "w": 3,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 50
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({coolify_resource=~\"$resource\", level=~\"error|fatal\"} [5m]))",
+          "queryType": "instant"
+        }
+      ]
     },
     {
-      "id": 7, "type": "stat", "title": "Errors (5m)",
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "x": 0, "y": 5, "w": 4, "h": 4 },
-      "fieldConfig": { "defaults": { "unit": "none", "color": { "mode": "thresholds" },
-        "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 1 }, { "color": "red", "value": 50 }] } }, "overrides": [] },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "area", "justifyMode": "auto" },
-      "targets": [{ "refId": "A", "datasource": { "type": "loki", "uid": "loki" },
-        "expr": "sum(count_over_time({coolify_project=\"partner-apps\", level=~\"error|fatal\"} [5m]))", "queryType": "instant" }]
+      "id": 7,
+      "type": "stat",
+      "title": "Warnings (5m)",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 15,
+        "y": 1,
+        "w": 3,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 20
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({coolify_resource=~\"$resource\", level=\"warn\"} [5m]))",
+          "queryType": "instant"
+        }
+      ]
     },
     {
-      "id": 8, "type": "stat", "title": "Warnings (5m)",
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "x": 4, "y": 5, "w": 4, "h": 4 },
-      "fieldConfig": { "defaults": { "unit": "none", "color": { "mode": "thresholds" },
-        "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "orange", "value": 20 }] } }, "overrides": [] },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "area", "justifyMode": "auto" },
-      "targets": [{ "refId": "A", "datasource": { "type": "loki", "uid": "loki" },
-        "expr": "sum(count_over_time({coolify_project=\"partner-apps\", level=\"warn\"} [5m]))", "queryType": "instant" }]
+      "id": 8,
+      "type": "stat",
+      "title": "Log lines/min",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 1,
+        "w": 3,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum(count_over_time({coolify_resource=~\"$resource\"} [1m]))",
+          "queryType": "instant"
+        }
+      ]
     },
     {
-      "id": 9, "type": "stat", "title": "Services reporting",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "x": 8, "y": 5, "w": 4, "h": 4 },
-      "fieldConfig": { "defaults": { "unit": "none", "color": { "mode": "thresholds" },
-        "thresholds": { "mode": "absolute", "steps": [{ "color": "text", "value": null }] } }, "overrides": [] },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "area", "justifyMode": "auto" },
-      "targets": [{ "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "expr": "count(count by (container_label_coolify_resourceName) (container_last_seen{container_label_coolify_projectName=\"partner-apps\"}))", "instant": true }]
+      "id": 9,
+      "type": "stat",
+      "title": "Services reporting",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 21,
+        "y": 1,
+        "w": 3,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "count(count by (container_label_coolify_resourceName) (container_last_seen{container_label_coolify_resourceName=~\"$resource\"}))",
+          "instant": true
+        }
+      ]
     },
     {
-      "id": 10, "type": "row", "title": "service breakdown", "collapsed": false,
-      "gridPos": { "x": 0, "y": 9, "w": 24, "h": 1 }, "panels": []
+      "id": 10,
+      "type": "bargauge",
+      "title": "Containers by box",
+      "description": "Running count split by physical server - this project spans more than one box.",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 5,
+        "w": 24,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true,
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "instant": true,
+          "expr": "count by (box) (container_last_seen{container_label_coolify_resourceName=~\"$resource\"})",
+          "legendFormat": "{{box}}"
+        }
+      ]
     },
     {
-      "id": 11, "type": "stat", "title": "Service status",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "x": 0, "y": 10, "w": 24, "h": 7 },
-      "fieldConfig": { "defaults": { "color": { "mode": "thresholds" },
-        "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }, { "color": "green", "value": 1 }] },
-        "mappings": [{ "type": "value", "options": { "0": { "text": "DOWN", "index": 0 }, "1": { "text": "UP", "index": 1 } } }],
-        "noValue": "no data" }, "overrides": [] },
-      "options": { "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
-        "orientation": "auto", "textMode": "name", "colorMode": "background", "graphMode": "none", "justifyMode": "center" },
-      "targets": [{ "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" }, "instant": true,
-        "expr": "max by (container_label_coolify_resourceName) ((time() - container_last_seen{container_label_coolify_projectName=\"partner-apps\", container_label_coolify_resourceName=~\"$resource\"}) < 60)",
-        "legendFormat": "{{container_label_coolify_resourceName}}" }]
+      "id": 11,
+      "type": "row",
+      "title": "service breakdown",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 9,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
     },
     {
-      "id": 12, "type": "timeseries", "title": "CPU cores by service",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "x": 0, "y": 17, "w": 12, "h": 8 },
-      "fieldConfig": { "defaults": { "unit": "none", "decimals": 3,
-        "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 8, "showPoints": "never", "spanNulls": true, "gradientMode": "opacity", "stacking": { "mode": "normal", "group": "A" } } }, "overrides": [] },
-      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["last", "max", "mean"] }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "expr": "sum by (container_label_coolify_resourceName) (rate(container_cpu_usage_seconds_total{container_label_coolify_projectName=\"partner-apps\", container_label_coolify_resourceName=~\"$resource\"}[$__rate_interval]))",
-        "legendFormat": "{{container_label_coolify_resourceName}}" }]
+      "id": 12,
+      "type": "stat",
+      "title": "Service status",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 10,
+        "w": 24,
+        "h": 7
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": {
+                  "text": "DOWN",
+                  "index": 0
+                },
+                "1": {
+                  "text": "UP",
+                  "index": 1
+                }
+              }
+            }
+          ],
+          "noValue": "no data"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "orientation": "auto",
+        "textMode": "name",
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "instant": true,
+          "expr": "max by (container_label_coolify_resourceName) ((time() - container_last_seen{container_label_coolify_resourceName=~\"$resource\"}) < 60)",
+          "legendFormat": "{{container_label_coolify_resourceName}}"
+        }
+      ]
     },
     {
-      "id": 13, "type": "timeseries", "title": "Memory by service",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "x": 12, "y": 17, "w": 12, "h": 8 },
-      "fieldConfig": { "defaults": { "unit": "bytes",
-        "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 8, "showPoints": "never", "spanNulls": true, "gradientMode": "opacity", "stacking": { "mode": "normal", "group": "A" } } }, "overrides": [] },
-      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["last", "max", "mean"] }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "expr": "sum by (container_label_coolify_resourceName) (container_memory_working_set_bytes{container_label_coolify_projectName=\"partner-apps\", container_label_coolify_resourceName=~\"$resource\"})",
-        "legendFormat": "{{container_label_coolify_resourceName}}" }]
+      "id": 13,
+      "type": "timeseries",
+      "title": "CPU cores by service",
+      "gridPos": {
+        "x": 0,
+        "y": 17,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": true,
+            "gradientMode": "opacity",
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "last",
+            "max",
+            "mean"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (container_label_coolify_resourceName) (rate(container_cpu_usage_seconds_total{container_label_coolify_resourceName=~\"$resource\"}[$__rate_interval]))",
+          "legendFormat": "{{container_label_coolify_resourceName}}"
+        }
+      ]
     },
     {
-      "id": 14, "type": "timeseries", "title": "Restarts by service",
-      "datasource": { "type": "prometheus", "uid": "prometheus" },
-      "gridPos": { "x": 0, "y": 25, "w": 24, "h": 7 },
-      "fieldConfig": { "defaults": { "unit": "none",
-        "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 0, "showPoints": "never", "spanNulls": true, "gradientMode": "opacity", "stacking": { "mode": "none", "group": "A" } } }, "overrides": [] },
-      "options": { "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["last", "max", "mean"] }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "refId": "A", "datasource": { "type": "prometheus", "uid": "prometheus" },
-        "expr": "sum by (container_label_coolify_resourceName) (changes(container_start_time_seconds{container_label_coolify_projectName=\"partner-apps\", container_label_coolify_resourceName=~\"$resource\"}[1h]))",
-        "legendFormat": "{{container_label_coolify_resourceName}}" }]
+      "id": 14,
+      "type": "timeseries",
+      "title": "Memory by service",
+      "gridPos": {
+        "x": 12,
+        "y": 17,
+        "w": 12,
+        "h": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": true,
+            "gradientMode": "opacity",
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "last",
+            "max",
+            "mean"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (container_label_coolify_resourceName) (container_memory_working_set_bytes{container_label_coolify_resourceName=~\"$resource\"})",
+          "legendFormat": "{{container_label_coolify_resourceName}}"
+        }
+      ]
     },
     {
-      "id": 15, "type": "row", "title": "logs", "collapsed": false,
-      "gridPos": { "x": 0, "y": 32, "w": 24, "h": 1 }, "panels": []
+      "id": 15,
+      "type": "timeseries",
+      "title": "Restarts by service",
+      "gridPos": {
+        "x": 0,
+        "y": 25,
+        "w": 24,
+        "h": 7
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": true,
+            "gradientMode": "opacity",
+            "stacking": {
+              "mode": "none",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "last",
+            "max",
+            "mean"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "expr": "sum by (container_label_coolify_resourceName) (changes(container_start_time_seconds{container_label_coolify_resourceName=~\"$resource\"}[1h]))",
+          "legendFormat": "{{container_label_coolify_resourceName}}"
+        }
+      ]
     },
     {
-      "id": 16, "type": "timeseries", "title": "Log volume by level",
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "x": 0, "y": 33, "w": 12, "h": 7 },
-      "fieldConfig": { "defaults": { "unit": "short", "custom": { "drawStyle": "bars", "lineWidth": 0, "fillOpacity": 80, "stacking": { "mode": "normal", "group": "A" } } },
+      "id": 16,
+      "type": "row",
+      "title": "logs - select one service above to inspect it individually",
+      "collapsed": false,
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 24,
+        "h": 1
+      },
+      "panels": []
+    },
+    {
+      "id": 17,
+      "type": "timeseries",
+      "title": "Log volume by level",
+      "gridPos": {
+        "x": 0,
+        "y": 33,
+        "w": 12,
+        "h": 7
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 0,
+            "fillOpacity": 80,
+            "showPoints": "never",
+            "spanNulls": true,
+            "gradientMode": "opacity",
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
         "overrides": [
-          { "matcher": { "id": "byName", "options": "error" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "red" } }] },
-          { "matcher": { "id": "byName", "options": "fatal" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "dark-red" } }] },
-          { "matcher": { "id": "byName", "options": "warn" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "orange" } }] },
-          { "matcher": { "id": "byName", "options": "info" }, "properties": [{ "id": "color", "value": { "mode": "fixed", "fixedColor": "green" } }] }
-        ] },
-      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "refId": "A", "datasource": { "type": "loki", "uid": "loki" },
-        "expr": "sum by (level) (count_over_time({coolify_project=\"partner-apps\", coolify_resource=~\"$resource\"}[$__interval]))",
-        "legendFormat": "{{level}}", "queryType": "range" }]
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "error"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "red"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "fatal"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "dark-red"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "warn"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "orange"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "info"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "mode": "fixed",
+                  "fixedColor": "green"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "last",
+            "max",
+            "mean"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (level) (count_over_time({coolify_resource=~\"$resource\"}[$__interval]))",
+          "legendFormat": "{{level}}",
+          "queryType": "range"
+        }
+      ]
     },
     {
-      "id": 17, "type": "timeseries", "title": "Error / warn rate by service",
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "x": 12, "y": 33, "w": 12, "h": 7 },
-      "fieldConfig": { "defaults": { "unit": "short", "custom": { "drawStyle": "line", "lineWidth": 1, "fillOpacity": 12, "stacking": { "mode": "normal", "group": "A" } } }, "overrides": [] },
-      "options": { "legend": { "displayMode": "list", "placement": "bottom" }, "tooltip": { "mode": "multi", "sort": "desc" } },
-      "targets": [{ "refId": "A", "datasource": { "type": "loki", "uid": "loki" },
-        "expr": "sum by (coolify_resource) (count_over_time({coolify_project=\"partner-apps\", coolify_resource=~\"$resource\"} |~ \"(?i)(error|warn|fatal|exception|critical)\" [$__interval]))",
-        "legendFormat": "{{coolify_resource}}", "queryType": "range" }]
+      "id": 18,
+      "type": "timeseries",
+      "title": "Log volume by service",
+      "gridPos": {
+        "x": 12,
+        "y": 33,
+        "w": 12,
+        "h": 7
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": true,
+            "gradientMode": "opacity",
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "last",
+            "max",
+            "mean"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (coolify_resource) (count_over_time({coolify_resource=~\"$resource\"}[$__interval]))",
+          "legendFormat": "{{coolify_resource}}",
+          "queryType": "range"
+        }
+      ]
     },
     {
-      "id": 18, "type": "logs", "title": "Errors, warnings & exceptions",
-      "datasource": { "type": "loki", "uid": "loki" },
-      "gridPos": { "x": 0, "y": 40, "w": 24, "h": 10 },
+      "id": 19,
+      "type": "timeseries",
+      "title": "Error / warn rate by service",
+      "gridPos": {
+        "x": 0,
+        "y": 40,
+        "w": 24,
+        "h": 6
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 1,
+            "fillOpacity": 8,
+            "showPoints": "never",
+            "spanNulls": true,
+            "gradientMode": "opacity",
+            "stacking": {
+              "mode": "normal",
+              "group": "A"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "last",
+            "max",
+            "mean"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (coolify_resource) (count_over_time({coolify_resource=~\"$resource\"} |~ \"(?i)(error|warn|fatal|exception|critical)\" [$__interval]))",
+          "legendFormat": "{{coolify_resource}}",
+          "queryType": "range"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "type": "logs",
+      "title": "Errors, warnings & exceptions",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 46,
+        "w": 24,
+        "h": 10
+      },
       "pluginVersion": "12.3.2",
-      "options": { "showTime": true, "showLabels": true, "showCommonLabels": true, "wrapLogMessage": true, "prettifyLogMessage": true,
-        "enableLogDetails": true, "dedupStrategy": "none", "sortOrder": "Descending", "enableInfiniteScrolling": false, "showControls": false },
-      "targets": [{ "refId": "A", "datasource": { "type": "loki", "uid": "loki" },
-        "expr": "{coolify_project=\"partner-apps\", coolify_resource=~\"$resource\"} |~ \"(?i)(error|warn|fatal|critical|exception|traceback|panic)\"",
-        "maxLines": 500, "legendFormat": "" }]
+      "options": {
+        "showTime": true,
+        "showLabels": true,
+        "showCommonLabels": true,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": true,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending",
+        "enableInfiniteScrolling": false,
+        "showControls": false
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{coolify_resource=~\"$resource\"} |~ \"(?i)(error|warn|fatal|critical|exception|traceback|panic)\"",
+          "maxLines": 500,
+          "legendFormat": ""
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "type": "logs",
+      "title": "All logs (pick one service above to inspect it individually)",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 56,
+        "w": 24,
+        "h": 14
+      },
+      "pluginVersion": "12.3.2",
+      "options": {
+        "showTime": true,
+        "showLabels": true,
+        "showCommonLabels": true,
+        "wrapLogMessage": true,
+        "prettifyLogMessage": true,
+        "enableLogDetails": true,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending",
+        "enableInfiniteScrolling": false,
+        "showControls": false
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{coolify_resource=~\"$resource\"}",
+          "maxLines": 1000,
+          "legendFormat": ""
+        }
+      ]
     }
   ]
 }
