@@ -15,14 +15,22 @@ SCOPES = {
     "dev":     {"folder": "dev",     "project_regex": "Valura-development|global-valura-dev"},
     "staging": {"folder": "staging", "project_regex": "valura-UAE-staging|global-valura-staging"},
     "prod":    {"folder": "prod",    "project_regex": "valura-prod"},
-    # partner-apps/DSP/DSP-new-server/valura-dubai - verified live against
+    # partner-apps/DSP/india-mf-dev - verified live against
     # coolify_build_success{project=...} (these are the real DB project names,
     # not the lowercase coolify.projectName docker-label slug used elsewhere).
-    # DSP-new-server and valura-dubai currently have ZERO rows in
-    # application_deployment_queues (no deploy history recorded there at all,
-    # not just old) - included for when that changes, but expect "no data".
+    # DSP's prod-global/UAE apps + the VERIFID stg stack all genuinely live
+    # under this one "DSP" project (confirmed via /api/v1/applications), even
+    # though they're hosted on dubai (86.106.26.45, firewalled off from our
+    # own agents - see ../dubai-box/README.md) - build history for them still
+    # comes from Coolify's DB directly, independent of that firewall gap.
+    # "DSP-new-server" was deliberately dropped: it turned out to be the
+    # stale `delete-entire-after-confirmation` duplicate-DSP-ADMIN project,
+    # not a real one (confirmed via the Coolify API's destination/server
+    # data) - see dubai-box/README.md for the full story. "valura-dubai" was
+    # also dropped - it's an unrelated project name, not where the dubai-hosted
+    # DSP apps actually live (they're under "DSP", confirmed above).
     "partner-apps": {"folder": "partner-apps", "title": "Build Logs",
-                      "project_regex": "partner-apps|DSP|DSP-new-server|valura-dubai|india-mf-dev"},
+                      "project_regex": "partner-apps|DSP|india-mf-dev"},
 }
 
 _id = [0]

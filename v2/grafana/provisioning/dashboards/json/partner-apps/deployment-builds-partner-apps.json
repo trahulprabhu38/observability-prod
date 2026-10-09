@@ -31,10 +31,10 @@
           "type": "prometheus",
           "uid": "prometheus"
         },
-        "definition": "label_values(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai|india-mf-dev\"}, project)",
+        "definition": "label_values(coolify_build_success{project=~\"partner-apps|DSP|india-mf-dev\"}, project)",
         "query": {
           "qryType": 1,
-          "query": "label_values(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai|india-mf-dev\"}, project)",
+          "query": "label_values(coolify_build_success{project=~\"partner-apps|DSP|india-mf-dev\"}, project)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "includeAll": true,
@@ -55,10 +55,10 @@
           "type": "prometheus",
           "uid": "prometheus"
         },
-        "definition": "label_values(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai|india-mf-dev\", project=~\"$project\"}, app)",
+        "definition": "label_values(coolify_build_success{project=~\"partner-apps|DSP|india-mf-dev\", project=~\"$project\"}, app)",
         "query": {
           "qryType": 1,
-          "query": "label_values(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai|india-mf-dev\", project=~\"$project\"}, app)",
+          "query": "label_values(coolify_build_success{project=~\"partner-apps|DSP|india-mf-dev\", project=~\"$project\"}, app)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "includeAll": false,
@@ -103,10 +103,10 @@
           "uid": "prometheus"
         },
         "hide": 2,
-        "definition": "label_values(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai|india-mf-dev\", project=~\"$project\", app=\"$app\", rank=~\"$rank\"}, deployment_uuid)",
+        "definition": "label_values(coolify_build_success{project=~\"partner-apps|DSP|india-mf-dev\", project=~\"$project\", app=\"$app\", rank=~\"$rank\"}, deployment_uuid)",
         "query": {
           "qryType": 1,
-          "query": "label_values(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai|india-mf-dev\", project=~\"$project\", app=\"$app\", rank=~\"$rank\"}, deployment_uuid)",
+          "query": "label_values(coolify_build_success{project=~\"partner-apps|DSP|india-mf-dev\", project=~\"$project\", app=\"$app\", rank=~\"$rank\"}, deployment_uuid)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "includeAll": false,
@@ -205,7 +205,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "count(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai|india-mf-dev\", project=~\"$project\", rank=\"1\"} == 1)",
+          "expr": "count(coolify_build_success{project=~\"partner-apps|DSP|india-mf-dev\", project=~\"$project\", rank=\"1\"} == 1)",
           "instant": true
         }
       ]
@@ -267,7 +267,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "count(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai|india-mf-dev\", project=~\"$project\", rank=\"1\"} == 0)",
+          "expr": "count(coolify_build_success{project=~\"partner-apps|DSP|india-mf-dev\", project=~\"$project\", rank=\"1\"} == 0)",
           "instant": true
         }
       ]
@@ -330,7 +330,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "count(coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai|india-mf-dev\", project=~\"$project\", rank=\"1\"} == 0 and on(uuid) coolify_app_up == 1)",
+          "expr": "count(coolify_build_success{project=~\"partner-apps|DSP|india-mf-dev\", project=~\"$project\", rank=\"1\"} == 0 and on(uuid) coolify_app_up == 1)",
           "instant": true
         }
       ]
@@ -596,7 +596,7 @@
           },
           "instant": true,
           "format": "table",
-          "expr": "coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai|india-mf-dev\", project=~\"$project\", rank=\"1\"} == 0 and on(uuid) coolify_app_up == 1"
+          "expr": "coolify_build_success{project=~\"partner-apps|DSP|india-mf-dev\", project=~\"$project\", rank=\"1\"} == 0 and on(uuid) coolify_app_up == 1"
         }
       ],
       "transformations": [
@@ -724,7 +724,7 @@
             "uid": "prometheus"
           },
           "instant": true,
-          "expr": "coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai|india-mf-dev\", project=~\"$project\", rank=\"1\"}",
+          "expr": "coolify_build_success{project=~\"partner-apps|DSP|india-mf-dev\", project=~\"$project\", rank=\"1\"}",
           "legendFormat": "{{project}} / {{app}}"
         }
       ]
@@ -898,7 +898,7 @@
           },
           "instant": true,
           "format": "table",
-          "expr": "coolify_build_success{project=~\"partner-apps|DSP|DSP-new-server|valura-dubai|india-mf-dev\", project=~\"$project\"}"
+          "expr": "coolify_build_success{project=~\"partner-apps|DSP|india-mf-dev\", project=~\"$project\"}"
         }
       ],
       "transformations": [
