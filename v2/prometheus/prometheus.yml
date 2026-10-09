@@ -82,6 +82,13 @@ scrape_configs:
       - files: ["/etc/prometheus/targets/cadvisor-*.yml"]
         refresh_interval: 30s
 
+  # ----- Postgres metrics (prometheus-community/postgres_exporter) -----
+  # One exporter per Postgres host: add to targets/postgres-*.yml
+  - job_name: postgres-fleet
+    file_sd_configs:
+      - files: ["/etc/prometheus/targets/postgres-*.yml"]
+        refresh_interval: 30s
+
   # ----- Jenkins (CI/CD) -----
   # Controller's own Prometheus-plugin endpoint. Anonymous/unauthenticated by
   # design (useAuthenticatedEndpoint is off) - that's how the plugin expects

@@ -1,0 +1,11 @@
+# file_sd target list for the `postgres-fleet` job.
+# Copy to postgres-fleet.yml (drop .example) and edit. Prometheus re-reads it live.
+#
+# One entry per host running prometheus-community/postgres_exporter on :9187.
+
+- targets:
+    - "10.0.0.20:9187"
+  labels:
+    box: lxc-postgres
+    kind: postgres
+    env: prod
