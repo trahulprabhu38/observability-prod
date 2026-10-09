@@ -1,7 +1,7 @@
 {
   "uid": "partner-apps-group",
   "title": "Partner Apps",
-  "description": "Everything in the partner-apps business line: partner-apps (46 apps per Coolify's API, 39 visible to cAdvisor), DSP (26 apps per Coolify's API - Monarch/Isolate-KYC/NIFM/dsp-distributor/sales-arena/icici-admin all visible to cAdvisor on valura-dev), india-mf-dev (3 apps + a redis sidecar), and Valtax (valtax-integration-api/web-global, from the unrelated global-valura-dev project, kept out of the Coolify-API Service Status panel since that's scoped to partner-apps/DSP/india-mf-dev specifically). DSP-API/WEB/ADMIN-prod-global, DSP-WEB-prod-UAE, UAE-DSP-API and the VERIFID stg stack are real, running (confirmed via the Coolify API, so they DO show correctly in Service Status below) but all live on 'dubai' (86.106.26.45), which is reachable by ping and serving its apps on :443 but has :22/:8085/:9100 firewalled off from this stack - see dubai-box/README.md. Their CPU/memory/log panels below will read 'no data' until that firewall gap is fixed; no dashboard change can work around that. (A container named 'dsp-admin-prod-global' DOES show up in cAdvisor on valura-prod, under project slug dsp-new-server - that's a stale duplicate in a Coolify project literally named 'delete-entire-after-confirmation', NOT the real DSP-ADMIN-prod-GLOBAL on dubai. Deliberately excluded from this dashboard's resource list to avoid showing misleading data under a matching name.)",
+  "description": "Everything in the partner-apps business line: partner-apps (46 apps per Coolify's API, 39 visible to cAdvisor), DSP (26 apps per Coolify's API; Monarch/Isolate-KYC/NIFM/dsp-distributor/sales-arena/icici-admin on valura-dev, and as of 2026-10-09 the prod-global tier + VERIFID stg stack on dubai (86.106.26.45) too - node-exporter/cAdvisor were deployed there and are confirmed up), india-mf-dev (3 apps + a redis sidecar), and Valtax (valtax-integration-api/web-global, from the unrelated global-valura-dev project, kept out of the Coolify-API Service Status panel since that's scoped to partner-apps/DSP/india-mf-dev specifically). Note: dubai's logs/traces can't reach Loki yet (it's not on the same private network as the other boxes - see dubai-box/README.md), so its apps show real CPU/memory/status here but no log panels until that's resolved. All cAdvisor queries explicitly exclude box=valura-prod because a stale duplicate of DSP-ADMIN-prod-GLOBAL sits there under the same resource name (in a Coolify project literally named delete-entire-after-confirmation) - without that exclusion its idle numbers would quietly contaminate the real dubai app's CPU/memory figures.",
   "tags": [
     "partner-apps",
     "dsp",
@@ -27,7 +27,7 @@
         "type": "custom",
         "name": "resource",
         "label": "Service (pick one to inspect it individually - cAdvisor-visible only)",
-        "query": "aldar-site-landing,anandrathi-valura-webapp,assetplus-valura-webapp,banks-pitch,bob-capital-landing,bob-capital-webapp,bonanza-partner-portal,dhanavruksha-valura-webapp,dsp-distributor,featdhanaviruksh-webapp,featmira-valura,featnarnolia-valura,featrav-valura,federal-landing,federal-valura-webapp,icici-admin,india-mf-api,india-mf-fp,india-mf-redis,india-mf-web,isolate-kyc-admin,isolate-kyc-api,isolate-kyc-vt,isolate-kyc-web,jhaveri-valura-webapp,ledger-docs,monarch-api,monarch-monarch-microservice,monarch-viewtrade,monarch-web,motilal-valura-webapp,narnolia-partner-portal,neoma-valura-webapp,neovision-value-fund,nifm-api,nifm-web,payit-pitch,sales-arena,valtax-integration-api-global,valtax-integration-web-global,valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa,valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0,valura-aldar-landing,valura-anandrathi-landing,valura-assetplus-landing,valura-bonanza-landing,valura-cobrand-studio,valura-dhanavruksha-landing,valura-docs,valura-get-landing,valura-icici-prudential-landing,valura-jhaveri-landing,valura-neoma-landing,valura-partner-hub,vogue,vogue-app,vogue-partner-portal,wealthbullet-get-valura-webapp",
+        "query": "aldar-site-landing,anandrathi-valura-webapp,assetplus-valura-webapp,banks-pitch,bob-capital-landing,bob-capital-webapp,bonanza-partner-portal,dhanavruksha-valura-webapp,dsp-admin-prod-global,dsp-api,dsp-api-prod-global,dsp-distributor,dsp-web,dsp-web-prod-global,featdhanaviruksh-webapp,featmira-valura,featnarnolia-valura,featrav-valura,federal-landing,federal-valura-webapp,icici-admin,india-mf-api,india-mf-fp,india-mf-redis,india-mf-web,isolate-kyc-admin,isolate-kyc-api,isolate-kyc-vt,isolate-kyc-web,jhaveri-valura-webapp,ledger-docs,monarch-api,monarch-monarch-microservice,monarch-viewtrade,monarch-web,motilal-valura-webapp,narnolia-partner-portal,neoma-valura-webapp,neovision-value-fund,nifm-api,nifm-web,payit-pitch,sales-arena,valtax-integration-api-global,valtax-integration-web-global,valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa,valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0,valura-aldar-landing,valura-anandrathi-landing,valura-assetplus-landing,valura-bonanza-landing,valura-cobrand-studio,valura-dhanavruksha-landing,valura-docs,valura-get-landing,valura-icici-prudential-landing,valura-jhaveri-landing,valura-neoma-landing,valura-partner-hub,verifid-admin-stg,verifid-api-stg,verifid-backend-stg,verifid-web-stg,vogue,vogue-app,vogue-partner-portal,wealthbullet-get-valura-webapp",
         "options": [
           {
             "text": "aldar-site-landing",
@@ -70,8 +70,33 @@
             "selected": false
           },
           {
+            "text": "dsp-admin-prod-global",
+            "value": "dsp-admin-prod-global",
+            "selected": false
+          },
+          {
+            "text": "dsp-api",
+            "value": "dsp-api",
+            "selected": false
+          },
+          {
+            "text": "dsp-api-prod-global",
+            "value": "dsp-api-prod-global",
+            "selected": false
+          },
+          {
             "text": "dsp-distributor",
             "value": "dsp-distributor",
+            "selected": false
+          },
+          {
+            "text": "dsp-web",
+            "value": "dsp-web",
+            "selected": false
+          },
+          {
+            "text": "dsp-web-prod-global",
+            "value": "dsp-web-prod-global",
             "selected": false
           },
           {
@@ -300,6 +325,26 @@
             "selected": false
           },
           {
+            "text": "verifid-admin-stg",
+            "value": "verifid-admin-stg",
+            "selected": false
+          },
+          {
+            "text": "verifid-api-stg",
+            "value": "verifid-api-stg",
+            "selected": false
+          },
+          {
+            "text": "verifid-backend-stg",
+            "value": "verifid-backend-stg",
+            "selected": false
+          },
+          {
+            "text": "verifid-web-stg",
+            "value": "verifid-web-stg",
+            "selected": false
+          },
+          {
             "text": "vogue",
             "value": "vogue",
             "selected": false
@@ -322,7 +367,7 @@
         ],
         "includeAll": true,
         "multi": true,
-        "allValue": "(aldar-site-landing|anandrathi-valura-webapp|assetplus-valura-webapp|banks-pitch|bob-capital-landing|bob-capital-webapp|bonanza-partner-portal|dhanavruksha-valura-webapp|dsp-distributor|featdhanaviruksh-webapp|featmira-valura|featnarnolia-valura|featrav-valura|federal-landing|federal-valura-webapp|icici-admin|india-mf-api|india-mf-fp|india-mf-redis|india-mf-web|isolate-kyc-admin|isolate-kyc-api|isolate-kyc-vt|isolate-kyc-web|jhaveri-valura-webapp|ledger-docs|monarch-api|monarch-monarch-microservice|monarch-viewtrade|monarch-web|motilal-valura-webapp|narnolia-partner-portal|neoma-valura-webapp|neovision-value-fund|nifm-api|nifm-web|payit-pitch|sales-arena|valtax-integration-api-global|valtax-integration-web-global|valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa|valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0|valura-aldar-landing|valura-anandrathi-landing|valura-assetplus-landing|valura-bonanza-landing|valura-cobrand-studio|valura-dhanavruksha-landing|valura-docs|valura-get-landing|valura-icici-prudential-landing|valura-jhaveri-landing|valura-neoma-landing|valura-partner-hub|vogue|vogue-app|vogue-partner-portal|wealthbullet-get-valura-webapp)",
+        "allValue": "(aldar-site-landing|anandrathi-valura-webapp|assetplus-valura-webapp|banks-pitch|bob-capital-landing|bob-capital-webapp|bonanza-partner-portal|dhanavruksha-valura-webapp|dsp-admin-prod-global|dsp-api|dsp-api-prod-global|dsp-distributor|dsp-web|dsp-web-prod-global|featdhanaviruksh-webapp|featmira-valura|featnarnolia-valura|featrav-valura|federal-landing|federal-valura-webapp|icici-admin|india-mf-api|india-mf-fp|india-mf-redis|india-mf-web|isolate-kyc-admin|isolate-kyc-api|isolate-kyc-vt|isolate-kyc-web|jhaveri-valura-webapp|ledger-docs|monarch-api|monarch-monarch-microservice|monarch-viewtrade|monarch-web|motilal-valura-webapp|narnolia-partner-portal|neoma-valura-webapp|neovision-value-fund|nifm-api|nifm-web|payit-pitch|sales-arena|valtax-integration-api-global|valtax-integration-web-global|valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa|valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0|valura-aldar-landing|valura-anandrathi-landing|valura-assetplus-landing|valura-bonanza-landing|valura-cobrand-studio|valura-dhanavruksha-landing|valura-docs|valura-get-landing|valura-icici-prudential-landing|valura-jhaveri-landing|valura-neoma-landing|valura-partner-hub|verifid-admin-stg|verifid-api-stg|verifid-backend-stg|verifid-web-stg|vogue|vogue-app|vogue-partner-portal|wealthbullet-get-valura-webapp)",
         "current": {
           "text": "All",
           "value": "$__all"
@@ -334,7 +379,7 @@
     {
       "title": "Explore logs",
       "type": "link",
-      "url": "/explore?left={\"datasource\":\"loki\",\"queries\":[{\"expr\":\"{coolify_resource=~\\\"(aldar-site-landing|anandrathi-valura-webapp|assetplus-valura-webapp|banks-pitch|bob-capital-landing|bob-capital-webapp|bonanza-partner-portal|dhanavruksha-valura-webapp|dsp-distributor|featdhanaviruksh-webapp|featmira-valura|featnarnolia-valura|featrav-valura|federal-landing|federal-valura-webapp|icici-admin|india-mf-api|india-mf-fp|india-mf-redis|india-mf-web|isolate-kyc-admin|isolate-kyc-api|isolate-kyc-vt|isolate-kyc-web|jhaveri-valura-webapp|ledger-docs|monarch-api|monarch-monarch-microservice|monarch-viewtrade|monarch-web|motilal-valura-webapp|narnolia-partner-portal|neoma-valura-webapp|neovision-value-fund|nifm-api|nifm-web|payit-pitch|sales-arena|valtax-integration-api-global|valtax-integration-web-global|valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa|valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0|valura-aldar-landing|valura-anandrathi-landing|valura-assetplus-landing|valura-bonanza-landing|valura-cobrand-studio|valura-dhanavruksha-landing|valura-docs|valura-get-landing|valura-icici-prudential-landing|valura-jhaveri-landing|valura-neoma-landing|valura-partner-hub|vogue|vogue-app|vogue-partner-portal|wealthbullet-get-valura-webapp)\\\"}\"}],\"range\":{\"from\":\"now-1h\",\"to\":\"now\"}}",
+      "url": "/explore?left={\"datasource\":\"loki\",\"queries\":[{\"expr\":\"{coolify_resource=~\\\"(aldar-site-landing|anandrathi-valura-webapp|assetplus-valura-webapp|banks-pitch|bob-capital-landing|bob-capital-webapp|bonanza-partner-portal|dhanavruksha-valura-webapp|dsp-admin-prod-global|dsp-api|dsp-api-prod-global|dsp-distributor|dsp-web|dsp-web-prod-global|featdhanaviruksh-webapp|featmira-valura|featnarnolia-valura|featrav-valura|federal-landing|federal-valura-webapp|icici-admin|india-mf-api|india-mf-fp|india-mf-redis|india-mf-web|isolate-kyc-admin|isolate-kyc-api|isolate-kyc-vt|isolate-kyc-web|jhaveri-valura-webapp|ledger-docs|monarch-api|monarch-monarch-microservice|monarch-viewtrade|monarch-web|motilal-valura-webapp|narnolia-partner-portal|neoma-valura-webapp|neovision-value-fund|nifm-api|nifm-web|payit-pitch|sales-arena|valtax-integration-api-global|valtax-integration-web-global|valura-a-ifeatbonanza-valura-o3s9r4coffs478vpm9grf2oa|valura-a-ifeatmotilal-valura-q11ojdt6zu5a0y9yh3zf67x0|valura-aldar-landing|valura-anandrathi-landing|valura-assetplus-landing|valura-bonanza-landing|valura-cobrand-studio|valura-dhanavruksha-landing|valura-docs|valura-get-landing|valura-icici-prudential-landing|valura-jhaveri-landing|valura-neoma-landing|valura-partner-hub|verifid-admin-stg|verifid-api-stg|verifid-backend-stg|verifid-web-stg|vogue|vogue-app|vogue-partner-portal|wealthbullet-get-valura-webapp)\\\"}\"}],\"range\":{\"from\":\"now-1h\",\"to\":\"now\"}}",
       "icon": "external link",
       "targetBlank": true
     }
@@ -425,7 +470,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "count(container_last_seen{container_label_coolify_resourceName=~\"$resource\"})",
+          "expr": "count(container_last_seen{container_label_coolify_resourceName=~\"$resource\", box!=\"valura-prod\"})",
           "instant": true
         }
       ]
@@ -491,7 +536,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(changes(container_start_time_seconds{container_label_coolify_resourceName=~\"$resource\"}[1h])) or vector(0)",
+          "expr": "sum(changes(container_start_time_seconds{container_label_coolify_resourceName=~\"$resource\", box!=\"valura-prod\"}[1h])) or vector(0)",
           "instant": true
         }
       ]
@@ -549,7 +594,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_coolify_resourceName=~\"$resource\"}[5m]))",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{container_label_coolify_resourceName=~\"$resource\", box!=\"valura-prod\"}[5m]))",
           "instant": true
         }
       ]
@@ -607,7 +652,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum(container_memory_working_set_bytes{container_label_coolify_resourceName=~\"$resource\"})",
+          "expr": "sum(container_memory_working_set_bytes{container_label_coolify_resourceName=~\"$resource\", box!=\"valura-prod\"})",
           "instant": true
         }
       ]
@@ -851,7 +896,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "count(count by (container_label_coolify_resourceName) (container_last_seen{container_label_coolify_resourceName=~\"$resource\"}))",
+          "expr": "count(count by (container_label_coolify_resourceName) (container_last_seen{container_label_coolify_resourceName=~\"$resource\", box!=\"valura-prod\"}))",
           "instant": true
         }
       ]
@@ -1090,7 +1135,7 @@
             "uid": "prometheus"
           },
           "instant": true,
-          "expr": "count by (box) (container_last_seen{container_label_coolify_resourceName=~\"$resource\"})",
+          "expr": "count by (box) (container_last_seen{container_label_coolify_resourceName=~\"$resource\", box!=\"valura-prod\"})",
           "legendFormat": "{{box}}"
         }
       ]
@@ -1260,7 +1305,7 @@
             "uid": "prometheus"
           },
           "instant": true,
-          "expr": "max by (container_label_coolify_resourceName) ((time() - container_last_seen{container_label_coolify_resourceName=~\"$resource\"}) < 60)",
+          "expr": "max by (container_label_coolify_resourceName) ((time() - container_last_seen{container_label_coolify_resourceName=~\"$resource\", box!=\"valura-prod\"}) < 60)",
           "legendFormat": "{{container_label_coolify_resourceName}}"
         }
       ]
@@ -1315,7 +1360,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (container_label_coolify_resourceName) (rate(container_cpu_usage_seconds_total{container_label_coolify_resourceName=~\"$resource\"}[$__rate_interval]))",
+          "expr": "sum by (container_label_coolify_resourceName) (rate(container_cpu_usage_seconds_total{container_label_coolify_resourceName=~\"$resource\", box!=\"valura-prod\"}[$__rate_interval]))",
           "legendFormat": "{{container_label_coolify_resourceName}}"
         }
       ]
@@ -1370,7 +1415,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (container_label_coolify_resourceName) (container_memory_working_set_bytes{container_label_coolify_resourceName=~\"$resource\"})",
+          "expr": "sum by (container_label_coolify_resourceName) (container_memory_working_set_bytes{container_label_coolify_resourceName=~\"$resource\", box!=\"valura-prod\"})",
           "legendFormat": "{{container_label_coolify_resourceName}}"
         }
       ]
@@ -1425,7 +1470,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "sum by (container_label_coolify_resourceName) (changes(container_start_time_seconds{container_label_coolify_resourceName=~\"$resource\"}[1h]))",
+          "expr": "sum by (container_label_coolify_resourceName) (changes(container_start_time_seconds{container_label_coolify_resourceName=~\"$resource\", box!=\"valura-prod\"}[1h]))",
           "legendFormat": "{{container_label_coolify_resourceName}}"
         }
       ]
